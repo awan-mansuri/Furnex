@@ -1,0 +1,529 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Untree.co">
+  <link rel="shortcut icon" href="{% static 'images/furnex-f-logo.svg' %}">
+  <meta name="description" content="" />
+  <meta name="keywords" content="bootstrap, bootstrap4" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#3B5D50',
+            'brand-dark': '#2D4A3F',
+            'brand-light': '#DCE5E1',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    /* Enhanced Thank You Page Styles */
+    .thank-you-section {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      padding: 4rem 0;
+    }
+    
+    .success-animation {
+      animation: successPulse 1.5s ease-in-out;
+    }
+    
+    @keyframes successPulse {
+      0% { transform: scale(0.9); opacity: 0; }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .thankyou-icon {
+      font-size: 5rem;
+      color: #3B5D50;
+      margin-bottom: 2rem;
+      animation: bounce 1s ease-in-out;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+      40% {transform: translateY(-20px);}
+      60% {transform: translateY(-10px);}
+    }
+    
+    .order-summary-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border: none;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      margin-top: 2rem;
+    }
+    
+    .order-summary-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    
+    .card-header-gradient {
+      background: linear-gradient(135deg, #3b5d50 0%, #314d43 100%);
+      border: none;
+      padding: 1.5rem;
+    }
+    
+    /* Enhanced Button Styles */
+    .btn-enhanced {
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 12px 24px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-enhanced:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    
+    .btn-primary-enhanced {
+      background: linear-gradient(135deg, #3b5d50 0%, #314d43 100%);
+      color: white;
+    }
+    
+    .btn-primary-enhanced:hover {
+      background: linear-gradient(135deg, #314d43 0%, #3b5d50 100%);
+      color: white;
+    }
+    
+    .btn-secondary-enhanced {
+      background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+      color: white;
+    }
+    
+    .btn-secondary-enhanced:hover {
+      background: linear-gradient(135deg, #5a6268 0%, #343a40 100%);
+      color: white;
+    }
+    
+    .btn-outline-enhanced {
+      background: transparent;
+      border: 2px solid #6c757d;
+      color: #6c757d;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-outline-enhanced:hover {
+      background: #6c757d;
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    /* Order Status Timeline */
+    .order-timeline {
+      position: relative;
+      padding: 2rem 0;
+      margin: 2rem 0;
+    }
+    
+    .order-timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e2e8f0;
+      transform: translateX(-50%);
+    }
+    
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .timeline-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .timeline-item.active .timeline-icon {
+      background: #3B5D50;
+      border-color: #3B5D50;
+      color: white;
+      box-shadow: 0 5px 15px rgba(59, 93, 80, 0.35);
+    }
+    
+    .timeline-content {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    /* Next Steps Section */
+    .next-steps {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .step-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .step-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b5d50 0%, #314d43 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1rem;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .order-timeline::before {
+        left: 25px;
+      }
+      
+      .timeline-item {
+        text-align: left;
+        padding-left: 60px;
+      }
+      
+      .timeline-icon {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+      
+      .thankyou-icon {
+        font-size: 3.5rem;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .btn-group .btn {
+        margin: 5px 0;
+      }
+    }
+    
+    /* Hero Section Fix */
+    .hero {
+      padding: 3rem 0;
+    }
+    
+    .intro-excerpt {
+      padding: 2rem 0;
+    }
+    
+    /* Content Spacing */
+    .content-section {
+      padding: 3rem 0;
+    }
+    
+    /* Success Message */
+    .success-message {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+      border: 1px solid #c3e6cb;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+  </style>
+  
+  <title>Thank You - Order Confirmed | Furnex</title>
+</head>
+
+<body>
+  <!-- Header (Tailwind like profile) -->
+  <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2">
+          <span class="text-2xl font-bold text-brand">Furnex<span class="text-gray-600">.</span></span>
+        </a>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="{% url 'home' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Home</a>
+          <a href="{% url 'shop' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Shop</a>
+          <a href="{% url 'about' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">About us</a>
+          <a href="{% url 'services' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Services</a>
+          <a href="{% url 'blog' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Blog</a>
+          <a href="{% url 'contact' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Contact us</a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-brand-light transition-colors duration-200">
+            <i class="fas fa-shopping-cart text-gray-600 hover:text-brand"></i>
+          </a>
+          <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Thank You Hero Section (Tailwind) -->
+  <section class="bg-gradient-to-br from-gray-50 to-gray-100 py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center">
+        <div class="success-animation">
+          <div class="thankyou-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h1 class="text-4xl font-extrabold text-gray-800 mb-4">Order Confirmed!</h1>
+          <div class="max-w-2xl mx-auto bg-green-50 border border-green-200 rounded-xl p-4 text-green-800">
+            <p class="text-lg">
+              <i class="fas fa-check-circle mr-2 text-green-600"></i>
+              Thank you for your purchase! Your order has been successfully received and is being processed.
+            </p>
+          </div>
+        </div>
+
+     
+
+        <!-- Action Buttons -->
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a href="{% url 'shop' %}" class="inline-flex items-center bg-gray-800 hover:bg-gray-900 text-white px-5 py-3 rounded-lg transition">
+            <i class="fas fa-shopping-bag mr-2"></i>Continue Shopping
+          </a>
+          {% if order %}
+          <a href="{% url 'invoice' order.id %}" class="inline-flex items-center bg-gradient-to-r from-brand to-brand-dark hover:from-brand-dark hover:to-brand text-white px-5 py-3 rounded-lg transition">
+            <i class="fas fa-receipt mr-2"></i>View Invoice
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Order Details Section (Tailwind) -->
+  {% if order %}
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-5xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div class="bg-gradient-to-r from-brand to-brand-dark text-white text-center p-6">
+            <h4 class="text-xl font-semibold"><i class="fas fa-receipt mr-2"></i>Order Summary</h4>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span class="text-gray-700 font-medium">Order #:</span>
+                <span class="font-bold text-brand">{{ order.order_number }}</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span class="text-gray-700 font-medium">Order Date:</span>
+                <span>{{ order.created_at|date:"M d, Y" }}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span class="text-gray-700 font-medium">Payment Method:</span>
+                <span class="px-3 py-1 rounded-full text-white bg-brand text-sm">{{ order.get_payment_method_display }}</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span class="text-gray-700 font-medium">Order Status:</span>
+                <span class="px-3 py-1 rounded-full text-white bg-green-600 text-sm">Confirmed</span>
+              </div>
+            </div>
+
+            <div class="border-t pt-4">
+              <div class="space-y-2 max-w-md ml-auto">
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-700">Subtotal:</span>
+                  <span class="font-medium">₹{{ order.subtotal|floatformat:0 }}</span>
+                </div>
+
+                {% if order.coupon_code and order.coupon_discount > 0 %}
+                <div class="flex items-center justify-between text-green-600">
+                  <span class="flex items-center"><i class="fas fa-tag mr-2"></i>Coupon Discount:</span>
+                  <span class="font-semibold">-₹{{ order.coupon_discount|floatformat:0 }}</span>
+                </div>
+                {% endif %}
+
+                {% if order.payment_method == 'cash_on_delivery' %}
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-700">COD Fee:</span>
+                  <span>₹50</span>
+                </div>
+                {% endif %}
+
+                <div class="flex items-center justify-between text-lg font-semibold border-t pt-3">
+                  <span>Total Amount:</span>
+                  <span class="text-brand">₹{{ order.total|floatformat:0 }}</span>
+                </div>
+
+                {% if order.coupon_discount > 0 %}
+                <div class="text-center bg-green-50 border border-green-200 text-green-700 rounded-lg py-2">
+                  <i class="fas fa-gift mr-2"></i>
+                  <strong>You saved ₹{{ order.coupon_discount|floatformat:0 }} with your coupon!</strong>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="mt-6 bg-gradient-to-br from-brand-light to-white rounded-xl p-6">
+          <h4 class="text-center text-gray-800 font-semibold mb-4"><i class="fas fa-road mr-2"></i>What's Next?</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex items-start bg-white rounded-lg p-4 shadow-sm">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-r from-brand to-brand-dark text-white flex items-center justify-center mr-3">
+                <i class="fas fa-envelope text-sm"></i>
+              </div>
+              <div>
+                <h6 class="font-semibold mb-1">Order Confirmation Email</h6>
+                <p class="text-gray-600 text-sm mb-0">We've sent a confirmation email with your order details.</p>
+              </div>
+            </div>
+            <div class="flex items-start bg-white rounded-lg p-4 shadow-sm">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-r from-brand to-brand-dark text-white flex items-center justify-center mr-3">
+                <i class="fas fa-shipping-fast text-sm"></i>
+              </div>
+              <div>
+                <h6 class="font-semibold mb-1">Shipping Updates</h6>
+                <p class="text-gray-600 text-sm mb-0">You'll receive tracking information once your order ships.</p>
+              </div>
+            </div>
+            <div class="flex items-start bg-white rounded-lg p-4 shadow-sm">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-r from-brand to-brand-dark text-white flex items-center justify-center mr-3">
+                <i class="fas fa-headset text-sm"></i>
+              </div>
+              <div>
+                <h6 class="font-semibold mb-1">Need Help?</h6>
+                <p class="text-gray-600 text-sm mb-0">Our support team is here to help with any questions.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mt-6">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a href="{% url 'shop' %}" class="inline-flex items-center bg-gray-800 hover:bg-gray-900 text-white px-5 py-3 rounded-lg transition">
+                <i class="fas fa-shopping-bag mr-2"></i>Continue Shopping
+              </a>
+              <a href="{% url 'invoice' order.id %}" class="inline-flex items-center bg-gradient-to-r from-brand to-brand-dark hover:from-brand-dark hover:to-brand text-white px-5 py-3 rounded-lg transition">
+                <i class="fas fa-print mr-2"></i>Print Invoice
+              </a>
+              <a href="{% url 'user_profile' %}" class="inline-flex items-center border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-lg transition">
+                <i class="fas fa-user mr-2"></i>View Order History
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Footer (Tailwind like profile) -->
+  <footer class="bg-white border-t border-gray-200 mt-12">
+    <div class="container mx-auto py-12 px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="col-span-1 md:col-span-2">
+          <div class="flex items-center mb-4">
+            <span class="text-2xl font-bold text-brand">Furnex<span class="text-gray-600">.</span></span>
+          </div>
+          <p class="text-gray-600 mb-6 max-w-md">Discover comfort, style, and craftsmanship. At Furnex, we design furniture that turns houses into homes.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-brand hover:text-white transition-all duration-200"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-brand hover:text-white transition-all duration-200"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-brand hover:text-white transition-all duration-200"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-brand hover:text-white transition-all duration-200"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Company</h3>
+          <ul class="space-y-3">
+            <li><a href="{% url 'about' %}" class="text-base text-gray-600 hover:text-brand transition-colors">About us</a></li>
+            <li><a href="{% url 'services' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Services</a></li>
+            <li><a href="{% url 'blog' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Blog</a></li>
+            <li><a href="{% url 'contact' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Contact us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Account</h3>
+          <ul class="space-y-3">
+            <li><a href="{% url 'cart' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Shopping Cart</a></li>
+            <li><a href="{% url 'wishlist' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Wishlist</a></li>
+            <li><a href="{% url 'compare' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Compare</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-12 pt-8 border-t border-gray-200">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-base text-gray-500">Copyright &copy; <script>document.write(new Date().getFullYear());</script> Furnex. All Rights Reserved.</p>
+          <div class="mt-4 md:mt-0 flex space-x-6">
+            <a href="#" class="text-base text-gray-500 hover:text-brand transition-colors">Terms & Conditions</a>
+            <a href="#" class="text-base text-gray-500 hover:text-brand transition-colors">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  
+  <script>
+    // Add some celebratory animations
+    document.addEventListener('DOMContentLoaded', function() {
+      // Success animation delay for elements
+      const elements = document.querySelectorAll('.timeline-item, .step-item');
+      elements.forEach((el, index) => {
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, index * 300);
+      });
+      
+      // Set initial state for animation
+      elements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.5s ease';
+      });
+    });
+  </script>
+</body>
+</html>

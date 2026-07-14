@@ -1,0 +1,43 @@
+<!-- Account Dropdown Menu -->
+<div class="relative group">
+  <!-- User Avatar Button -->
+  <button class="flex items-center space-x-2 focus:outline-none">
+    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+      <i class="fas fa-user text-gray-600"></i>
+    </div>
+    <span class="hidden md:inline text-gray-700">My Account</span>
+    <i class="fas fa-chevron-down text-xs text-gray-600"></i>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50 hidden group-hover:block">
+    <!-- Dashboard -->
+    <a href="{% url 'account' %}" class="block px-4 py-3 hover:bg-gray-100 text-gray-800">
+      <div class="flex items-center">
+        <i class="fas fa-tachometer-alt w-6 text-blue-500"></i>
+        <span>Dashboard</span>
+      </div>
+    </a>
+
+    <!-- My Orders -->
+    <a href="{% url 'my_orders' %}" class="block px-4 py-3 hover:bg-gray-100 text-gray-800">
+      <div class="flex items-center">
+        <i class="fas fa-shopping-bag w-6 text-green-500"></i>
+        <span>My Orders</span>
+      </div>
+    </a>
+
+    <div class="border-t my-2"></div>
+
+    <!-- Logout -->
+    <form method="post" action="{% url 'account_logout' %}" class="block w-full">
+      {% csrf_token %}
+      <button type="submit" class="w-full text-left px-4 py-3 hover:bg-gray-100 text-red-500">
+        <div class="flex items-center">
+          <i class="fas fa-sign-out-alt w-6"></i>
+          <span>Logout</span>
+        </div>
+      </button>
+    </form>
+  </div>
+</div>

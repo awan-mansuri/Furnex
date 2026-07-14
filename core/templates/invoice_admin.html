@@ -1,0 +1,43 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin Invoice #{{ order.order_number }} - Furnex</title>
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/fontawesome/css/all.min.css' %}" rel="stylesheet">
+  <link rel="shortcut icon" href="{% static 'images/furnex-f-logo.svg' %}">
+  <style>
+    /* Re-use all styles from user invoice */
+  </style>
+  <meta name="robots" content="noindex">
+</head>
+<body>
+  {# We include the full user invoice template and then hide / modify user-only bits #}
+  {% include 'invoice.html' %}
+
+  <script>
+    // remove user-only buttons and add admin button after DOM loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hide existing footer-actions and company-info sections from included invoice
+        const footerActions = document.querySelector('.footer-actions');
+        if (footerActions) footerActions.remove();
+        const companyInfo = document.querySelector('.company-info');
+        if (companyInfo) companyInfo.remove();
+
+        // Create new footer with Back to Admin link
+        const adminFooter = document.createElement('div');
+        adminFooter.className = 'footer-actions no-print';
+        adminFooter.style.justifyContent = 'center';
+
+        const backBtn = document.createElement('a');
+        backBtn.className = 'btn btn-outline';
+        backBtn.href = '/admin/core/order/';
+        backBtn.innerHTML = '<i class="fas fa-arrow-left me-1"></i>Back to Admin';
+
+        adminFooter.appendChild(backBtn);
+        document.querySelector('.invoice-container').appendChild(adminFooter);
+    });
+  </script>
+</body>
+</html>

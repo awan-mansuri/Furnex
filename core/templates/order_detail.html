@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order #{{ order.id }} Details - Furnex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand': '#047857',
+                        'brand-dark': '#065f46',
+                        'brand-light': '#d1fae5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header (match Wishlist) -->
+    <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-brand">Furnex<span class="text-gray-600">.</span></span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Home</a>
+                    <a href="{% url 'shop' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Shop</a>
+                    <a href="{% url 'about' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">About us</a>
+                    <a href="{% url 'services' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Services</a>
+                    <a href="{% url 'blog' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Blog</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Contact us</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-brand-light transition-colors duration-200">
+                        <i class="fas fa-shopping-cart text-gray-600 hover:text-brand"></i>
+                    </a>
+                    <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="bg-gradient-to-r from-green-600 to-green-500 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-semibold flex items-center">
+                        <i class="fas fa-receipt text-white mr-3"></i> Order Details
+                    </h1>
+                    <p class="text-green-100 mt-2">Order #{{ order.id }} • {{ order.created_at|date:"F d, Y" }}</p>
+                </div>
+                <a href="{% url 'my_orders' %}" class="hidden md:inline-flex items-center bg-white text-green-700 hover:bg-green-50 font-medium py-2 px-4 rounded-lg transition-all duration-300">
+                    <i class="fas fa-list mr-2"></i> Back to Orders
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Status -->
+        <div class="mb-6">
+            {% if order.status == 'delivered' %}
+                <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Delivered</span>
+            {% elif order.status == 'returning' %}
+                <span class="bg-yellow-100 text-yellow-700 text-xs font-medium px-3 py-1 rounded-full">Returning</span>
+            {% elif order.status == 'returned' %}
+                <span class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">Returned</span>
+            {% elif order.status == 'processing' %}
+                <span class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">Processing</span>
+            {% elif order.status == 'shipped' %}
+                <span class="bg-indigo-100 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full">Shipped</span>
+            {% elif order.status == 'cancelled' %}
+                <span class="bg-red-100 text-red-700 text-xs font-medium px-3 py-1 rounded-full">Cancelled</span>
+            {% else %}
+                <span class="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full">{{ order.status_display }}</span>
+            {% endif %}
+        </div>
+
+        <!-- Info Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="text-gray-800 font-semibold mb-3"><i class="fas fa-info-circle mr-2 text-brand"></i>Order Info</div>
+                <div class="text-sm text-gray-600 space-y-2">
+                    <div class="flex justify-between"><span>Order ID</span><span class="font-medium">#{{ order.id }}</span></div>
+                    {% if order.tracking_id %}
+                    <div class="flex justify-between"><span>Tracking ID</span><span class="font-medium">{{ order.tracking_id }}</span></div>
+                    {% endif %}
+                    <div class="flex justify-between"><span>Order Date</span><span class="font-medium">{{ order.created_at|date:"M d, Y g:i A" }}</span></div>
+                    <div class="flex justify-between"><span>Updated</span><span class="font-medium">{{ order.updated_at|date:"M d, Y g:i A" }}</span></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="text-gray-800 font-semibold mb-3"><i class="fas fa-credit-card mr-2 text-brand"></i>Payment</div>
+                <div class="text-sm text-gray-600 space-y-2">
+                    <div class="flex justify-between"><span>Method</span><span class="font-medium">{{ order.get_payment_method_display }}</span></div>
+                    <div class="flex justify-between"><span>Status</span><span class="font-medium">{{ order.get_payment_status_display }}</span></div>
+                    {% if order.razorpay_payment_id %}
+                    <div class="flex justify-between"><span>Payment ID</span><span class="font-medium">{{ order.razorpay_payment_id|truncatechars:15 }}</span></div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="text-gray-800 font-semibold mb-3"><i class="fas fa-user mr-2 text-brand"></i>Customer</div>
+                <div class="text-sm text-gray-600 space-y-2">
+                    <div class="flex justify-between"><span>Name</span><span class="font-medium">{{ order.first_name }} {{ order.last_name }}</span></div>
+                    <div class="flex justify-between"><span>Email</span><span class="font-medium">{{ order.email }}</span></div>
+                    <div class="flex justify-between"><span>Phone</span><span class="font-medium">{{ order.phone }}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping -->
+        <div class="mt-6 bg-white rounded-2xl shadow-sm p-6">
+            <div class="text-gray-800 font-semibold mb-2"><i class="fas fa-shipping-fast mr-2 text-brand"></i>Shipping Address</div>
+            <div class="text-gray-700">{{ order.shipping_name }}<br>{{ order.shipping_address }}</div>
+        </div>
+
+        <!-- Items -->
+        <div class="mt-6">
+            <div class="text-gray-800 font-semibold mb-3"><i class="fas fa-box-open mr-2 text-brand"></i>Order Items ({{ order.items.count }})</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for item in order.items.all %}
+                <div class="bg-white rounded-2xl shadow-sm p-4 flex items-center">
+                    <div class="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-gray-400"><i class="fas fa-image"></i></div>
+                        {% endif %}
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <div class="text-gray-800 font-medium">{{ item.product.name }}</div>
+                        <div class="text-xs text-gray-500">Category: {{ item.product.category.name }}</div>
+                        <div class="text-xs text-gray-500">Qty: {{ item.quantity }} • ₹{{ item.price }} each</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-500">Item Total</div>
+                        <div class="text-gray-800 font-semibold">₹{% widthratio item.price 1 item.quantity %}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="mt-6 bg-white rounded-2xl shadow-sm p-6">
+            <div class="text-gray-800 font-semibold mb-3"><i class="fas fa-calculator mr-2 text-brand"></i>Order Summary</div>
+            <div class="space-y-2 text-sm text-gray-700">
+                <div class="flex justify-between"><span>Subtotal ({{ order.items.count }} item{{ order.items.count|pluralize }})</span><span>₹{{ order.subtotal }}</span></div>
+                {% if order.coupon_discount > 0 %}
+                <div class="flex justify-between"><span>Coupon Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</span><span>-₹{{ order.coupon_discount }}</span></div>
+                {% endif %}
+                <div class="pt-2 mt-2 border-t border-gray-200 flex justify-between font-semibold text-gray-900"><span>Total Amount</span><span>₹{{ order.total }}</span></div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-6 flex flex-wrap gap-3">
+            <a href="{% url 'my_orders' %}" class="inline-flex items-center bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium py-2 px-4 rounded-lg transition-all duration-300">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Orders
+            </a>
+            <a href="{% url 'invoice' order.id %}" target="_blank" class="inline-flex items-center border border-brand text-brand hover:bg-brand-light font-medium py-2 px-4 rounded-lg transition-all duration-300">
+                <i class="fas fa-file-invoice mr-2"></i> Download Invoice
+            </a>
+            {% if order.status == 'delivered' and order.can_return %}
+            <a href="{% url 'return_order' order.id %}" class="inline-flex items-center border border-yellow-500 text-yellow-700 hover:bg-yellow-50 font-medium py-2 px-4 rounded-lg transition-all duration-300">
+                <i class="fas fa-undo mr-2"></i> Return Product
+            </a>
+            {% elif order.status == 'delivered' and not order.can_return %}
+            <div class="inline-flex items-center bg-gray-100 text-gray-700 font-medium py-2 px-4 rounded-lg cursor-not-allowed">
+                <i class="fas fa-ban mr-2"></i> Return Window Expired
+            </div>
+            {% elif order.status == 'returning' %}
+            <div class="inline-flex items-center bg-yellow-100 text-yellow-700 font-medium py-2 px-4 rounded-lg cursor-not-allowed">
+                <i class="fas fa-clock mr-2"></i> Return in Progress
+            </div>
+            {% elif order.status == 'returned' %}
+            <div class="inline-flex items-center bg-green-100 text-green-700 font-medium py-2 px-4 rounded-lg cursor-not-allowed">
+                <i class="fas fa-check-circle mr-2"></i> Return Completed
+            </div>
+            {% endif %}
+            <a href="{% url 'contact' %}" class="inline-flex items-center border border-brand text-brand hover:bg-brand-light font-medium py-2 px-4 rounded-lg transition-all duration-300">
+                <i class="fas fa-headset mr-2"></i> Contact Support
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer (match Wishlist) -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600 text-sm">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-brand transition-colors text-sm">Terms & Conditions</a>
+                    <a href="#" class="text-gray-500 hover:text-brand transition-colors text-sm">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

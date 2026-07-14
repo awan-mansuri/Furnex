@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load humanize %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Furnex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B5D50',
+                        'primary-dark': '#2F4B41',
+                        'primary-light': '#DCE5E1',
+                        'gray-bg': '#f9fafb',
+                        'gray-text': '#6b7280',
+                        'gray-dark': '#374151',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-10px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3B5D4F 0%, #2F4B41 100%);
+        }
+        
+        .highlight-gradient {
+            background: linear-gradient(135deg, #3B5D4F, #2F4B41);
+        }
+        
+        .sidebar-item.active {
+            background-color: #f0fdf4;
+            border-left: 4px solid #047857;
+            color: #047857;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .notification-panel {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .notification-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .notification-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .notification-panel::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        .notification-panel::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* Theme overrides to align Tailwind green utilities with site theme */
+        :root { --theme:#3B5D4F; --theme-dark:#2F4B41; --theme-light:#DCE5E1; }
+        .text-primary{color:var(--theme)!important}
+        .bg-primary{background-color:var(--theme)!important}
+        .hover\:bg-primary-dark:hover{background-color:var(--theme-dark)!important}
+        .bg-primary-light{background-color:var(--theme-light)!important}
+        .border-primary{border-color:var(--theme)!important}
+        /* Map common green utility classes used in this page to theme */
+        .text-green-500,.text-green-600{color:var(--theme)!important}
+        .bg-green-50,.bg-green-100{background-color:var(--theme-light)!important}
+        .bg-green-600,.bg-green-500{background-color:var(--theme)!important}
+        .hover\:bg-green-700:hover,.hover\:bg-green-600:hover{background-color:var(--theme-dark)!important}
+        .border-green-500,.border-green-600{border-color:var(--theme)!important}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Start Header/Navigation -->
+    <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-primary">Furnex<span class="text-gray-600">.</span></span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Home</a>
+                    <a href="{% url 'shop' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Shop</a>
+                    <a href="{% url 'about' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">About us</a>
+                    <a href="{% url 'services' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Services</a>
+                    <a href="{% url 'blog' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Blog</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Contact us</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- User menu would go here -->
+                    <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-primary-light transition-colors duration-200">
+                        <i class="fas fa-shopping-cart text-gray-600 hover:text-primary"></i>
+                    </a>
+                    <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Profile Header Section -->
+    <div class="gradient-bg text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center mb-4">
+                        <div class="relative mr-4">
+                            <div class="w-20 h-20 rounded-full overflow-hidden shadow-lg border-4 border-white/30 bg-white/20 flex items-center justify-center">
+                                {% if profile and profile.avatar_url %}
+                                <img id="profileAvatar" src="{{ profile.avatar_url }}" alt="avatar" class="w-full h-full object-cover" />
+                                {% else %}
+                                <span id="profileAvatarInitial" class="text-white text-2xl font-bold">{{ user.get_full_name|default:user.username|slice:":1" }}</span>
+                                {% endif %}
+                            </div>
+                            <button id="openCameraBtn" class="absolute -bottom-2 -right-2 bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-light transition-colors duration-200">
+                                <i class="fas fa-camera text-sm"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold mb-2">Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+                            <p class="text-primary-light">Manage your account, track orders, and discover exclusive offers</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-4 mt-4">
+                        <div class="flex items-center text-sm text-primary-light">
+                            <i class="fas fa-envelope mr-2"></i>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        <div class="flex items-center text-sm text-primary-light">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            <span>Joined {{ user.date_joined|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-shrink-0">
+                    <a href="{% url 'edit_profile' %}" class="inline-flex items-center px-6 py-3 bg-white text-primary font-semibold rounded-xl hover:bg-primary-light hover:text-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Camera Modal -->
+    <div id="cameraModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 bg-black/30 backdrop-blur-sm">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-camera text-green-500"></i>
+                    Profile Photo Studio
+                </h3>
+                <button id="closeCameraBtn" class="text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Camera View -->
+            <div class="relative bg-black overflow-hidden" style="height: 400px;">
+                <!-- Video Stream -->
+                <video id="cameraVideo" autoplay playsinline class="w-full h-full object-cover" style="filter: var(--camera-filter, none);"></video>
+                
+                <!-- Canvas for capture -->
+                <canvas id="cameraCanvas" class="hidden"></canvas>
+                
+                <!-- Preview Image -->
+                <img id="cameraPreview" class="hidden w-full h-full object-cover" alt="preview" style="filter: var(--preview-filter, none);" />
+                
+                <!-- Camera Grid Overlay -->
+                <div id="cameraGrid" class="absolute inset-0 pointer-events-none hidden">
+                    <div class="w-full h-full grid grid-cols-3 grid-rows-3">
+                        <div class="border-r border-b border-white/20"></div>
+                        <div class="border-r border-b border-white/20"></div>
+                        <div class="border-b border-white/20"></div>
+                        <div class="border-r border-b border-white/20"></div>
+                        <div class="border-r border-b border-white/20"></div>
+                        <div class="border-b border-white/20"></div>
+                        <div class="border-r border-white/20"></div>
+                        <div class="border-r border-white/20"></div>
+                        <div></div>
+                    </div>
+                </div>
+                
+                <!-- Camera Controls Overlay -->
+                <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                    <!-- Flash/Grid Toggle -->
+                    <div class="flex gap-2">
+                        <button id="toggleGrid" class="bg-black/50 backdrop-blur-sm text-white p-3 rounded-full hover:bg-black/70 transition-all">
+                            <i class="fas fa-border-all text-sm"></i>
+                        </button>
+                        <button id="flipCamera" class="bg-black/50 backdrop-blur-sm text-white p-3 rounded-full hover:bg-black/70 transition-all">
+                            <i class="fas fa-sync-alt text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Zoom Control -->
+                    <div class="bg-black/50 backdrop-blur-sm rounded-full px-4 py-2 hidden" id="zoomControl">
+                        <input type="range" id="zoomSlider" min="1" max="3" step="0.1" value="1" class="w-24" />
+                    </div>
+                </div>
+                
+                <!-- Center Guide Circle -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="w-48 h-48 rounded-full border-4 border-green-500/30"></div>
+                </div>
+            </div>
+
+            <!-- Filter Selection -->
+            <div id="filterSection" class="px-6 py-3 bg-black/30 backdrop-blur-sm overflow-x-auto hidden">
+                <div class="flex gap-3">
+                    <button class="filter-btn flex-shrink-0" data-filter="none">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center text-white text-xs font-bold">None</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="grayscale(100%)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-gray-300 to-gray-500 flex items-center justify-center text-white text-xs font-bold">B&W</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="sepia(100%)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-yellow-600 to-orange-700 flex items-center justify-center text-white text-xs font-bold">Sepia</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="brightness(1.2) contrast(1.1)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold">Vivid</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="hue-rotate(180deg)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">Cool</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="saturate(2)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-pink-500 to-red-600 flex items-center justify-center text-white text-xs font-bold">Pop</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- File Upload Fallback -->
+            <div id="fileFallback" class="hidden px-6 py-4 bg-gray-800/50">
+                <label class="block text-sm text-gray-300 mb-2">📁 Choose a photo from device</label>
+                <input id="avatarFile" type="file" accept="image/*" capture="user" class="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700" />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 px-6 py-4 bg-black/30 backdrop-blur-sm">
+                <button id="captureBtn" class="flex-1 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold py-3 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                    <i class="fas fa-camera"></i>
+                    <span>Capture</span>
+                </button>
+                <button id="retakeBtn" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-xl transition-all hidden flex items-center justify-center gap-2">
+                    <i class="fas fa-redo"></i>
+                    <span>Retake</span>
+                </button>
+                <button id="savePhotoBtn" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-3 rounded-xl transition-all shadow-lg hover:shadow-xl hidden flex items-center justify-center gap-2">
+                    <i class="fas fa-check"></i>
+                    <span>Save</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto py-8 px-4">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Navigation -->
+            <div class="w-full lg:w-64 flex-shrink-0">
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-tachometer-alt text-primary mr-3"></i>
+                            Dashboard
+                        </h3>
+                    </div>
+                    
+                    <div class="p-4">
+                        <div class="space-y-2">
+                            <a href="#notifications" class="sidebar-item flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 hover:text-primary transition-all duration-200 group">
+                                <i class="fas fa-bell w-5 mr-3 text-gray-400 group-hover:text-primary"></i>
+                                <span>Notifications</span>
+                                {% if unread_notifications_count %}
+                                <span class="ml-auto bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">{{ unread_notifications_count }}</span>
+                                {% endif %}
+                            </a>
+                            <a href="#coupons" class="sidebar-item flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 hover:text-primary transition-all duration-200 group">
+                                <i class="fas fa-ticket-alt w-5 mr-3 text-gray-400 group-hover:text-primary"></i>
+                                <span>My Coupons</span>
+                                {% if active_coupons %}
+                                <span class="ml-auto bg-green-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">{{ active_coupons|length }}</span>
+                                {% endif %}
+                            </a>
+                            
+                            <a href="#addresses" class="sidebar-item flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 hover:text-primary transition-all duration-200 group">
+                                <i class="fas fa-map-marker-alt w-5 mr-3 text-gray-400 group-hover:text-primary"></i>
+                                <span>Address Book</span>
+                            </a>
+                            
+                            <a href="#orders" class="sidebar-item flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 hover:text-primary transition-all duration-200 group">
+                                <i class="fas fa-shopping-bag w-5 mr-3 text-gray-400 group-hover:text-primary"></i>
+                                <span>My Orders</span>
+                                <span class="ml-auto bg-yellow-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">{{ orders|length }}</span>
+                            </a>
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-100">
+                            <div class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 px-4">Account</div>
+                            <div class="space-y-2">
+                                <a href="{% url 'wishlist' %}" class="flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 hover:text-primary transition-all duration-200 group">
+                                    <i class="fas fa-heart w-5 mr-3 text-gray-400 group-hover:text-primary"></i>
+                                    <span>Wishlist</span>
+                                </a>
+                                
+                                <a href="{% url 'compare' %}" class="flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 hover:text-primary transition-all duration-200 group">
+                                    <i class="fas fa-exchange-alt w-5 mr-3 text-gray-400 group-hover:text-primary"></i>
+                                    <span>Compare</span>
+                                </a>
+                                
+                                <a href="{% url 'my_orders' %}" class="flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 hover:text-primary transition-all duration-200 group">
+                                    <i class="fas fa-box-open w-5 mr-3 text-gray-400 group-hover:text-primary"></i>
+                                    <span>Product Details</span>
+                                </a>
+
+                                
+                                <a href="{% url 'home' %}" class="flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 hover:text-primary transition-all duration-200 group">
+                                    <i class="fas fa-arrow-left w-5 mr-3 text-gray-400 group-hover:text-primary"></i>
+                                    <span>Continue Shopping</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1">
+                <!-- Stats Cards -->
+                {% if active_coupons or total_savings %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 card-hover animate-fade-in">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-xl bg-green-50 text-primary">
+                                <i class="fas fa-ticket-alt text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500 uppercase tracking-wide">Active Coupons</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ active_coupons|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-gradient rounded-2xl shadow-sm p-6 text-white card-hover animate-fade-in" style="animation-delay: 0.1s;">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-xl bg-white bg-opacity-20">
+                                <i class="fas fa-rupee-sign text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm uppercase tracking-wide text-green-100">Total Savings</p>
+                                <p class="text-2xl font-bold">₹{{ total_savings|floatformat:2|default:"0.00" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-sm p-6 card-hover animate-fade-in" style="animation-delay: 0.2s;">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-xl bg-yellow-50 text-yellow-600">
+                                <i class="fas fa-clock text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500 uppercase tracking-wide">Expiring Soon</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ expiring_soon_count }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-sm p-6 card-hover animate-fade-in" style="animation-delay: 0.3s;">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-xl bg-blue-50 text-blue-600">
+                                <i class="fas fa-shopping-bag text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500 uppercase tracking-wide">Total Orders</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ orders|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Notifications Section -->
+                <div id="notifications" class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 animate-fade-in">
+                    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-bell text-primary mr-3"></i>
+                            Notifications
+                        </h2>
+                        {% if unread_notifications_count %}
+                        <button onclick="markAllNotificationsRead()" class="text-sm bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-sm hover:shadow-md">
+                            <i class="fas fa-check-double mr-2"></i>
+                            Mark All Read
+                        </button>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if notifications_page %}
+                        <div class="notification-panel space-y-4" data-notification-list data-page="{{ notifications_page.number }}">
+                            {% for notification in notifications_page %}
+                            <div class="border border-gray-200 rounded-xl p-5 hover:bg-gray-50 transition-all duration-200 animate-slide-in" id="notification-{{ notification.id }}">
+                                <div class="flex justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-start">
+                                            {% if notification.notification_type == 'coupon_awarded' %}
+                                            <div class="p-3 rounded-xl bg-green-100 text-primary mr-4">
+                                                <i class="fas fa-gift"></i>
+                                            </div>
+                                            {% elif notification.notification_type == 'order_update' %}
+                                            <div class="p-3 rounded-xl bg-yellow-100 text-yellow-600 mr-4">
+                                                <i class="fas fa-truck"></i>
+                                            </div>
+                                            {% else %}
+                                            <div class="p-3 rounded-xl bg-blue-100 text-blue-600 mr-4">
+                                                <i class="fas fa-info-circle"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div class="flex-1">
+                                                <h4 class="font-semibold text-gray-800">{{ notification.title }}</h4>
+                                                <p class="text-gray-600 mt-2">{{ notification.message }}</p>
+                                                <div class="flex items-center mt-3 text-sm text-gray-500">
+                                                    <i class="fas fa-clock mr-2"></i>
+                                                    <span data-timeago="{{ notification.created_at|date:'c' }}">{{ notification.created_at|naturaltime }}</span>
+                                                </div>
+                                                {% if notification.coupon %}
+                                                <div class="mt-4">
+                                                    <button onclick="copyCouponCode('{{ notification.coupon.code }}')" class="text-sm bg-green-100 hover:bg-green-200 text-primary px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-sm">
+                                                        <i class="fas fa-copy mr-2"></i>
+                                                        Copy Code: {{ notification.coupon.code }}
+                                                    </button>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button onclick="markNotificationRead({{ notification.id }})" class="text-gray-400 hover:text-gray-600 ml-4 flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-6 flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <span>Showing {{ notifications_page.start_index }}-{{ notifications_page.end_index }} of {{ notifications_page.paginator.count }}</span>
+                                {% if unread_notifications_count %}
+                                <span class="hidden md:inline-flex items-center gap-2 text-xs bg-red-100 text-red-600 font-semibold px-3 py-1 rounded-full">
+                                    <i class="fas fa-bell"></i>
+                                    {{ unread_notifications_count }} unread
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="flex items-center justify-between md:justify-end gap-3">
+                                {% if notifications_page.has_previous %}
+                                <a href="?page={{ notifications_page.previous_page_number }}#notifications" class="inline-flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Previous
+                                </a>
+                                {% endif %}
+                                {% if notifications_page.has_next %}
+                                <a href="?page={{ notifications_page.next_page_number }}#notifications" class="inline-flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+                                    Next
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-12" data-notification-empty>
+                            <div class="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-bell-slash text-gray-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">No Notifications</h3>
+                            <p class="text-gray-500 max-w-md mx-auto">You're all caught up! Check back later for updates.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Coupons Section -->
+                <div id="coupons" class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 animate-fade-in hidden" style="animation-delay: 0.1s;">
+                    <div class="px-6 py-5 border-b border-gray-100">
+                        <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-ticket-alt text-primary mr-3"></i>
+                            My Coupons
+                            {% if active_coupons %}
+                            <span class="ml-4 bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">{{ active_coupons|length }} Active</span>
+                            {% endif %}
+                        </h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if active_coupons %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {% for coupon in active_coupons %}
+                            <div class="border-2 border-dashed border-primary rounded-2xl p-6 bg-green-50 card-hover">
+                                <div class="flex justify-between items-start mb-5">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-primary">{{ coupon.code }}</h3>
+                                        <p class="text-gray-800 font-semibold mt-2 text-lg">
+                                            {% if coupon.discount_type == 'percent' %}
+                                            {{ coupon.discount_value }}% OFF
+                                            {% else %}
+                                            ₹{{ coupon.discount_value }} OFF
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <span class="bg-primary text-white text-sm font-medium px-3 py-1 rounded-full">Active</span>
+                                </div>
+                                
+                                <div class="space-y-3 text-gray-600">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-shopping-cart w-5 mr-3"></i>
+                                        <span>Min. Order: ₹{{ coupon.min_order_value }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock w-5 mr-3"></i>
+                                        <span>Valid until: {{ coupon.expiry_date|date:"M d, Y" }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-redo w-5 mr-3"></i>
+                                        <span>{{ coupon.remaining_uses_count }} use(s) left</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                                    <button onclick="copyCouponCode('{{ coupon.code }}')" class="flex-1 bg-primary hover:bg-primary-dark text-white py-3 rounded-xl transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md">
+                                        <i class="fas fa-copy mr-2"></i>
+                                        Copy Code
+                                    </button>
+                                    <a href="{% url 'shop' %}" class="flex-1 border border-primary text-primary hover:bg-primary hover:text-white py-3 rounded-xl transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md">
+                                        <i class="fas fa-shopping-bag mr-2"></i>
+                                        Shop Now
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-12">
+                            <div class="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-ticket-alt text-gray-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">No Active Coupons</h3>
+                            <p class="text-gray-500 mb-6 max-w-md mx-auto">Complete your first order to unlock exclusive coupons!</p>
+                            <a href="{% url 'shop' %}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-primary hover:bg-primary-dark transition-all duration-200">
+                                <i class="fas fa-shopping-bag mr-2"></i>
+                                Start Shopping
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if expired_coupons %}
+                        <div class="mt-10">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-5 flex items-center">
+                                <i class="fas fa-history text-gray-500 mr-3"></i>
+                                Expired Coupons
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {% for coupon in expired_coupons %}
+                                <div class="border border-gray-200 rounded-xl p-5 bg-gray-50">
+                                    <h4 class="font-medium text-gray-700">{{ coupon.code }}</h4>
+                                    <p class="text-gray-500 mt-1">
+                                        {% if coupon.discount_type == 'percent' %}
+                                        {{ coupon.discount_value }}% OFF
+                                        {% else %}
+                                        ₹{{ coupon.discount_value }} OFF
+                                        {% endif %}
+                                    </p>
+                                    <div class="flex items-center mt-3 text-sm text-gray-500">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        <span>Expired: {{ coupon.expiry_date|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Addresses Section -->
+                <div id="addresses" class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 animate-fade-in hidden" style="animation-delay: 0.2s;">
+                    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-map-marker-alt text-primary mr-3"></i>
+                            Saved Addresses
+                        </h2>
+                        <a href="{% url 'add_address' %}" class="text-sm bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-sm hover:shadow-md">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add New Address
+                        </a>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if addresses %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {% for address in addresses %}
+                            <div class="border border-gray-200 rounded-xl p-6 hover:border-primary transition-all duration-200 card-hover">
+                                {% if address.is_default %}
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary text-white mb-4">
+                                    <i class="fas fa-star mr-2"></i>
+                                    Default Address
+                                </div>
+                                {% endif %}
+                                
+                                <div class="flex justify-between items-start mb-5">
+                                    <h3 class="font-semibold text-gray-800 text-lg">
+                                        {{ address.first_name }} {{ address.last_name }}
+                                    </h3>
+                                    <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{{ address.get_address_type_display }}</span>
+                                </div>
+                                
+                                <div class="space-y-3 text-gray-600">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-map-marker-alt text-gray-400 w-5 mr-3 mt-1"></i>
+                                        <span>{{ address.address }}{% if address.apartment %}, {{ address.apartment }}{% endif %}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-city text-gray-400 w-5 mr-3"></i>
+                                        <span>{{ address.city }}, {{ address.state }} - {{ address.postal_code }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-flag text-gray-400 w-5 mr-3"></i>
+                                        <span>{{ address.country }}</span>
+                                    </div>
+                                    {% if address.phone %}
+                                    <div class="flex items-center">
+                                        <i class="fas fa-phone text-gray-400 w-5 mr-3"></i>
+                                        <span>{{ address.phone }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mt-6 flex flex-wrap gap-3">
+                                    <a href="{% url 'edit_address' address.id %}" class="text-sm border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg transition-all duration-200 flex items-center">
+                                        <i class="fas fa-edit mr-2"></i>
+                                        Edit
+                                    </a>
+                                    {% if not address.is_default %}
+                                    <a href="{% url 'set_default_address' address.id %}" class="text-sm border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg transition-all duration-200 flex items-center">
+                                        <i class="fas fa-star mr-2"></i>
+                                        Set Default
+                                    </a>
+                                    {% endif %}
+                                    <a href="{% url 'delete_address' address.id %}" class="text-sm border border-red-300 text-red-700 hover:bg-red-50 px-4 py-2 rounded-lg transition-all duration-200 flex items-center" onclick="return confirm('Are you sure you want to delete this address?')">
+                                        <i class="fas fa-trash mr-2"></i>
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-12">
+                            <div class="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-map-marker-alt text-gray-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">No Addresses Saved</h3>
+                            <p class="text-gray-500 mb-6 max-w-md mx-auto">Add your first address for faster checkout</p>
+                            <a href="{% url 'add_address' %}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-primary hover:bg-primary-dark transition-all duration-200">
+                                <i class="fas fa-plus mr-2"></i>
+                                Add Your First Address
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Orders Section -->
+                <div id="orders" class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 animate-fade-in hidden" style="animation-delay: 0.3s;">
+                    <div class="px-6 py-5 border-b border-gray-100">
+                        <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-shopping-bag text-primary mr-3"></i>
+                            My Orders
+                        </h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if orders %}
+                        <div class="space-y-6">
+                            {% for order in orders %}
+                            <div class="border-2 border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                <!-- Green Header with Order Info and Badges -->
+                                <div class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center">
+                                    <div>
+                                        <h3 class="font-bold text-xl">Order #{{ order.order_number }}</h3>
+                                        <p class="text-green-50 mt-1 text-sm">Placed on {{ order.created_at|date:"F d, Y" }}</p>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 mt-3 md:mt-0">
+                                        <!-- Status Badge -->
+                                        {% if order.status == 'delivered' %}
+                                        <span class="bg-white text-green-700 text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-check-circle"></i> Delivered</span>
+                                        {% elif order.status == 'processing' %}
+                                        <span class="bg-white text-blue-700 text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-cogs"></i> Processing</span>
+                                        {% elif order.status == 'dispatched' %}
+                                        <span class="bg-white text-purple-700 text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-truck"></i> Dispatched</span>
+                                        {% elif order.status == 'out_for_delivery' %}
+                                        <span class="bg-white text-orange-700 text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-shipping-fast"></i> Out for Delivery</span>
+                                        {% elif order.status == 'returning' %}
+                                        <span class="bg-white text-yellow-700 text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-undo"></i> Return Requested</span>
+                                        {% elif order.status == 'returned' %}
+                                        <span class="bg-white text-red-700 text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-box-open"></i> Returned</span>
+                                        {% else %}
+                                        <span class="bg-white text-gray-700 text-xs font-bold px-4 py-2 rounded-full shadow-sm">{{ order.get_status_display }}</span>
+                                        {% endif %}
+                                        
+                                        <!-- Payment Status Badge -->
+                                        {% if order.payment_status == 'refunded' %}
+                                        <span class="bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-money-bill-wave"></i> Refunded</span>
+                                        {% elif order.payment_method == 'cash_on_delivery' and order.payment_status == 'paid' %}
+                                        <span class="bg-yellow-400 text-gray-900 text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-money-bill"></i> COD</span>
+                                        {% elif order.payment_method == 'cash_on_delivery' %}
+                                        <span class="bg-yellow-400 text-gray-900 text-xs font-bold px-4 py-2 rounded-full shadow-sm inline-flex items-center gap-1"><i class="fas fa-money-bill"></i> COD</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                 
+                                <!-- Order Content -->
+                                <div class="p-6 bg-white">
+                                    <!-- Compact Items Table -->
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden mb-4">
+                                        <table class="min-w-full text-sm">
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th class="px-3 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Product</th>
+                                                    <th class="px-3 py-2 text-center text-xs font-semibold text-gray-600 uppercase">Qty</th>
+                                                    <th class="px-3 py-2 text-right text-xs font-semibold text-gray-600 uppercase">Price</th>
+                                                    <th class="px-3 py-2 text-right text-xs font-semibold text-gray-600 uppercase">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200">
+                                                {% for item in order.items.all %}
+                                                <tr class="hover:bg-gray-50">
+                                                    <td class="px-3 py-2 text-gray-800">{{ item.product.name }}</td>
+                                                    <td class="px-3 py-2 text-center text-gray-600">{{ item.quantity }}</td>
+                                                    <td class="px-3 py-2 text-right text-gray-600">₹{{ item.price }}</td>
+                                                    <td class="px-3 py-2 text-right font-semibold text-gray-800">₹{% widthratio item.price 1 item.quantity %}</td>
+                                                </tr>
+                                                {% endfor %}
+                                                <tr class="bg-gray-50 font-bold">
+                                                    <td colspan="3" class="px-3 py-3 text-right text-gray-700">Grand Total:</td>
+                                                    <td class="px-3 py-3 text-right text-green-700 text-lg">₹{{ order.total|floatformat:2 }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <!-- Status Strip (Only for delivered, not for returned/returning) -->
+                                    {% if order.status == 'delivered' and order.delivered_at %}
+                                    <div class="bg-green-50 border-l-4 border-green-500 px-4 py-3 mb-4 rounded flex items-start gap-2">
+                                        <i class="fas fa-check-circle text-green-600 mt-0.5"></i>
+                                        <div>
+                                            <p class="text-sm font-semibold text-green-800">Order Delivered</p>
+                                            <p class="text-xs text-green-600 mt-1">Delivered on {{ order.delivered_at|date:"F d, Y \a\t h:i A" }}</p>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <!-- Tracking Timeline (Always Visible) -->
+                                    {% if order.tracking_id %}
+                                    <div id="track_result_{{ order.order_number }}" class="mb-4" data-tracking-id="{{ order.tracking_id }}"></div>
+                                    <div id="track_error_{{ order.order_number }}" class="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm" style="display:none;"></div>
+                                    {% endif %}
+                                    
+                                    <!-- Footer Buttons -->
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <a href="{% url 'invoice' order.id %}" target="_blank" class="inline-flex items-center px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all">
+                                            <i class="fas fa-download mr-2"></i>Download Invoice
+                                        </a>
+                                        <a href="{% url 'contact' %}" class="inline-flex items-center px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all">
+                                            <i class="fas fa-headset mr-2"></i>Contact Support
+                                        </a>
+                                        
+                                        <!-- Return/Back Button -->
+                                        {% if order.status == 'delivered' and order.can_return %}
+                                        <a href="{% url 'return_order' order.id %}" class="inline-flex items-center px-4 py-2 bg-red-50 border-2 border-red-300 rounded-lg text-sm font-semibold text-red-700 hover:bg-red-100 hover:border-red-400 transition-all">
+                                            <i class="fas fa-undo mr-2"></i>Return Product
+                                        </a>
+                                        {% elif order.status == 'returning' or order.status == 'returned' %}
+                                        <a href="{% url 'user_profile' %}" class="inline-flex items-center px-4 py-2 bg-gray-100 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-200 hover:border-gray-400 transition-all">
+                                            <i class="fas fa-arrow-left mr-2"></i>Back to Profile
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-12">
+                            <div class="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-shopping-bag text-gray-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">No Orders Yet</h3>
+                            <p class="text-gray-500 mb-6 max-w-md mx-auto">You haven't placed any orders yet.</p>
+                            <a href="{% url 'shop' %}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-primary hover:bg-primary-dark transition-all duration-200">
+                                <i class="fas fa-shopping-bag mr-2"></i>
+                                Start Shopping
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Footer Section -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="container mx-auto py-12 px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl font-bold text-primary">Furnex<span class="text-gray-600">.</span></span>
+                    </div>
+                    <p class="text-gray-600 mb-6 max-w-md">Discover comfort, style, and craftsmanship. At Furnex, we design furniture that turns houses into homes.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-all duration-200">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-all duration-200">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-all duration-200">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-all duration-200">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Company</h3>
+                    <ul class="space-y-3">
+                        <li><a href="{% url 'about' %}" class="text-base text-gray-600 hover:text-primary transition-colors">About us</a></li>
+                        <li><a href="{% url 'services' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Services</a></li>
+                        <li><a href="{% url 'blog' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="{% url 'contact' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Contact us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Account</h3>
+                    <ul class="space-y-3">
+                        <li><a href="{% url 'cart' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Shopping Cart</a></li>
+                        <li><a href="{% url 'wishlist' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Wishlist</a></li>
+                        <li><a href="{% url 'compare' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Compare</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-gray-200">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-base text-gray-500">Copyright &copy; <script>document.write(new Date().getFullYear());</script> Furnex. All Rights Reserved.</p>
+                    <div class="mt-4 md:mt-0 flex space-x-6">
+                        <a href="#" class="text-base text-gray-500 hover:text-primary transition-colors">Terms & Conditions</a>
+                        <a href="#" class="text-base text-gray-500 hover:text-primary transition-colors">Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End Footer Section -->
+
+    <script>
+        // Sidebar navigation: reveal sections only when clicked
+        document.querySelectorAll('.sidebar-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = href.substring(1);
+                    ['notifications','coupons','addresses','orders'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.add('hidden');
+                    });
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.classList.remove('hidden');
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const focusSection = urlParams.get('focus');
+        if (focusSection) {
+            const targetLink = document.querySelector(`.sidebar-item[href="#${focusSection}"]`);
+            if (targetLink) {
+                targetLink.click();
+            }
+        }
+
+        // Copy coupon code function
+        function copyCouponCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                // Show a temporary success message
+                alert('Coupon code copied to clipboard: ' + code);
+            });
+        }
+
+        // Notification functions
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function updateNotificationEmptyState() {
+            const list = document.querySelector('[data-notification-list]');
+            const empty = document.querySelector('[data-notification-empty]');
+            if (list && !list.querySelector('[id^="notification-"]')) {
+                if (list.dataset.page && list.dataset.page !== '1') {
+                    const paginationLink = document.querySelector('a[href*="?page=' + (parseInt(list.dataset.page, 10) - 1) + '"]');
+                    if (paginationLink) {
+                        window.location.href = paginationLink.href;
+                        return;
+                    }
+                }
+                if (empty) empty.classList.remove('hidden');
+            }
+        }
+
+        function adjustSidebarBadge(delta) {
+            const badge = document.querySelector('.sidebar-item[href="#notifications"] .bg-red-500');
+            if (!badge) {
+                return;
+            }
+            if (delta === -Infinity) {
+                badge.remove();
+                return;
+            }
+            const current = parseInt(badge.textContent);
+            const next = isNaN(current) ? 0 : Math.max(current + delta, 0);
+            if (next > 0) {
+                badge.textContent = next;
+            } else {
+                badge.remove();
+            }
+        }
+
+        // Core notification functions
+        function markNotificationRead(notificationId) {
+            const id = parseInt(notificationId, 10);
+            if (!id) return;
+            
+            fetch('/notifications/mark-read/' + id + '/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            }).then(() => {
+                // Remove notification from DOM
+                const element = document.getElementById('notification-' + id);
+                if (element) {
+                    element.remove();
+                }
+                adjustSidebarBadge(-1);
+                updateNotificationEmptyState();
+            }).catch(err => {
+                console.error('Error marking notification as read:', err);
+            });
+        }
+
+        function markAllNotificationsRead() {
+            fetch('/notifications/mark-all-read/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            }).then(() => {
+                // Remove all notifications from DOM
+                document.querySelectorAll('[id^="notification-"]').forEach(item => {
+                    item.remove();
+                });
+                adjustSidebarBadge(-Infinity);
+                updateNotificationEmptyState();
+            }).catch(err => {
+                console.error('Error marking all notifications as read:', err);
+            });
+        }
+
+        document.addEventListener('click', function(event) {
+            const markButton = event.target.closest('[data-notification-id]');
+            if (markButton) {
+                event.preventDefault();
+                markNotificationReadProfile(markButton.getAttribute('data-notification-id'));
+                return;
+            }
+            const markAll = event.target.closest('[data-mark-all]');
+            if (markAll) {
+                event.preventDefault();
+                markAllNotificationsReadProfile();
+                return;
+            }
+            const item = event.target.closest('[data-notification-item]');
+            if (item && !event.target.closest('[data-notification-id]')) {
+                item.classList.add('active');
+            }
+        });
+
+        // Auto-load tracking timeline for all orders
+        async function loadTrackingTimeline(trackingId, orderNumber) {
+            const errorBox = document.getElementById(`track_error_${orderNumber}`);
+            const resultBox = document.getElementById(`track_result_${orderNumber}`);
+            
+            if (!resultBox) return;
+            
+            resultBox.innerHTML = "<div class='text-center text-gray-500 py-3'><i class='fas fa-spinner fa-spin mr-2'></i>Loading tracking...</div>";
+
+            // Fetch live tracking details based on tracking ID
+            try {
+                const fd = new FormData();
+                fd.append('tracking_id', trackingId);
+                const res = await fetch('/track-order-ajax/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                    body: fd
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    throw new Error(data.message || 'Unable to fetch tracking');
+                }
+                const o = data.order;
+                const status = (o.status || '').toLowerCase();
+                const steps = o.steps || {};
+                const stepsTime = o.steps_time || {};
+                
+                let timelineHTML = '';
+                
+                // Special view for returned/returning orders (like Amazon)
+                if (status === 'returned' || status === 'returning') {
+                    const isReturned = status === 'returned';
+                    const bgColor = isReturned ? '#eff6ff' : '#fef3c7';
+                    const borderColor = isReturned ? '#3b82f6' : '#f59e0b';
+                    const iconColor = isReturned ? '#3b82f6' : '#f59e0b';
+                    const icon = isReturned ? 'fas fa-box-open' : 'fas fa-clock';
+                    const title = isReturned ? 'Product Returned' : 'Return Request Submitted';
+                    const message = isReturned 
+                        ? 'Payment has been refunded to your account' 
+                        : 'We are processing your return request';
+                    
+                    timelineHTML = `
+                        <div style="background: ${bgColor}; border-left: 4px solid ${borderColor}; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <i class="${icon}" style="color: ${iconColor}; font-size: 1.5rem; margin-top: 2px;"></i>
+                                <div>
+                                    <h4 style="font-weight: 700; font-size: 1rem; color: #1e293b; margin-bottom: 4px;">${title}</h4>
+                                    <p style="color: #64748b; font-size: 0.9rem;">${message}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Show only "Order Placed" step for returned orders
+                    timelineHTML += `
+                        <div class="bg-white border border-gray-200 rounded-lg p-5">
+                            <h4 class="text-base font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-route mr-2 text-green-600"></i>Order History
+                            </h4>
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); border: 2px solid #22c55e; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <i class="fas fa-shopping-cart" style="color: white; font-size: 0.65rem;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; font-size: 0.9rem; color: #16a34a; margin-bottom: 2px;">Order Placed</div>
+                                    <div style="color: #16a34a; font-size: 0.75rem; font-weight: 500;">${o.created_at || ''}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Normal tracking timeline for non-returned orders
+                    const stepConfig = {
+                        placed: { icon: 'fas fa-shopping-cart', title: 'Order Placed' },
+                        processing: { icon: 'fas fa-cogs', title: 'Processing' },
+                        dispatched: { icon: 'fas fa-truck', title: 'Dispatched' },
+                        out_for_delivery: { icon: 'fas fa-shipping-fast', title: 'Out for Delivery' },
+                        delivered: { icon: 'fas fa-check-circle', title: 'Delivered' }
+                    };
+                    
+                    // Build timeline HTML matching screenshot
+                    timelineHTML = '<div class="bg-white border border-gray-200 rounded-lg p-5"><h4 class="text-base font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-route mr-2 text-green-600"></i>Tracking Timeline</h4><div class="space-y-4 relative" style="padding-left: 30px;">';
+                    
+                    // Vertical connector line
+                    timelineHTML += '<div style="position: absolute; left: 9px; top: 20px; bottom: 20px; width: 2px; background: linear-gradient(to bottom, #22c55e 0%, #e5e7eb 100%);"></div>';
+                    
+                    ['placed', 'processing', 'dispatched', 'out_for_delivery', 'delivered'].forEach((stepStatus) => {
+                    const config = stepConfig[stepStatus];
+                    const isCompleted = steps[stepStatus] || false;
+                    const isCurrent = (status === stepStatus);
+                    const timestamp = stepsTime[stepStatus] || 'Pending';
+                    
+                    // Use specific icon for each step instead of generic checkmark
+                    const stepIcon = isCompleted ? `<i class="${config.icon}" style="color: white; font-size: 0.65rem;"></i>` : '';
+                    const circleStyle = isCompleted 
+                        ? 'background: linear-gradient(135deg, #22c55e, #16a34a); border: 2px solid #22c55e;' 
+                        : 'background: #f3f4f6; border: 2px solid #d1d5db;';
+                    
+                    timelineHTML += `
+                        <div style="display: flex; align-items: flex-start; position: relative;">
+                            <div style="width: 20px; height: 20px; border-radius: 50%; ${circleStyle} display: flex; align-items: center; justify-content: center; position: absolute; left: -30px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                ${stepIcon}
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 0.9rem; color: ${isCompleted ? '#16a34a' : '#9ca3af'}; margin-bottom: 2px;">
+                                    ${config.title}
+                                    ${isCurrent ? '<span style="display: inline-block; background: #22c55e; color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.65rem; margin-left: 6px; font-weight: 700;">Current</span>' : ''}
+                                </div>
+                                <div style="color: ${isCompleted ? '#16a34a' : '#9ca3af'}; font-size: 0.75rem; font-weight: 500;">
+                                    ${timestamp}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    });
+                    
+                    timelineHTML += '</div></div>';
+                }
+                
+                resultBox.innerHTML = timelineHTML;
+                errorBox.style.display = "none";
+            } catch (err) {
+                errorBox.textContent = err.message || 'Unable to fetch tracking details.';
+                errorBox.style.display = 'block';
+                resultBox.innerHTML = '';
+            }
+        }
+
+        // Initialize: show notifications and auto-load order timelines
+        document.addEventListener('DOMContentLoaded', function() {
+            const first = document.querySelector('.sidebar-item[href="#notifications"]');
+            if (first) first.classList.add('active');
+            const notif = document.getElementById('notifications');
+            if (notif) notif.classList.remove('hidden');
+            
+            // Auto-load tracking timelines when orders section becomes visible
+            const ordersLink = document.querySelector('.sidebar-item[href="#orders"]');
+            if (ordersLink) {
+                ordersLink.addEventListener('click', function() {
+                    setTimeout(() => {
+                        // Load timeline for each order with tracking ID
+                        document.querySelectorAll('[data-tracking-id]').forEach(el => {
+                            const trackingId = el.dataset.trackingId;
+                            const orderNum = el.id.replace('track_result_', '');
+                            if (trackingId && orderNum && !el.hasAttribute('data-loaded')) {
+                                el.setAttribute('data-loaded', 'true');
+                                loadTrackingTimeline(trackingId, orderNum);
+                            }
+                        });
+                    }, 100);
+                });
+            }
+        });
+    </script>
+
+    <script>
+        // Advanced Camera Studio for avatar capture
+        (function(){
+            const openBtn = document.getElementById('openCameraBtn');
+            const modal = document.getElementById('cameraModal');
+            const closeBtn = document.getElementById('closeCameraBtn');
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            const preview = document.getElementById('cameraPreview');
+            const captureBtn = document.getElementById('captureBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+            const saveBtn = document.getElementById('savePhotoBtn');
+            const fileFallback = document.getElementById('fileFallback');
+            const fileInput = document.getElementById('avatarFile');
+            const filterSection = document.getElementById('filterSection');
+            const gridOverlay = document.getElementById('cameraGrid');
+            const toggleGridBtn = document.getElementById('toggleGrid');
+            const flipCameraBtn = document.getElementById('flipCamera');
+            
+            let stream;
+            let selectedFile = null;
+            let currentFilter = 'none';
+            let facingMode = 'user';
+            
+            function showModal(){ modal.classList.remove('hidden'); modal.classList.add('flex'); }
+            function hideModal(){ modal.classList.add('hidden'); modal.classList.remove('flex'); }
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            async function startCamera(){
+                try {
+                    console.log('Starting camera...');
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: facingMode, width: 1280, height: 1280 }, 
+                        audio: false 
+                    });
+                    console.log('Camera stream obtained:', stream);
+                    
+                    video.srcObject = stream;
+                    
+                    // Wait for video metadata to load
+                    await new Promise((resolve, reject) => {
+                        video.onloadedmetadata = () => {
+                            console.log('Video metadata loaded');
+                            resolve();
+                        };
+                        video.onerror = (e) => {
+                            console.error('Video element error:', e);
+                            reject(e);
+                        };
+                        // Timeout after 5 seconds
+                        setTimeout(() => reject(new Error('Video load timeout')), 5000);
+                    });
+                    
+                    // Explicitly play the video
+                    try {
+                        await video.play();
+                        console.log('Video playing successfully');
+                    } catch(playError) {
+                        console.error('Video play error:', playError);
+                    }
+                    
+                    video.classList.remove('hidden');
+                    
+                    // Show filter section
+                    if(filterSection) {
+                        filterSection.classList.remove('hidden');
+                        console.log('Filter section shown');
+                    } else {
+                        console.error('Filter section element not found');
+                    }
+                } catch(e) {
+                    console.error('Camera error:', e);
+                    // Show fallback file picker
+                    if(fileFallback){ fileFallback.classList.remove('hidden'); }
+                    video.classList.add('hidden');
+                    captureBtn.classList.add('hidden');
+                    retakeBtn.classList.add('hidden');
+                    saveBtn.classList.add('hidden');
+                    // Keep filter section visible for file uploads
+                    if(filterSection) {
+                        filterSection.classList.remove('hidden');
+                        console.log('Filter section shown for file upload');
+                    }
+                }
+            }
+            
+            function stopCamera(){
+                if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
+                video.srcObject = null;
+            }
+
+            function dataURLToBlob(dataURL){
+                const arr = dataURL.split(','), mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length; const u8arr = new Uint8Array(n);
+                while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+                return new Blob([u8arr], {type:mime});
+            }
+
+            if(openBtn){
+                openBtn.addEventListener('click', async ()=>{
+                    console.log('Opening camera modal...');
+                    showModal();
+                    // Reset state
+                    video.classList.remove('hidden');
+                    preview.classList.add('hidden');
+                    retakeBtn.classList.add('hidden');
+                    saveBtn.classList.add('hidden');
+                    captureBtn.classList.remove('hidden');
+                    if(fileFallback){ fileFallback.classList.add('hidden'); }
+                    // Ensure filter section is visible
+                    if(filterSection){ 
+                        filterSection.classList.remove('hidden'); 
+                        console.log('Filter section element found and shown');
+                    } else {
+                        console.error('Filter section element not found!');
+                    }
+                    selectedFile = null;
+                    // Apply default filter
+                    currentFilter = 'none';
+                    video.style.setProperty('--camera-filter', 'none');
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('ring-2', 'ring-green-500'));
+                    await startCamera();
+                });
+            }
+            if(closeBtn){
+                closeBtn.addEventListener('click', ()=>{ stopCamera(); hideModal(); });
+            }
+            if(captureBtn){
+                captureBtn.addEventListener('click', ()=>{
+                    if(!stream) {
+                        console.error('No camera stream available');
+                        return;
+                    }
+                    const w = video.videoWidth || 512; const h = video.videoHeight || 512;
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Apply current filter to captured image
+                    if(currentFilter !== 'none') {
+                        ctx.filter = currentFilter;
+                    }
+                    ctx.drawImage(video, 0, 0, w, h);
+                    
+                    const dataURL = canvas.toDataURL('image/jpeg', 0.92);
+                    preview.src = dataURL;
+                    preview.style.setProperty('--preview-filter', currentFilter);
+                    preview.classList.remove('hidden');
+                    video.classList.add('hidden');
+                    captureBtn.classList.add('hidden');
+                    retakeBtn.classList.remove('hidden');
+                    saveBtn.classList.remove('hidden');
+                    // Pause camera preview
+                    stopCamera();
+                });
+            }
+            if(retakeBtn){
+                retakeBtn.addEventListener('click', async ()=>{
+                    preview.classList.add('hidden');
+                    video.classList.remove('hidden');
+                    saveBtn.classList.add('hidden');
+                    retakeBtn.classList.add('hidden');
+                    captureBtn.classList.remove('hidden');
+                    await startCamera();
+                });
+            }
+            if(saveBtn){
+                saveBtn.addEventListener('click', async ()=>{
+                    try{
+                        const fd = new FormData();
+                        if(selectedFile){
+                            fd.append('avatar', selectedFile, selectedFile.name || 'avatar.jpg');
+                        } else if(preview.src && preview.src.startsWith('data:')){
+                            const blob = dataURLToBlob(preview.src);
+                            fd.append('avatar', blob, 'avatar.jpg');
+                        } else {
+                            alert('No image selected');
+                            return;
+                        }
+                        const res = await fetch('{% url "upload_avatar" %}', {
+                            method: 'POST',
+                            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                            body: fd,
+                        });
+                        const data = await res.json();
+                        if(data.success){
+                            // Update avatar in header
+                            let avatarImg = document.getElementById('profileAvatar');
+                            const initial = document.getElementById('profileAvatarInitial');
+                            if(!avatarImg){
+                                avatarImg = document.createElement('img');
+                                avatarImg.id = 'profileAvatar';
+                                avatarImg.className = 'w-full h-full object-cover';
+                                const container = initial ? initial.parentElement : null;
+                                if(container){
+                                    container.innerHTML = '';
+                                    container.appendChild(avatarImg);
+                                }
+                            }
+                            avatarImg.src = data.url + '?t=' + Date.now();
+                            hideModal();
+                        } else {
+                            alert(data.message || 'Upload failed');
+                        }
+                    }catch(e){
+                        alert('Upload failed');
+                    }
+                });
+            }
+            // Fallback file input handler
+            if(fileInput){
+                fileInput.addEventListener('change', ()=>{
+                    const file = fileInput.files && fileInput.files[0];
+                    if(file){
+                        selectedFile = file;
+                        preview.src = URL.createObjectURL(file);
+                        preview.classList.remove('hidden');
+                        video.classList.add('hidden');
+                        saveBtn.classList.remove('hidden');
+                        captureBtn.classList.add('hidden');
+                        retakeBtn.classList.remove('hidden');
+                        // Show filter section for uploaded files
+                        if(filterSection) {
+                            filterSection.classList.remove('hidden');
+                            console.log('Filter section shown for uploaded file');
+                        }
+                    }
+                });
+            }
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentFilter = btn.dataset.filter;
+                    const filterValue = currentFilter === 'none' ? 'none' : currentFilter;
+                    video.style.setProperty('--camera-filter', filterValue);
+                    preview.style.setProperty('--preview-filter', filterValue);
+                    
+                    // Visual feedback
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('ring-2', 'ring-green-500'));
+                    btn.classList.add('ring-2', 'ring-green-500');
+                });
+            });
+            
+            // Grid toggle
+            if(toggleGridBtn && gridOverlay) {
+                toggleGridBtn.addEventListener('click', () => {
+                    gridOverlay.classList.toggle('hidden');
+                    toggleGridBtn.classList.toggle('bg-green-500');
+                    toggleGridBtn.classList.toggle('text-white');
+                });
+            }
+            
+            // Flip camera
+            if(flipCameraBtn) {
+                flipCameraBtn.addEventListener('click', async () => {
+                    facingMode = facingMode === 'user' ? 'environment' : 'user';
+                    stopCamera();
+                    await startCamera();
+                });
+            }
+            
+            // Close modal when clicking backdrop
+            if(modal){
+                modal.addEventListener('click', (e)=>{ if(e.target === modal){ stopCamera(); hideModal(); } });
+            }
+        })();
+    </script>
+
+    <!-- Return Request Success Popup -->
+    {% if request.session.return_request_submitted %}
+    <div id="returnSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="animation: fadeIn 0.3s;">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden" style="animation: slideUp 0.4s;">
+            <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
+                <div class="flex items-center justify-center">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                        <i class="fas fa-check text-green-600 text-3xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="p-8 text-center">
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">Return Request Submitted!</h3>
+                <p class="text-gray-600 mb-2">Your return request for</p>
+                <p class="text-lg font-semibold text-green-600 mb-4">Order #{{ request.session.return_order_number }}</p>
+                <p class="text-gray-600 mb-6">has been successfully submitted. Our team will review your request and process it within 24-48 hours.</p>
+                <button onclick="closeReturnModal()" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold py-3 px-6 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-md hover:shadow-lg">
+                    <i class="fas fa-check mr-2"></i>Got It!
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+    
+    <script>
+        function closeReturnModal() {
+            const modal = document.getElementById('returnSuccessModal');
+            if (modal) {
+                modal.style.animation = 'fadeOut 0.3s';
+                setTimeout(() => {
+                    modal.remove();
+                    // Clear session flag via AJAX
+                    fetch('{% url "user_profile" %}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ clear_return_flag: true })
+                    });
+                }, 300);
+            }
+        }
+        
+        // Auto-close after 5 seconds
+        setTimeout(() => {
+            closeReturnModal();
+        }, 5000);
+    </script>
+    {% endif %}
+    
+<script>
+(function(){
+  function updateTimeagos(){
+    var now = Date.now();
+    document.querySelectorAll('[data-timeago]').forEach(function(el){
+      var ts = Date.parse(el.getAttribute('data-timeago'));
+      if (isNaN(ts)) return;
+      var diff = Math.floor((now - ts)/1000);
+      if (diff < 60){ el.textContent = 'just now'; return; }
+      var value, unit;
+      if (diff < 3600){ value = Math.floor(diff/60); unit = 'minute'; }
+      else if (diff < 86400){ value = Math.floor(diff/3600); unit = 'hour'; }
+      else if (diff < 2592000){ value = Math.floor(diff/86400); unit = 'day'; }
+      else if (diff < 31536000){ value = Math.floor(diff/2592000); unit = 'month'; }
+      else { value = Math.floor(diff/31536000); unit = 'year'; }
+      el.textContent = value + ' ' + unit + (value>1?'s':'') + ' ago';
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ updateTimeagos(); setInterval(updateTimeagos, 60000); });
+  else { updateTimeagos(); setInterval(updateTimeagos, 60000); }
+})();
+</script>
+</body>
+</html>

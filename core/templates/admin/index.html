@@ -1,0 +1,323 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    .card-dark { background:#101726; border:1px solid rgba(255,255,255,.06); border-radius:16px; color:#d6e1ff; }
+    .app-list .module { background:#121826; border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:14px 14px 8px 14px; margin-bottom:16px; }
+    .app-list .module h2 { font-size:20px; margin:4px 0 12px 0; }
+    .app-list .model { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-top:1px solid rgba(255,255,255,.06); gap:12px; }
+    .app-list .model:first-of-type { border-top:none; }
+    .app-list .model a { font-size:15px; }
+    #furnexChart { height: 400px !important; max-height: 400px; }
+    #productSalesChart { height: 400px !important; max-height: 400px; }
+    #orderStatusChart { height: 400px !important; max-height: 400px; }
+    #userRegistrationChart { height: 400px !important; max-height: 400px; }
+    .stat { background:#0f1524; border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:12px 14px; text-align:center; }
+    .stat .num { font-size:22px; font-weight:800; color:#00e1ff }
+    .stat .lbl { color:#94a3b8; font-size:12px }
+    /* Hide recent actions panel */
+    #recent-actions-module, .recent-actions, .dashboard #content-main .module:last-child h2:contains('Recent actions') { display:none !important; }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <section class="content">
+    <div class="container-fluid">
+      <!-- KPI Stats Row -->
+      <div class="row mb-4">
+        <div class="col-6 col-md-3"><div class="stat"><div id="tile-users" class="num">0</div><div class="lbl">Users</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat"><div id="tile-orders" class="num">0</div><div class="lbl">Orders</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat"><div id="tile-products" class="num">0</div><div class="lbl">Products</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat"><div id="tile-sales" class="num">₹0</div><div class="lbl">Sales</div></div></div>
+      </div>
+
+      <!-- Charts Section - Full Width -->
+      <div class="row">
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card card-dark p-4">
+            <div class="d-flex align-items-center mb-4" style="gap:10px;">
+              <img src="{% static 'images/furnex-f-logo.svg' %}" alt="F" style="height:28px;width:28px;"/>
+              <h4 style="margin:0;">Sales & Profit</h4>
+            </div>
+            <canvas id="furnexChart"></canvas>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card card-dark p-4">
+            <div class="d-flex align-items-center mb-4" style="gap:10px;">
+              <img src="{% static 'images/bag.svg' %}" alt="P" style="height:26px;width:26px;"/>
+              <h4 style="margin:0;">Top Products</h4>
+            </div>
+            <canvas id="productSalesChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card card-dark p-4">
+            <div class="d-flex align-items-center mb-4" style="gap:10px;">
+              <img src="{% static 'images/order-icon.svg' %}" alt="O" style="height:26px;width:26px;" onerror="this.style.display='none';"/>
+              <h4 style="margin:0;">Order Status Distribution</h4>
+            </div>
+            <canvas id="orderStatusChart"></canvas>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card card-dark p-4">
+            <div class="d-flex align-items-center mb-4" style="gap:10px;">
+              <img src="{% static 'images/user-icon.svg' %}" alt="U" style="height:26px;width:26px;" onerror="this.style.display='none';"/>
+              <h4 style="margin:0;">Monthly User Registrations</h4>
+            </div>
+            <canvas id="userRegistrationChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      // Online/offline notifier + background email retry
+      function notifyOnline() {
+        const toast = document.createElement('div');
+        toast.textContent = 'Back online - syncing emails...';
+        toast.style.position = 'fixed';toast.style.bottom='16px';toast.style.right='16px';toast.style.background='#16a34a';toast.style.color='#fff';toast.style.padding='8px 12px';toast.style.borderRadius='8px';toast.style.zIndex='9999';
+        document.body.appendChild(toast); setTimeout(()=>toast.remove(), 3000);
+        fetch('/retry-email-queue/').catch(()=>{});
+      }
+      function notifyOffline() {
+        const toast = document.createElement('div');
+        toast.textContent = 'You are offline. Emails will queue.';
+        toast.style.position = 'fixed';toast.style.bottom='16px';toast.style.right='16px';toast.style.background='#dc2626';toast.style.color='#fff';toast.style.padding='8px 12px';toast.style.borderRadius='8px';toast.style.zIndex='9999';
+        document.body.appendChild(toast); setTimeout(()=>toast.remove(), 3000);
+      }
+      window.addEventListener('online', notifyOnline);
+      window.addEventListener('offline', notifyOffline);
+      if (navigator.onLine) { fetch('/retry-email-queue/').catch(()=>{}); }
+
+      try {
+        // Fill KPI tiles
+        fetch('/admin-model-counts/').then(r=>r.json()).then(c=>{
+          document.getElementById('tile-users').textContent = (c.auth && c.auth.Users) || 0;
+          document.getElementById('tile-orders').textContent = (c.core && c.core.Orders) || 0;
+          document.getElementById('tile-products').textContent = (c.core && c.core.Products) || 0;
+          const rev = (c.core && c.core.Revenue) || 0;
+          document.getElementById('tile-sales').textContent = '₹' + Math.round(rev);
+        }).catch(()=>{});
+        const res = await fetch('/admin-dashboard-data/');
+        if (!res.ok) return;
+        const data = await res.json();
+        const ctx = document.getElementById('furnexChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.sales_labels,
+            datasets: [
+              {
+                label: 'Revenue',
+                data: data.sales_data,
+                borderColor: '#00e1ff',
+                backgroundColor: 'rgba(0,225,255,0.18)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 6,
+                pointHoverRadius: 8
+              },
+              {
+                label: 'Profit',
+                data: data.profit_data,
+                borderColor: '#6c63ff',
+                backgroundColor: 'rgba(108,99,255,0.18)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 6,
+                pointHoverRadius: 8
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { 
+              legend: { 
+                labels: { 
+                  color: '#cbd5e1',
+                  font: { size: 14 }
+                } 
+              } 
+            },
+            scales: {
+              x: { 
+                ticks: { 
+                  color: '#94a3b8',
+                  font: { size: 12 }
+                }, 
+                grid: { color: 'rgba(148,163,184,0.15)' } 
+              },
+              y: { 
+                ticks: { 
+                  color: '#94a3b8',
+                  font: { size: 12 }
+                }, 
+                grid: { color: 'rgba(148,163,184,0.15)' } 
+              }
+            }
+          }
+        });
+        // Product sales (bar)
+        const pctx = document.getElementById('productSalesChart');
+        if (pctx) {
+          new Chart(pctx, {
+            type: 'bar',
+            data: {
+              labels: data.product_sales_labels,
+              datasets: [{
+                label: 'Units sold',
+                data: data.product_sales_data,
+                backgroundColor: 'rgba(34,197,94,0.6)',
+                borderColor: '#22c55e',
+                borderWidth: 2,
+                borderRadius: 4,
+                borderSkipped: false,
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { 
+                legend: { 
+                  labels: { 
+                    color: '#cbd5e1',
+                    font: { size: 14 }
+                  } 
+                } 
+              },
+              scales: {
+                x: { 
+                  ticks: { 
+                    color: '#94a3b8',
+                    font: { size: 12 },
+                    maxRotation: 45
+                  }, 
+                  grid: { color: 'rgba(148,163,184,0.15)' } 
+                },
+                y: { 
+                  ticks: { 
+                    color: '#94a3b8',
+                    font: { size: 12 }
+                  }, 
+                  grid: { color: 'rgba(148,163,184,0.15)' } 
+                }
+              }
+            }
+          });
+        }
+        
+        // Order Status Distribution (pie chart)
+        const osctx = document.getElementById('orderStatusChart');
+        if (osctx && data.order_status_labels && data.order_status_data) {
+          new Chart(osctx, {
+            type: 'pie',
+            data: {
+              labels: data.order_status_labels,
+              datasets: [{
+                data: data.order_status_data,
+                backgroundColor: [
+                  'rgba(255, 193, 7, 0.8)',   // pending - yellow
+                  'rgba(13, 110, 253, 0.8)',  // processing - blue
+                  'rgba(32, 201, 151, 0.8)',  // shipped - teal
+                  'rgba(25, 135, 84, 0.8)',   // delivered - green
+                  'rgba(220, 53, 69, 0.8)'    // cancelled - red
+                ],
+                borderColor: [
+                  '#ffc107', '#0d6efd', '#20c997', '#198754', '#dc3545'
+                ],
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    color: '#cbd5e1',
+                    font: { size: 12 },
+                    padding: 15,
+                    usePointStyle: true
+                  }
+                }
+              }
+            }
+          });
+        }
+        
+        // User Registration Trend (line chart)
+        const urctx = document.getElementById('userRegistrationChart');
+        if (urctx && data.user_registration_labels && data.user_registration_data) {
+          new Chart(urctx, {
+            type: 'line',
+            data: {
+              labels: data.user_registration_labels,
+              datasets: [{
+                label: 'New Users',
+                data: data.user_registration_data,
+                borderColor: '#ff6b6b',
+                backgroundColor: 'rgba(255, 107, 107, 0.18)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: '#ff6b6b'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  labels: {
+                    color: '#cbd5e1',
+                    font: { size: 14 }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  ticks: {
+                    color: '#94a3b8',
+                    font: { size: 12 }
+                  },
+                  grid: { color: 'rgba(148,163,184,0.15)' }
+                },
+                y: {
+                  ticks: {
+                    color: '#94a3b8',
+                    font: { size: 12 }
+                  },
+                  grid: { color: 'rgba(148,163,184,0.15)' }
+                }
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('Chart load failed', e);
+      }
+    });
+  </script>
+{% endblock %}
+
+

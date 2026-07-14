@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ registry.name }} - Gift Registry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand': '#3B5D50',
+                        'brand-dark': '#2D4A3F',
+                        'brand-light': '#DCE5E1',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl shadow-lg p-8 text-white mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <i class="fas fa-gift text-3xl"></i>
+                        <h1 class="text-3xl font-bold">{{ registry.name }}</h1>
+                    </div>
+                    <p class="text-white/90"><i class="fas fa-calendar mr-2"></i>{{ registry.event_date|date:"F d, Y" }}</p>
+                    {% if registry.description %}
+                    <p class="mt-3 text-white/80">{{ registry.description }}</p>
+                    {% endif %}
+                </div>
+                <div class="text-right">
+                    <span class="bg-white/20 backdrop-blur rounded-full px-4 py-2 text-sm font-semibold">
+                        {{ registry.get_registry_type_display }}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Share Code -->
+            <div class="mt-6 bg-white/10 backdrop-blur rounded-lg p-4 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-white/70 uppercase">Registry Code</p>
+                    <p class="font-mono text-xl font-bold">{{ registry.unique_code }}</p>
+                </div>
+                <button onclick="copyCode()" class="bg-white text-purple-600 hover:bg-gray-100 rounded-lg px-4 py-2 font-semibold transition">
+                    <i class="fas fa-copy mr-2"></i>Copy Link
+                </button>
+            </div>
+        </div>
+
+        <!-- Registry Items -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    <i class="fas fa-list-ul text-brand mr-2"></i>Gift List
+                </h2>
+                <span class="text-gray-600">{{ items|length }} items</span>
+            </div>
+
+            {% if items %}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for item in items %}
+                <div class="border-2 border-gray-200 rounded-xl p-4 hover:border-brand transition">
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-48 object-cover rounded-lg mb-4">
+                    {% endif %}
+                    
+                    <h3 class="font-semibold text-gray-800 mb-2">{{ item.product.name }}</h3>
+                    <p class="text-brand font-bold text-lg mb-2">₹{{ item.product.final_price }}</p>
+                    
+                    <!-- Progress -->
+                    <div class="mb-3">
+                        <div class="flex justify-between text-xs text-gray-600 mb-1">
+                            <span>Requested: {{ item.quantity_requested }}</span>
+                            <span>Gifted: {{ item.quantity_purchased }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-brand rounded-full h-2 transition-all" style="width: {% widthratio item.quantity_purchased item.quantity_requested 100 %}%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Priority Badge -->
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold px-2 py-1 rounded-full
+                            {% if item.priority == 'high' %}bg-red-100 text-red-700
+                            {% elif item.priority == 'medium' %}bg-yellow-100 text-yellow-700
+                            {% else %}bg-green-100 text-green-700{% endif %}">
+                            {% if item.priority == 'high' %}Must Have
+                            {% elif item.priority == 'medium' %}Would Love
+                            {% else %}Nice to Have{% endif %}
+                        </span>
+                        
+                        {% if item.is_fulfilled %}
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
+                            <i class="fas fa-check"></i> Complete
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Action Button -->
+                    {% if not item.is_fulfilled %}
+                    <a href="{% url 'product_detail' item.product.id %}" class="block w-full bg-brand hover:bg-brand-dark text-white text-center py-2 rounded-lg font-semibold transition">
+                        <i class="fas fa-gift mr-2"></i>Gift This
+                    </a>
+                    {% else %}
+                    <button disabled class="block w-full bg-gray-300 text-gray-600 text-center py-2 rounded-lg font-semibold cursor-not-allowed">
+                        <i class="fas fa-check mr-2"></i>Fulfilled
+                    </button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-box-open text-gray-300 text-6xl mb-4"></i>
+                <p class="text-gray-600 text-lg">No items in this registry yet</p>
+                {% if is_owner %}
+                <a href="{% url 'shop' %}" class="inline-block mt-4 bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-lg font-semibold transition">
+                    <i class="fas fa-plus mr-2"></i>Add Items
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'home' %}" class="inline-block bg-white hover:bg-gray-50 border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold transition">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function copyCode() {
+            const code = '{{ registry.unique_code }}';
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Registry link copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>

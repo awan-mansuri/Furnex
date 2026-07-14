@@ -1,0 +1,81 @@
+SUMMARY (easy)
+- Databases: 1 (SQLite)
+- Models (tables): 16
+- Primary keys: 16
+- Foreign keys: 20
+- Unique constraints: 5
+- select_related: 8 locations (5 admin, 3 views)
+- prefetch_related: 0
+- annotate: 4
+- aggregate: 2
+- raw SQL JOIN: 0
+
+Notes on JOIN types
+- select_related uses SQL JOINs (INNER JOIN when FK is non-nullable; LEFT OUTER JOIN when FK is nullable).
+- annotate/values on related fields trigger the necessary joins implicitly.
+
+DATABASES USED
+- default: django.db.backends.sqlite3 → file: furnex_final/db.sqlite3
+
+PRIMARY KEYS (implicit unless specified; using DEFAULT_AUTO_FIELD BigAutoField)
+- core.Category: id (PK)
+- core.Product: id (PK)
+- core.Order: id (PK)
+- core.OrderItem: id (PK)
+- core.Cart: id (PK)
+- core.Discount: id (PK)
+- core.EmailQueue: id (PK)
+- core.Review: id (PK)
+- core.UserAddress: id (PK)
+- core.Contact: id (PK)
+- core.Coupon: id (PK)
+- core.UserCoupon: id (PK)
+- core.Wishlist: id (PK)
+- core.Compare: id (PK)
+- core.UserNotification: id (PK)
+- auth.User: id (PK) [Django built-in]
+
+FOREIGN KEYS
+- core.Product.category → core.Category(id) [on_delete=CASCADE]
+- core.Order.user → auth.User(id) [on_delete=CASCADE, null=True, blank=True]
+- core.OrderItem.order → core.Order(id) [on_delete=CASCADE]
+- core.OrderItem.product → core.Product(id) [on_delete=CASCADE]
+- core.Cart.user → auth.User(id) [on_delete=CASCADE, null=True, blank=True]
+- core.Cart.product → core.Product(id) [on_delete=CASCADE]
+- core.Discount.user → auth.User(id) [on_delete=CASCADE, null=True, blank=True]
+- core.Review.product → core.Product(id) [on_delete=CASCADE, related_name='reviews']
+- core.Review.user → auth.User(id) [on_delete=SET_NULL, null=True, blank=True]
+- core.UserAddress.user → auth.User(id) [on_delete=CASCADE, related_name='addresses']
+- core.Coupon.user → auth.User(id) [on_delete=CASCADE, related_name='user_coupons']
+- core.UserCoupon.user → auth.User(id) [on_delete=CASCADE, related_name='coupon_usage']
+- core.UserCoupon.coupon → core.Coupon(id) [on_delete=CASCADE, related_name='usage_records']
+- core.UserCoupon.order → core.Order(id) [on_delete=CASCADE, related_name='coupon_used']
+- core.Wishlist.user → auth.User(id) [on_delete=CASCADE, related_name='wishlist_items']
+- core.Wishlist.product → core.Product(id) [on_delete=CASCADE, related_name='wishlisted_by']
+- core.Compare.user → auth.User(id) [on_delete=CASCADE, related_name='compared_by']
+- core.Compare.product → core.Product(id) [on_delete=CASCADE, related_name='compared_by']
+- core.UserNotification.user → auth.User(id) [on_delete=CASCADE, related_name='notifications']
+- core.UserNotification.coupon → core.Coupon(id) [on_delete=CASCADE, null=True, blank=True, related_name='notifications']
+
+UNIQUE CONSTRAINTS / COMPOSITE UNIQUES
+- core.Cart.unique_together: (user, product), (session_key, product)
+- core.Wishlist.unique_together: (user, product)
+- core.Compare.unique_together: (user, product)
+- core.Coupon.code: unique=True
+
+JOIN USAGE (ORM-level)
+- select_related:
+  • core/admin.py: ModelAdmin.get_queryset uses select_related for Coupon (user), UserNotification (user, coupon), UserCoupon (user, coupon, order), Wishlist (user, product), Compare (user, product)
+  • core/views.py: wishlist_view and compare_view select_related('product'); user_profile_view also uses select_related on wishlist/compare queries
+- annotate/aggregation (joins implied via relations):
+  • core/views.py shop(): annotate(effective_price=F('price') - Coalesce(F('discount_price'), 0)) on Product queryset
+  • core/views.py admin_dashboard_data(): Order.annotate(month=TruncMonth('created_at')).values('month').annotate(total_amount=Sum('total'))
+  • core/views.py admin_dashboard_data(): OrderItem.values('product__name').annotate(total_qty=Sum('quantity')).order_by('-total_qty')
+  • core/views.py admin_model_counts(): aggregates Sum('total') on paid orders
+- prefetch_related: None found
+- raw SQL JOIN: None found
+
+NOTES
+- Only one database configured: SQLite (default). No replicas or routers.
+- DEFAULT_AUTO_FIELD is BigAutoField, so all implicit PKs are 64-bit integers.
+- Relationships and aggregations above represent how joins happen under the hood even without explicit SQL JOIN statements.

@@ -1,0 +1,52 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="module">
+    <h2>{{ title }}</h2>
+    {% if title and 'FAQ' in title %}
+    <p>Upload a CSV file with headers: <code>question,answer,tags,is_active(optional)</code></p>
+    <ul>
+      <li><strong>question</strong>: Required</li>
+      <li><strong>answer</strong>: Required</li>
+      <li><strong>tags</strong>: Optional, comma-separated</li>
+      <li><strong>is_active</strong>: Optional (1/0, true/false, yes/no); defaults to active</li>
+    </ul>
+    {% else %}
+    <p>Upload a CSV file with headers: <code>name,category,price,discount_price,stock,description,image</code></p>
+    <ul>
+      <li><strong>category</strong>: If it does not exist, it will be created</li>
+      <li><strong>price</strong>, <strong>discount_price</strong>: Decimals, optional discount</li>
+      <li><strong>stock</strong>: Integer</li>
+      <li><strong>image</strong>: Optional local path; if relative, it is resolved under MEDIA_ROOT; only local files supported</li>
+    </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+      </table>
+      <div class="submit-row">
+        <input type="submit" class="default" value="Import">
+        <a href=".." class="button cancel-link">Cancel</a>
+      </div>
+    </form>
+    
+    <hr>
+    <p style="color:#000;">Example CSV:</p>
+    {% if title and 'FAQ' in title %}
+<pre style="background:#f8f9fa;padding:12px;border:1px solid #ddd;overflow:auto;color:#000;">
+question,answer,tags,is_active
+"What is your return policy?","You can return within 10 days.","returns,policy",true
+"Do you offer assembly?","Yes, assembly service is available.","assembly,service",1
+</pre>
+    {% else %}
+<pre style="background:#f8f9fa;padding:12px;border:1px solid #ddd;overflow:auto;color:#000;">
+name,category,price,discount_price,stock,description,image
+"Modern Sofa","Sofas",24999,2000,10,"Comfortable modern sofa","products/sofa1.jpg"
+"Dining Table","Tables",15999,,5,"Solid wood dining table","products/table1.jpg"
+</pre>
+    {% endif %}
+  </div>
+{% endblock %}

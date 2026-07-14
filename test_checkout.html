@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout Debug Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-8">
+    <h1 class="text-2xl font-bold mb-4">Checkout Debug Test</h1>
+    
+    <div class="space-y-4">
+        <div class="border p-4">
+            <h2 class="font-bold">Payment Method Selection</h2>
+            <input type="hidden" id="payment_method_field" value="">
+            
+            <div onclick="selectPaymentMethod('razorpay')" class="cursor-pointer border-2 p-4 my-2 payment-option">
+                Click to select Razorpay
+            </div>
+            
+            <div onclick="selectPaymentMethod('cod')" class="cursor-pointer border-2 p-4 my-2 payment-option">
+                Click to select COD
+            </div>
+            
+            <p class="mt-4">Selected method: <span id="selected-method" class="font-bold">None</span></p>
+        </div>
+        
+        <div class="border p-4">
+            <h2 class="font-bold mb-2">Payment Buttons</h2>
+            <button id="pay-with-razorpay" class="bg-green-500 text-white px-4 py-2 rounded hidden">
+                Razorpay Button
+            </button>
+            <button id="cod-button" class="bg-blue-500 text-white px-4 py-2 rounded hidden">
+                COD Button
+            </button>
+        </div>
+        
+        <div class="border p-4">
+            <h2 class="font-bold mb-2">Console Output:</h2>
+            <div id="console" class="bg-gray-100 p-2 font-mono text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const consoleDiv = document.getElementById('console');
+            consoleDiv.innerHTML += message + '<br>';
+            console.log(message);
+        }
+
+        window.selectPaymentMethod = function(method) {
+            log('selectPaymentMethod called with: ' + method);
+            
+            // Update hidden form field
+            document.getElementById('payment_method_field').value = method;
+            document.getElementById('selected-method').textContent = method;
+            
+            // Update visual selection for all payment options
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('border-green-500', 'bg-green-50');
+                option.classList.add('border-gray-200');
+            });
+            
+            // Add selected class to the clicked option
+            const selectedOption = event.currentTarget;
+            selectedOption.classList.remove('border-gray-200');
+            selectedOption.classList.add('border-green-500', 'bg-green-50');
+            
+            // Update payment buttons
+            updatePaymentUI();
+        }
+
+        function updatePaymentUI() {
+            const method = document.getElementById('payment_method_field').value;
+            const razorpayBtn = document.getElementById('pay-with-razorpay');
+            const codBtn = document.getElementById('cod-button');
+            
+            log('updatePaymentUI called. Method: ' + method);
+            
+            if (method === 'cod') {
+                log('Showing COD button, hiding Razorpay');
+                razorpayBtn.classList.add('hidden');
+                codBtn.classList.remove('hidden');
+            } else if (method === 'razorpay') {
+                log('Showing Razorpay button, hiding COD');
+                razorpayBtn.classList.remove('hidden');
+                codBtn.classList.add('hidden');
+            } else {
+                log('No method selected, hiding both buttons');
+                razorpayBtn.classList.add('hidden');
+                codBtn.classList.add('hidden');
+            }
+        }
+
+        // Initialize
+        updatePaymentUI();
+        log('Page loaded and initialized');
+
+        // Add click handlers to buttons
+        document.getElementById('pay-with-razorpay').addEventListener('click', function() {
+            log('Razorpay button clicked!');
+            alert('Razorpay button works!');
+        });
+
+        document.getElementById('cod-button').addEventListener('click', function() {
+            log('COD button clicked!');
+            alert('COD button works!');
+        });
+    </script>
+</body>
+</html>

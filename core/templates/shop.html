@@ -1,0 +1,970 @@
+{% load static %}
+<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Untree.co">
+  <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+
+  <meta name="description" content="" />
+  <meta name="keywords" content="bootstrap, bootstrap4" />
+
+				<!-- Bootstrap CSS -->
+<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+<style>
+/* Catalog card look */
+.catalog-card { border-radius: 20px; background:#ffffff; border:1px solid #eee; box-shadow: 0 12px 32px rgba(0,0,0,0.07); transition: all .3s ease; }
+.catalog-card:hover { box-shadow: 0 18px 45px rgba(0,0,0,0.10); transform: translateY(-2px); }
+.thumb { background: #fbf7f3; border-radius: 18px; margin: 16px; height: 300px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.thumb img { max-height: 90%; width:auto; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.08)); }
+.badge-sale { background:#fee2e2 !important; color:#b91c1c !important; border-radius: 999px; font-size: .7rem; padding: .25rem .6rem; }
+.meta { padding: 0 20px 16px 20px; }
+.meta .category { text-transform: uppercase; font-size: .68rem; letter-spacing: .06em; color:#9aa1a7; margin-bottom: 6px; }
+.meta .name-price { display:flex; align-items:center; justify-content:space-between; }
+.meta .name { font-weight:600; color:#222; margin:0; font-size:1.05rem; }
+.meta .price { color:#166534; font-weight:700; }
+.meta .old { color:#9ca3af; text-decoration: line-through; font-size:.85rem; margin-left:8px; }
+.cart-fab, .notify-fab { position:absolute; right:14px; width:42px; height:42px; border-radius:999px; background:#1f2937; color:#fff; display:flex; align-items:center; justify-content:center; box-shadow: 0 8px 18px rgba(0,0,0,0.20); border:none; z-index:3; }
+.cart-fab { bottom:14px; }
+.notify-fab { bottom:62px; }
+.cart-fab:hover, .notify-fab:hover { background:#111827; transform: scale(1.05); }
+.thumb .thumb-link { position:absolute; inset:0; z-index:1; }
+
+/* Custom styles for enhanced user experience */
+.dropdown-item:hover {
+    background: linear-gradient(45deg, #6c757d, #495057) !important;
+    color: white !important;
+    transform: translateX(5px);
+}
+
+.dropdown-item:hover i {
+    color: white !important;
+}
+
+.form-control:focus {
+    border-color: #6c757d !important;
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+    transform: translateY(-2px);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important;
+}
+
+.nav-link:hover {
+    transform: scale(1.05);
+}
+
+/* Tab hover effects */
+.nav-tabs .nav-link:hover {
+    background: linear-gradient(45deg, #6c757d, #495057) !important;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+/* Modal animation */
+.modal.fade .modal-dialog {
+    transform: scale(0.8);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+}
+
+/* Form input animations */
+.form-control {
+    transition: all 0.3s ease;
+}
+
+.form-control:hover {
+    border-color: #6c757d;
+    transform: translateY(-1px);
+}
+
+/* Checkbox styling */
+.form-check-input:checked {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.form-check-input:focus {
+    border-color: #6c757d;
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+}
+
+/* Navigation visibility fixes */
+.custom-navbar-nav .nav-link {
+    color: #ffffff !important;
+    opacity: 0.8;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.custom-navbar-nav .nav-link:hover,
+.custom-navbar-nav .nav-item.active .nav-link {
+    opacity: 1;
+    color: #ffffff !important;
+}
+
+.custom-navbar-nav .nav-item.active .nav-link {
+    font-weight: 600;
+}
+
+/* Ensure dropdown items are visible */
+.dropdown-menu {
+    background: white;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.dropdown-item {
+    color: #333;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(45deg, #6c757d, #495057) !important;
+    color: white !important;
+    transform: translateX(5px);
+}
+
+/* Cart and user icons visibility */
+.custom-navbar-cta .nav-link img {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.custom-navbar-cta .nav-link:hover img {
+    opacity: 1;
+    transform: scale(1.1);
+}
+/* Enhanced Product Card Styles */
+.product-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-color: rgba(108, 117, 125, 0.3);
+}
+
+.product-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.product-card:hover .position-absolute[style*="opacity: 0"] {
+    opacity: 1 !important;
+}
+
+/* Enhanced Button Styles */
+.btn {
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #3d4449 100%);
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+/* Quantity Selector Enhancements */
+.quantity-btn {
+    transition: all 0.2s ease;
+    border: 2px solid #e9ecef;
+}
+
+.quantity-btn:hover {
+    background: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    transform: scale(1.1);
+}
+
+.quantity-input {
+    border: 2px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.quantity-input:focus {
+    border-color: #6c757d;
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+}
+
+/* Badge Enhancements */
+.badge {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Card Image Enhancements */
+.card-img-top {
+    transition: transform 0.3s ease;
+}
+
+/* Loading Animation */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Enhanced Form Controls */
+.form-control, .form-select {
+    transition: all 0.3s ease;
+    border: 2px solid #e9ecef;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #6c757d;
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Input Group Enhancements */
+.input-group-text {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.input-group:focus-within .input-group-text {
+    border-color: #6c757d;
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+}
+/* Shop layout refinements */
+.shop-container { max-width: 1200px; margin: 0 auto; }
+.product-image-wrap { aspect-ratio: 4 / 3; background: #f8f9fa; }
+.product-card .card-body { display: flex; flex-direction: column; }
+.product-card .d-grid { margin-top: auto; }
+</style>
+		<title>Furnex - Shop</title>
+	</head>
+
+	<body>
+
+    <!-- Toast container -->
+    <div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
+
+		<!-- Start Header/Navigation -->
+		<nav class="custom-navbar navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+
+			<div class="container">
+				<a class="navbar-brand" href="{% url 'home' %}">Furnex<span>.</span></a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarsFurni">
+					<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'home' %}">Home</a>
+						</li>
+						<li class="nav-item active">
+							<a class="nav-link" href="{% url 'shop' %}">Shop</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'about' %}">About us</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'services' %}">Services</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'blog' %}">Blog</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'contact' %}">Contact us</a>
+						</li>
+					</ul>
+
+					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+						{% include '_navbar.html' %}
+						<li><a class="nav-link" href="{% url 'cart' %}"><img src="{% static 'images/cart.svg' %}"></a></li>
+					</ul>
+				</div>
+			</div>
+				
+		</nav>
+		<!-- End Header/Navigation -->
+
+		<!-- Start Hero Section -->
+		<div class="hero">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-5">
+						<div class="intro-excerpt">
+							<h1>Shop Furnex</h1>
+							<p class="mb-4">Browse our curated selection of modern, sustainable furniture. From statement sofas to elegant dining sets, Furnex offers quality and style for every room and every budget.</p>
+							<p><a href="#products" class="btn btn-secondary me-2">Shop Now</a><a href="#products" class="btn btn-white-outline">Explore</a></p>
+						</div>
+					</div>
+					<div class="col-lg-7">
+						<div class="hero-img-wrap">
+							<img src="{% static 'images/couch.png' %}" class="img-fluid" alt="Furniture">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Hero Section -->
+
+		
+
+		<!-- Dynamic Product Section -->
+<div class="untree_co-section product-section before-footer-section" id="products" style="background:#faf8f6;">
+    <div class="container shop-container">
+        <!-- Enhanced Filters & Search -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                    <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); border: none;">
+                        <h5 class="text-white mb-0 d-flex align-items-center">
+                            <i class="fas fa-filter me-2"></i>Filter & Search Products
+                        </h5>
+                    </div>
+                    <div class="card-body p-4 tw-p-6">
+                        <form method="get" class="row g-3" id="search-form">
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-search me-2 text-primary"></i>Search Products
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="fas fa-search text-muted"></i>
+                                    </span>
+                                    <input class="form-control border-start-0" type="text" name="q" id="search-input" value="{{ q }}" placeholder="Search products..." style="border-radius: 0 10px 10px 0;">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-tags me-2 text-primary"></i>Category
+                                </label>
+                                <select class="form-select" name="category" id="category-select" style="border-radius: 10px;">
+                                    <option value="">All Categories</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:'i' %}selected{% endif %}>{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-rupee-sign me-2 text-primary"></i>Min Price
+                                </label>
+                                <input class="form-control" type="number" name="min" id="min-price" value="{{ price_min }}" min="0" placeholder="0" style="border-radius: 10px;">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-rupee-sign me-2 text-primary"></i>Max Price
+                                </label>
+                                <input class="form-control" type="number" name="max" id="max-price" value="{{ price_max }}" min="0" placeholder="0" style="border-radius: 10px;">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button class="btn btn-primary w-100 fw-bold" type="submit" id="apply-filters-btn" style="border-radius: 10px; padding: 12px;">
+                                    <i class="fas fa-filter me-2"></i>Apply Filters
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Enhanced Products Display -->
+        <div class="row">
+            {% for product in products %}
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 border-0 catalog-card position-relative overflow-hidden">
+                    <!-- Catalog Thumb -->
+                    <div class="thumb position-relative">
+                        {% if product.image %}
+                          <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                          <img src="{% static 'images/product-1.png' %}" alt="{{ product.name }}">
+                        {% endif %}
+                        <a href="{% url 'product_detail' product.id %}" class="thumb-link" aria-label="{{ product.name }}"></a>
+                        {% if product.discount_price %}
+                          <span class="badge badge-sale position-absolute" style="top:12px; right:12px;">Sale</span>
+                        {% endif %}
+                        {% if product.stock == 0 %}
+                          <span class="badge bg-secondary position-absolute" style="top:12px; left:12px; border-radius:999px;">Out</span>
+                        {% endif %}
+                        <div class="relative">
+                          {% if product.stock <= 0 %}
+                            <!-- Notify bell above cart when out of stock -->
+                            <button type="button" class="notify-fab" onclick="notifyBackInStock({{ product.id }})" title="Notify me when in stock">
+                              <i class="fas fa-bell"></i>
+                            </button>
+                          {% endif %}
+                          <!-- Cart Button -->
+                          <button type="button" class="cart-fab" data-product="{{ product.id }}" {% if product.stock <= 0 %}disabled title="Out of stock"{% else %}onclick="submitAddToCart(this)" title="Add to Cart"{% endif %}>
+                            <i class="fas fa-shopping-cart"></i>
+                          </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Info -->
+                    <div class="card-body p-4">
+                        <div class="meta">
+                          {% if product.category %}
+                            <div class="category">{{ product.category.name }}</div>
+                          {% endif %}
+                          <div class="name-price">
+                            <h6 class="name">{{ product.name }}</h6>
+                            <div>
+                              {% if product.discount_price %}
+                                <span class="price">Rs. {{ product.final_price|floatformat:0 }}</span>
+                                <span class="old">Rs. {{ product.price|floatformat:0 }}</span>
+                              {% else %}
+                                <span class="price">Rs. {{ product.price|floatformat:0 }}</span>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <!-- Stock Info -->
+                        {% if product.stock > 0 %}
+                            <div class="mb-3">
+                                <small class="text-success" data-stock-container="{{ product.id }}"><i class="fas fa-circle me-1" style="font-size:.55rem;"></i><span class="stock-value" data-product="{{ product.id }}">{{ product.stock }}</span> in stock</small>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Action Buttons (hidden; floating cart triggers submit) -->
+                        <div class="d-grid gap-2">
+                            <form method="post" action="{% url 'add_to_cart' %}" class="add-to-cart-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn add-to-cart-btn d-none">Add to Cart</button>
+                            </form>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+		<!-- End Footer Section -->	
+
+		<!-- Login/Signup Modal - Only show when not authenticated -->
+        {% if not user.is_authenticated %}
+        <div class="modal fade" id="loginSignupModal" tabindex="-1" aria-labelledby="loginSignupModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;">
+              <div class="modal-header" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 25px 30px;">
+                <h5 class="modal-title fw-bold" id="loginSignupModalLabel" style="font-size: 1.5rem;">
+                  <i class="fas fa-user-circle me-2"></i>Welcome to Furnex
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body p-4">
+                <!-- Success/Error Messages in Modal -->
+                {% if messages %}
+                <div class="mb-4">
+                  {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none;">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle text-success{% elif message.tags == 'error' %}exclamation-circle text-danger{% else %}info-circle text-info{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %}
+                
+                <ul class="nav nav-tabs mb-4" id="loginSignupTabs" role="tablist" style="border: none;">
+                  <li class="nav-item" role="presentation" style="flex: 1;">
+                    <button class="nav-link active fw-bold" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true" style="border: none; border-radius: 10px 10px 0 0; background: linear-gradient(45deg, #6c757d, #495057); color: white; padding: 15px; transition: all 0.3s ease;">
+                      <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation" style="flex: 1;">
+                    <button class="nav-link fw-bold" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false" style="border: none; border-radius: 10px 10px 0 0; background: #e9ecef; color: #495057; padding: 15px; transition: all 0.3s ease;">
+                      <i class="fas fa-user-plus me-2"></i>Register
+                    </button>
+                  </li>
+                </ul>
+                <div class="tab-content" id="loginSignupTabsContent">
+                  <!-- Login Tab Content -->
+                  <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                    <form method="post" action="{% url 'login' %}">
+                      {% csrf_token %}
+                      <div class="mb-4">
+                        <label for="loginUsername" class="form-label fw-semibold text-dark">
+                          <i class="fas fa-user me-2" style="color: #6c757d;"></i>Username
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="loginUsername" name="username" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease;" placeholder="Enter your username">
+                      </div>
+                      <div class="mb-4">
+                        <label for="loginPassword" class="form-label fw-semibold text-dark">
+                          <i class="fas fa-lock me-2" style="color: #6c757d;"></i>Password
+                        </label>
+                        <input type="password" class="form-control form-control-lg" id="loginPassword" name="password" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease;" placeholder="Enter your password">
+                      </div>
+                      <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me" style="width: 18px; height: 18px;">
+                        <label class="form-check-label fw-semibold" for="rememberMe" style="margin-left: 8px;">
+                          <i class="fas fa-check-circle me-1 text-success"></i>Remember me
+                        </label>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-100 fw-bold" style="background: linear-gradient(45deg, #6c757d, #495057); border: none; border-radius: 10px; padding: 15px; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4); transition: all 0.3s ease;">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login to Your Account
+                      </button>
+                    </form>
+                  </div>
+                  
+                  <!-- Register Tab Content -->
+                  <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                    <form method="post" action="{% url 'register' %}">
+                      {% csrf_token %}
+                      <div class="mb-3">
+                        <label for="registerUsername" class="form-label fw-semibold text-dark">
+                          <i class="fas fa-user me-2" style="color: #6c757d;"></i>Username
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="registerUsername" name="username" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease;" placeholder="Choose a username">
+                      </div>
+                      <div class="mb-3">
+                        <label for="registerEmail" class="form-label fw-semibold text-dark">
+                          <i class="fas fa-envelope me-2" style="color: #6c757d;"></i>Email
+                        </label>
+                        <input type="email" class="form-control form-control-lg" id="registerEmail" name="email" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease;" placeholder="Enter your email">
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label for="registerFirstName" class="form-label fw-semibold text-dark">
+                            <i class="fas fa-user-tag me-2" style="color: #6c757d;"></i>First Name
+                          </label>
+                          <input type="text" class="form-control form-control-lg" id="registerFirstName" name="first_name" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease;" placeholder="First name">
+                        </div>
+                        <div class="col-md-6">
+                          <label for="registerLastName" class="form-label fw-semibold text-dark">
+                            <i class="fas fa-user-tag me-2" style="color: #6c757d;"></i>Last Name
+                          </label>
+                          <input type="text" class="form-control form-control-lg" id="registerLastName" name="last_name" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease;" placeholder="Last name">
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="registerPassword1" class="form-label fw-semibold text-dark">
+                          <i class="fas fa-lock me-2" style="color: #6c757d;"></i>Password
+                        </label>
+                        <input type="password" class="form-control form-control-lg" id="registerPassword1" name="password1" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease;" placeholder="Create a password">
+                      </div>
+                      <div class="mb-4">
+                        <label for="registerPassword2" class="form-label fw-semibold text-dark">
+                          <i class="fas fa-lock me-2" style="color: #6c757d;"></i>Confirm Password
+                        </label>
+                        <input type="password" class="form-control form-control-lg" id="registerPassword2" name="password2" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease;" placeholder="Confirm your password">
+                      </div>
+                      <button type="submit" class="btn btn-success w-100 fw-bold" style="background: linear-gradient(45deg, #198754, #157347); border: none; border-radius: 10px; padding: 15px; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(25, 135, 84, 0.4); transition: all 0.3s ease;">
+                        <i class="fas fa-user-plus me-2"></i>Create Your Account
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+		<footer class="footer-section">
+			<div class="container relative">
+
+				<div class="sofa-img">
+					<img src="{% static 'images/sofa.png' %}" alt="Image" class="img-fluid">
+				</div>
+
+				<div class="row g-5 mb-5">
+					<div class="col-lg-4">
+						<div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Furnex<span>.</span></a></div>
+Discover comfort, style, and craftsmanship. At Furnex, we design furniture that turns houses into homes. Every piece is built with care, using high-quality materials and timeless aesthetics.
+
+Create the space you love — effortlessly.
+
+
+						<ul class="list-unstyled custom-social">
+							<li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+						</ul>
+					</div>
+
+					<div class="col-lg-8">
+						<div class="row links-wrap">
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">About us</a></li>
+									<li><a href="#">Services</a></li>
+									<li><a href="#">Blog</a></li>
+									<li><a href="#">Contact us</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Support</a></li>
+									<li><a href="#">Knowledge base</a></li>
+									<li><a href="#">Live chat</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Jobs</a></li>
+									<li><a href="#">Our team</a></li>
+									<li><a href="#">Leadership</a></li>
+									<li><a href="#">Privacy Policy</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Nordic Chair</a></li>
+									<li><a href="#">Kruzo Aero</a></li>
+									<li><a href="#">Ergonomic Chair</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="border-top copyright">
+					<div class="row pt-4">
+						<div class="col-lg-6">
+							<p class="mb-2 text-center text-lg-start">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. 
+            </p>
+						</div>
+
+						<div class="col-lg-6 text-center text-lg-end">
+							<ul class="list-unstyled d-inline-flex ms-auto">
+								<li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+								<li><a href="#">Privacy Policy</a></li>
+							</ul>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+		</footer>
+		<!-- End Footer Section -->	
+
+		<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+		<script src="{% static 'js/tiny-slider.js' %}"></script>
+		<script src="{% static 'js/custom.js' %}"></script>
+		
+		<script>
+		// Auto-show modal when there are messages
+		document.addEventListener('DOMContentLoaded', function() {
+			console.log('DOM fully loaded');
+			console.log('Products:', document.querySelectorAll('.product-item').length);
+			console.log('Categories:', document.querySelectorAll('.category-filter a').length);
+			{% if messages and not user.is_authenticated %}
+			var modal = new bootstrap.Modal(document.getElementById('loginSignupModal'));
+			modal.show();
+			{% endif %}
+
+      // Toast helper
+      function showToast(message, type) {
+        const container = document.getElementById('toastContainer');
+        const wrap = document.createElement('div');
+        const bg = type === 'success' ? 'text-bg-success' : type === 'warning' ? 'text-bg-warning' : 'text-bg-danger';
+        wrap.className = `toast align-items-center ${bg} border-0 mb-2`;
+        wrap.setAttribute('role','alert');
+        wrap.setAttribute('aria-live','assertive');
+        wrap.setAttribute('aria-atomic','true');
+        wrap.innerHTML = `
+          <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>`;
+        container.appendChild(wrap);
+        const t = new bootstrap.Toast(wrap, { delay: 2000 });
+        t.show();
+        wrap.addEventListener('hidden.bs.toast', () => wrap.remove());
+      }
+
+      // Ensure cart-fab triggers our submit listener (not native submit)
+      window.submitAddToCart = function(btn) {
+        const card = btn.closest('.card');
+        const form = card ? card.querySelector('form.add-to-cart-form') : null;
+        if (!form) return;
+        const evt = new Event('submit', { cancelable: true, bubbles: true });
+        form.dispatchEvent(evt);
+      }
+
+      // CSRF helper for AJAX
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      // Notify bell handler
+      window.notifyBackInStock = async function(productId) {
+        {% if user.is_authenticated %}
+          try {
+            const res = await fetch('{% url "create_back_in_stock_alert" %}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+              },
+              body: JSON.stringify({ product_id: productId })
+            });
+            const data = await res.json();
+            if (data.success) {
+              showToast(data.message || 'We’ll notify you when this is back in stock.', 'warning');
+            } else {
+              showToast(data.message || 'Could not create alert.', 'danger');
+            }
+          } catch (e) {
+            showToast('Network error while creating alert.', 'danger');
+          }
+        {% else %}
+          const modalEl = document.getElementById('loginSignupModal');
+          if (modalEl) {
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+          } else {
+            showToast('Please login to set back-in-stock alerts.', 'warning');
+          }
+        {% endif %}
+      }
+
+			// Auto-search functionality
+			let searchTimeout;
+			const searchInput = document.getElementById('search-input');
+			const categorySelect = document.getElementById('category-select');
+			const minPriceInput = document.getElementById('min-price');
+			const maxPriceInput = document.getElementById('max-price');
+			const searchForm = document.getElementById('search-form');
+
+			function performSearch() {
+				searchForm.submit();
+			}
+
+			// Auto-search on typing (with debounce)
+			if (searchInput) {
+				searchInput.addEventListener('input', function() {
+					clearTimeout(searchTimeout);
+					searchTimeout = setTimeout(performSearch, 500); // Wait 500ms after user stops typing
+				});
+			}
+
+			// Auto-search on category change
+			if (categorySelect) {
+				categorySelect.addEventListener('change', performSearch);
+			}
+
+			// Auto-search on price change (with debounce)
+			if (minPriceInput) {
+				minPriceInput.addEventListener('input', function() {
+					clearTimeout(searchTimeout);
+					searchTimeout = setTimeout(performSearch, 1000); // Wait 1s for price inputs
+				});
+			}
+
+			if (maxPriceInput) {
+				maxPriceInput.addEventListener('input', function() {
+					clearTimeout(searchTimeout);
+					searchTimeout = setTimeout(performSearch, 1000); // Wait 1s for price inputs
+				});
+			}
+
+
+			// Quantity UI removed; no handlers needed
+
+			// Quantity inputs removed; no change handlers
+
+			// Handle add to cart form submissions
+			document.querySelectorAll('.add-to-cart-form').forEach(form => {
+				form.addEventListener('submit', async function(e) {
+					e.preventDefault();
+					
+					const formData = new FormData(this);
+					const button = this.querySelector('.add-to-cart-btn');
+					const originalText = button ? button.innerHTML : '';
+            const card = this.closest('.card');
+            const nameEl = card ? card.querySelector('.name') : null;
+            const productName = nameEl ? nameEl.textContent.trim() : 'Item';
+            const productId = formData.get('product_id');
+					
+					// Disable button and show loading (if present)
+					if (button) { button.disabled = true; button.innerHTML = '<i class=\"fas fa-spinner fa-spin me-2\"></i>Adding...'; }
+					
+            try {
+					const res = await fetch("{% url 'add_to_cart' %}", {
+						method: 'POST',
+						body: formData,
+						headers: {
+							'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+						},
+            credentials: 'same-origin'
+					});
+            const data = await res.json();
+            if (data && data.success) {
+              showToast(productName + ' added to cart', 'success');
+              // Update stock value
+              const stockVal = card ? card.querySelector('.stock-value') : null;
+              if (stockVal && typeof data.updated_stock !== 'undefined') {
+                stockVal.textContent = data.updated_stock;
+              }
+              // Disable/enable cart floating button
+              const fab = card ? card.querySelector('.cart-fab') : null;
+              if (fab && typeof data.updated_stock !== 'undefined') {
+                const disable = data.updated_stock <= 0;
+                fab.disabled = disable;
+                fab.style.opacity = disable ? '0.5' : '1';
+                fab.style.pointerEvents = disable ? 'none' : 'auto';
+              }
+              // Toggle Out badge
+              const thumb = card ? card.querySelector('.thumb') : null;
+              if (thumb && typeof data.updated_stock !== 'undefined') {
+                let outBadge = thumb.querySelector('.out-badge');
+                if (data.updated_stock <= 0) {
+                  if (!outBadge) {
+                    outBadge = document.createElement('span');
+                    outBadge.className = 'badge bg-secondary position-absolute out-badge';
+                    outBadge.style.cssText = 'top:12px; left:12px; border-radius:999px;';
+                    outBadge.textContent = 'Out';
+                    thumb.appendChild(outBadge);
+                  }
+                } else if (outBadge) {
+                  outBadge.remove();
+                }
+              }
+              if (button) {
+                button.innerHTML = '<i class=\"fas fa-check me-2\"></i>Added!';
+                button.classList.remove('btn-dark');
+                button.classList.add('btn-success');
+                setTimeout(() => {
+                  button.innerHTML = originalText;
+                  button.classList.remove('btn-success');
+                  button.classList.add('btn-dark');
+                  button.disabled = false;
+                }, 2000);
+              }
+            } else {
+              showToast('Error adding product to cart', 'danger');
+              if (button) {
+                button.innerHTML = '<i class=\"fas fa-times me-2\"></i>Error';
+                button.classList.remove('btn-dark');
+                button.classList.add('btn-danger');
+                setTimeout(() => {
+                  button.innerHTML = originalText;
+                  button.classList.remove('btn-danger');
+                  button.classList.add('btn-dark');
+                  button.disabled = false;
+                }, 2000);
+              }
+            }
+            } catch (error) {
+              console.error('Error:', error);
+              showToast('Network error. Please try again.', 'danger');
+              if (button) {
+                button.innerHTML = '<i class=\"fas fa-times me-2\"></i>Error';
+                button.classList.remove('btn-dark');
+                button.classList.add('btn-danger');
+                setTimeout(() => {
+                  button.innerHTML = originalText;
+                  button.classList.remove('btn-danger');
+                  button.classList.add('btn-dark');
+                  button.disabled = false;
+                }, 2000);
+              }
+            }
+				});
+			});
+
+			// Handle back-in-stock alert requests
+			document.addEventListener('DOMContentLoaded', function() {
+				document.querySelectorAll('.notify-bell-btn').forEach(function(btn) {
+					btn.addEventListener('click', function(e) {
+						e.stopPropagation();
+						var prodId = this.getAttribute('data-product-id');
+						fetch('/back-in-stock-alert/', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json', "X-CSRFToken": (document.querySelector('input[name=csrfmiddlewaretoken]')||{}).value },
+							body: JSON.stringify({ product_id: prodId })
+						})
+						.then(r => r.json())
+						.then(data => {
+							if (data.success) {
+								this.style.display = 'none';
+								showToast('We will notify you in your profile when this product is back in stock!', 'success');
+							} else {
+								showToast(data.message || 'Notification already set!', 'info');
+							}
+						});
+					});
+				});
+			});
+		});
+
+		</script>
+		
+		<!-- Smart Context-Aware Chatbot Widget -->
+		{% include 'smart_chat_widget.html' %}
+	</body>
+
+</html>

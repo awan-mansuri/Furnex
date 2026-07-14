@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>Deploy stock for {{ stock.product_name }}</h1>
+  <p>Category: {{ stock.product_category }}</p>
+  <p>Price: {{ stock.product_price }}</p>
+  <p>Current stock available to deploy: {{ stock.current_stock }}</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="default">Deploy and open Product</button>
+    <a href=".." class="button">Cancel</a>
+  </form>
+{% endblock %}
+
+

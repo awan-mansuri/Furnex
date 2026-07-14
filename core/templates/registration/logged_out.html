@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block bodyclass %}logout{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  html, body, #content, #container { background: #eff2f1; }
+  #header, .breadcrumbs, #content, #footer { display:none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<script>try{window.location.replace('{% url 'admin:login' %}');}catch(e){window.location.href='{% url 'admin:login' %}';}</script>
+{% endblock %}
+
+

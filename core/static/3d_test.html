@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model Test</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        model-viewer { 
+            width: 100%; 
+            height: 500px; 
+            background-color: #f0f0f0; 
+            border-radius: 8px;
+        }
+        .model-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        h2 { color: #333; }
+        p { color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>3D Model Viewer Test Page</h1>
+        <p>This page tests if the 3D models are loading properly.</p>
+        
+        <div class="model-section">
+            <h2>Model 1: Astronaut (Product ID 1)</h2>
+            <model-viewer 
+                src="models/astronaut.glb" 
+                alt="3D Astronaut model"
+                ar
+                auto-rotate
+                camera-controls
+                shadow-intensity="1">
+            </model-viewer>
+        </div>
+        
+        <div class="model-section">
+            <h2>Model 2: Chair (Product ID 4)</h2>
+            <model-viewer 
+                src="models/chair.glb" 
+                alt="3D Chair model"
+                ar
+                auto-rotate
+                camera-controls
+                shadow-intensity="1">
+            </model-viewer>
+        </div>
+        
+        <div class="model-section">
+            <h3>Controls:</h3>
+            <ul>
+                <li><strong>Rotate:</strong> Click and drag</li>
+                <li><strong>Zoom:</strong> Mouse wheel or pinch</li>
+                <li><strong>Pan:</strong> Right-click and drag</li>
+                <li><strong>AR (Mobile):</strong> Look for AR button on supported devices</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

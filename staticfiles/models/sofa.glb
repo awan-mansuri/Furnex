@@ -1,0 +1,10 @@
+This is a placeholder file for a 3D model.
+You need to replace this file with an actual .glb 3D model file.
+You can download 3D models from sites like:
+- Free3D.com
+- Sketchfab.com
+- Google Poly (archived)
+- Or create your own using Blender and export as GLB format.
+
+For testing, you can use any GLB file from:
+https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0

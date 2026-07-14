@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ product.name }} - Furnex</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand': '#3B5D50',
+            'brand-dark': '#2D4A3F',
+            'brand-light': '#DCE5E1',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    .image-zoom-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      cursor: zoom-out;
+    }
+    
+    .image-zoom-overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    /* Custom image container to maintain aspect ratio */
+    .image-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 75%; /* 4:3 aspect ratio */
+      overflow: hidden;
+      border-radius: 12px;
+    }
+    
+    .image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* Changed from cover to contain to show full image */
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header (same as profile/compare style) -->
+  <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2">
+          <span class="text-2xl font-bold text-brand">Furnex<span class="text-gray-600">.</span></span>
+        </a>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="{% url 'home' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Home</a>
+          <a href="{% url 'shop' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Shop</a>
+          <a href="{% url 'about' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">About us</a>
+          <a href="{% url 'services' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Services</a>
+          <a href="{% url 'blog' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Blog</a>
+          <a href="{% url 'contact' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Contact us</a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-brand-light transition-colors duration-200">
+            <i class="fas fa-shopping-cart text-gray-600 hover:text-brand"></i>
+          </a>
+          <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- Navigation -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
+      <div class="flex items-center space-x-2 text-sm text-gray-500">
+        <a href="{% url 'home' %}" class="hover:text-brand transition-colors duration-300">Home</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <a href="{% url 'shop' %}" class="hover:text-brand transition-colors duration-300">Shop</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-brand font-medium">{{ product.category.name }}</span>
+      </div>
+      
+      <div class="flex space-x-3">
+        <a href="{% url 'shop' %}" class="bg-white text-gray-700 border border-gray-300 hover:border-brand hover:text-brand font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center">
+          <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+      </div>
+    </div>
+
+    <!-- Product Card -->
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 animate-fade-in">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
+        <!-- Product Images -->
+        <div class="space-y-4">
+          <div class="bg-gray-50 rounded-2xl p-6">
+            <div class="image-container">
+              {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="cursor-zoom-in" id="main-product-image">
+              {% else %}
+              <img src="{% static 'images/product-1.png' %}" alt="{{ product.name }}" class="cursor-zoom-in" id="main-product-image">
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Thumbnail Gallery (if you have multiple images) -->
+          <div class="flex space-x-4 justify-center">
+            {% if product.image %}
+            <div class="w-20 h-20 border-2 border-brand rounded-lg overflow-hidden cursor-pointer">
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+            </div>
+            {% endif %}
+            <!-- Add more thumbnails here if available -->
+          </div>
+          
+          <!-- Image Zoom Overlay -->
+          <div class="image-zoom-overlay" id="image-zoom-overlay"></div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="space-y-6">
+          <!-- Category & Title -->
+          <div>
+            <span class="bg-brand-light text-brand text-xs font-medium uppercase tracking-wide py-1 px-3 rounded-full">
+              {{ product.category.name }}
+            </span>
+            <h1 class="text-2xl font-semibold text-gray-800 mt-4">{{ product.name }}</h1>
+          </div>
+
+          <!-- Rating -->
+          <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-1">
+              {% for i in "12345" %}
+                {% if forloop.counter <= avg_rating|floatformat:0 %}
+                  <i class="fas fa-star text-yellow-400 text-sm"></i>
+                {% else %}
+                  <i class="far fa-star text-yellow-400 text-sm"></i>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <span class="text-sm text-gray-500">({{ review_count }} reviews)</span>
+          </div>
+
+          <!-- Price -->
+          <div class="flex items-center space-x-4">
+            <span class="text-3xl font-bold text-brand">₹{{ product.final_price|floatformat:0 }}</span>
+            {% if product.discount_price %}
+              <span class="text-xl text-gray-500 line-through">₹{{ product.price|floatformat:0 }}</span>
+              <span class="bg-red-100 text-red-600 text-sm font-medium py-1 px-3 rounded-full">
+                Save ₹{{ product.discount_price|floatformat:0 }}
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Stock Status -->
+          <div class="flex items-center space-x-2" data-stock-status-id="{{ product.id }}">
+            {% if product.stock > 0 %}
+              <i class="fas fa-check-circle text-green-500"></i>
+              <span class="text-green-600 font-medium" data-stock-id="{{ product.id }}"><span class="stock-value">{{ product.stock }}</span> items in stock</span>
+            {% else %}
+              <i class="fas fa-times-circle text-red-500"></i>
+              <span class="text-red-600 font-medium" data-stock-id="{{ product.id }}">Out of stock</span>
+            {% endif %}
+          </div>
+
+          <!-- Description -->
+          <div>
+            <h3 class="text-sm text-gray-500 uppercase tracking-wide mb-2">Description</h3>
+            <p class="text-base text-gray-700 leading-relaxed">{{ product.description }}</p>
+          </div>
+
+          <!-- Product Dimensions -->
+          {% if product.length or product.height or product.width %}
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 space-y-4 border border-blue-100">
+            <h3 class="text-sm text-gray-700 uppercase tracking-wide mb-3 flex items-center">
+              <i class="fas fa-ruler-combined text-brand mr-2"></i> Product Dimensions
+            </h3>
+            <div class="grid grid-cols-3 gap-4">
+              {% if product.length %}
+              <div class="text-center">
+                <div class="text-2xl font-bold text-brand">{{ product.length|floatformat:2 }} cm</div>
+                <div class="text-xs text-gray-500 uppercase">Length</div>
+              </div>
+              {% endif %}
+              {% if product.height %}
+              <div class="text-center">
+                <div class="text-2xl font-bold text-brand">{{ product.height|floatformat:2 }} cm</div>
+                <div class="text-xs text-gray-500 uppercase">Height</div>
+              </div>
+              {% endif %}
+              {% if product.width %}
+              <div class="text-center">
+                <div class="text-2xl font-bold text-brand">{{ product.width|floatformat:2 }} cm</div>
+                <div class="text-xs text-gray-500 uppercase">Width</div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          
+          <!-- Product Dimensions (from ProductDimension model - if exists) -->
+          {% if product.dimensions %}
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 space-y-4 border border-blue-100">
+            <h3 class="text-sm text-gray-700 uppercase tracking-wide mb-3 flex items-center">
+              <i class="fas fa-ruler-combined text-brand mr-2"></i> Additional Dimensions
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-brand">{{ product.dimensions.width|floatformat:0 }}"</div>
+                <div class="text-xs text-gray-500 uppercase">Width</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-brand">{{ product.dimensions.height|floatformat:0 }}"</div>
+                <div class="text-xs text-gray-500 uppercase">Height</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-brand">{{ product.dimensions.depth|floatformat:0 }}"</div>
+                <div class="text-xs text-gray-500 uppercase">Depth</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-brand">{{ product.dimensions.weight|floatformat:0 }}</div>
+                <div class="text-xs text-gray-500 uppercase">lbs</div>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-blue-200">
+              {% if product.dimensions.fits_through_standard_door %}
+                <span class="inline-flex items-center bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">
+                  <i class="fas fa-check-circle mr-1"></i> Fits through standard door
+                </span>
+              {% else %}
+                <span class="inline-flex items-center bg-yellow-100 text-yellow-700 text-xs font-medium px-3 py-1 rounded-full">
+                  <i class="fas fa-exclamation-triangle mr-1"></i> Check doorway clearance
+                </span>
+              {% endif %}
+              {% if product.dimensions.material %}
+                <span class="inline-flex items-center bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full">
+                  <i class="fas fa-cube mr-1"></i> {{ product.dimensions.material }}
+                </span>
+              {% endif %}
+              {% if product.dimensions.seating_capacity %}
+                <span class="inline-flex items-center bg-purple-100 text-purple-700 text-xs font-medium px-3 py-1 rounded-full">
+                  <i class="fas fa-couch mr-1"></i> Seats {{ product.dimensions.seating_capacity }}
+                </span>
+              {% endif %}
+              {% if product.dimensions.assembly_required %}
+                <span class="inline-flex items-center bg-orange-100 text-orange-700 text-xs font-medium px-3 py-1 rounded-full">
+                  <i class="fas fa-tools mr-1"></i> Assembly: ~{{ product.dimensions.assembly_time }} min
+                </span>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Features -->
+          <div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+            <h3 class="text-sm text-gray-500 uppercase tracking-wide mb-2">Features</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-truck text-brand"></i>
+                <span class="text-sm text-gray-700">Free Delivery</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-shield-alt text-brand"></i>
+                <span class="text-sm text-gray-700">1 Year Warranty</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-undo-alt text-brand"></i>
+                <span class="text-sm text-gray-700">Easy Returns</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-tools text-brand"></i>
+                <span class="text-sm text-gray-700">Assembly Service</span>
+              </div>
+            </div>
+          </div>
+
+          {% if product.stock > 0 %}
+          <!-- Quantity & Actions -->
+          <div class="space-y-4">
+            <div class="flex items-center space-x-4">
+              <span class="text-sm text-gray-500 uppercase tracking-wide">Quantity</span>
+              <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                <button id="qty-minus" class="bg-gray-100 text-gray-600 hover:bg-gray-200 w-10 h-10 flex items-center justify-center transition-colors duration-300">
+                  <i class="fas fa-minus text-sm"></i>
+                </button>
+                <input id="qty-input" class="w-16 h-10 text-center border-x border-gray-300 text-gray-800 font-medium" value="1" min="1" max="{{ product.stock }}" type="number" data-product="{{ product.id }}" data-max-stock="{{ product.stock }}">
+                <button id="qty-plus" class="bg-gray-100 text-gray-600 hover:bg-gray-200 w-10 h-10 flex items-center justify-center transition-colors duration-300">
+                  <i class="fas fa-plus text-sm"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+              <form id="addToCartForm" method="post" action="{% url 'add_to_cart' %}" class="flex-1">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="w-full bg-brand text-white hover:bg-brand-dark font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center hover:scale-[1.02]" data-add-cart-btn="{{ product.id }}">
+                  <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                </button>
+              </form>
+              <form id="buyNowForm" method="post" action="{% url 'buy_now' product.id %}" class="flex-1">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="w-full bg-gradient-to-r from-brand to-brand-dark text-white hover:from-brand-dark hover:to-brand font-medium py-3 px-6 rounded-lg transition-all duration-300 hover:scale-[1.02]" data-buy-now-btn="{{ product.id }}">
+                  <i class="fas fa-bolt mr-2"></i> Buy Now
+                </button>
+              </form>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex space-x-4 pt-4 border-t border-gray-200">
+              <button onclick="toggleWishlist()" class="flex items-center space-x-2 text-gray-600 hover:text-red-500 transition-colors duration-300">
+                <i class="{% if in_wishlist %}fas text-red-500{% else %}far{% endif %} fa-heart" id="wishlist-icon"></i>
+                <span class="text-sm">Wishlist</span>
+              </button>
+              <button onclick="compareProduct()" class="flex items-center space-x-2 text-gray-600 hover:text-brand transition-colors duration-300">
+                <i class="fas fa-balance-scale"></i>
+                <span class="text-sm">Compare</span>
+              </button>
+              <button onclick="shareProduct()" class="flex items-center space-x-2 text-gray-600 hover:text-brand transition-colors duration-300">
+                <i class="fas fa-share-alt"></i>
+                <span class="text-sm">Share</span>
+              </button>
+            </div>
+          </div>
+          {% else %}
+          <!-- Out of Stock Message -->
+          <div class="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+            <i class="fas fa-times-circle text-red-500 text-2xl mb-3"></i>
+            <h3 class="text-red-800 font-medium mb-2">Out of Stock</h3>
+            <p class="text-red-600 text-sm">This product is currently unavailable</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Reviews Section -->
+    <div class="bg-white rounded-2xl shadow-sm p-6 lg:p-8 animate-fade-in">
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Reviews List -->
+        <div class="lg:w-2/3">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+            <i class="fas fa-comments text-brand mr-3"></i> Customer Reviews
+          </h2>
+          
+          {% if reviews %}
+            <div class="space-y-6">
+              {% for r in reviews %}
+              <div class="border-b border-gray-200 pb-6 last:border-b-0">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-1">
+                      {% for i in "12345" %}
+                        {% if forloop.counter <= r.rating %}
+                          <i class="fas fa-star text-yellow-400 text-sm"></i>
+                        {% else %}
+                          <i class="far fa-star text-yellow-400 text-sm"></i>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    <span class="font-medium text-gray-800">{{ r.user.username|default:r.name|default:"Guest" }}</span>
+                  </div>
+                  <span class="text-sm text-gray-500">{{ r.created_at|date:'F d, Y' }}</span>
+                </div>
+                {% if r.comment %}
+                  <p class="text-base text-gray-700 leading-relaxed">{{ r.comment }}</p>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-12">
+              <i class="fas fa-comments text-gray-300 text-4xl mb-4"></i>
+              <h3 class="text-gray-500 font-medium mb-2">No reviews yet</h3>
+              <p class="text-gray-400 text-sm">Be the first to review this product!</p>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Write Review Form -->
+        <div class="lg:w-1/3">
+          <div class="bg-gray-50 rounded-2xl p-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+              <i class="fas fa-pen text-brand mr-2"></i> Write a Review
+            </h3>
+            
+            <form method="post" action="{% url 'review_submit' product.id %}">
+              {% csrf_token %}
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm text-gray-500 uppercase tracking-wide mb-2 block">Your Name</label>
+                  <input class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand-light transition-colors duration-300" 
+                         name="name" 
+                         placeholder="{% if user.is_authenticated %}{{ user.username }}{% else %}Enter your name{% endif %}">
+                </div>
+                
+                <div>
+                  <label class="text-sm text-gray-500 uppercase tracking-wide mb-2 block">Rating</label>
+                  <select class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand-light transition-colors duration-300" name="rating">
+                    <option value="5">⭐⭐⭐⭐⭐ Excellent (5)</option>
+                    <option value="4">⭐⭐⭐⭐☆ Very Good (4)</option>
+                    <option value="3">⭐⭐⭐☆☆ Good (3)</option>
+                    <option value="2">⭐⭐☆☆☆ Fair (2)</option>
+                    <option value="1">⭐☆☆☆☆ Poor (1)</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label class="text-sm text-gray-500 uppercase tracking-wide mb-2 block">Your Review</label>
+                  <textarea class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand-light transition-colors duration-300" 
+                            rows="4" 
+                            name="comment" 
+                            placeholder="Share your experience with this product..."></textarea>
+                </div>
+                
+                <button type="submit" class="w-full bg-brand text-white hover:bg-brand-dark font-medium py-3 px-6 rounded-lg transition-all duration-300 hover:scale-[1.02] flex items-center justify-center">
+                  <i class="fas fa-paper-plane mr-2"></i> Submit Review
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer (match compare/profile style) -->
+  <footer class="bg-white border-t border-gray-200 mt-12">
+    <div class="container mx-auto px-4 py-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <p class="text-sm text-gray-600">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved.</p>
+        </div>
+        <div class="flex space-x-6">
+          <a href="#" class="text-sm text-gray-600 hover:text-brand transition-colors duration-300">Terms & Conditions</a>
+          <a href="#" class="text-sm text-gray-600 hover:text-brand transition-colors duration-300">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Container -->
+  <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-3"></div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // Animation for cards on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.animate-fade-in');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+
+    // Quantity controls
+    const minus = document.getElementById('qty-minus');
+    const plus = document.getElementById('qty-plus');
+    const qty = document.getElementById('qty-input');
+    const addQty = document.querySelector('form#addToCartForm input[name="quantity"]');
+    const buyQty = document.querySelector('form#buyNowForm input[name="quantity"]');
+    
+    function sync(val){ 
+      qty.value = val; 
+      if (addQty) addQty.value = val; 
+      if (buyQty) buyQty.value = val; 
+    }
+    
+    if (minus) minus.addEventListener('click',()=>{ 
+      const v=Math.max(1, parseInt(qty.value||'1')-1); 
+      sync(v) 
+    });
+    
+    if (plus) plus.addEventListener('click',()=>{ 
+      const max=parseInt(qty.max||'99'); 
+      const v=Math.min(max, parseInt(qty.value||'1')+1); 
+      sync(v) 
+    });
+    
+    if (qty) qty.addEventListener('change',()=>{ 
+      let v=parseInt(qty.value||'1'); 
+      if(isNaN(v)||v<1) v=1; 
+      const max=parseInt(qty.max||'99'); 
+      if(v>max) v=max; 
+      sync(v) 
+    });
+
+    // Image zoom functionality
+    const productImage = document.getElementById('main-product-image');
+    const zoomOverlay = document.getElementById('image-zoom-overlay');
+    
+    if (productImage) {
+      productImage.addEventListener('click', function() {
+        const clonedImg = productImage.cloneNode();
+        zoomOverlay.innerHTML = '';
+        zoomOverlay.appendChild(clonedImg);
+        zoomOverlay.style.display = 'flex';
+      });
+    }
+    
+    if (zoomOverlay) {
+      zoomOverlay.addEventListener('click', function() {
+        zoomOverlay.style.display = 'none';
+      });
+    }
+
+    // Share functionality
+    function shareProduct() {
+      const url = window.location.href;
+      const title = document.querySelector('.product-title').textContent;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          text: 'Check out this product from Furnex',
+          url: url,
+        })
+        .catch(console.error);
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          showNotification('Product link copied to clipboard!', 'success');
+        });
+      }
+    }
+
+    // Wishlist functionality
+    function toggleWishlist() {
+      {% if user.is_authenticated %}
+      fetch('/wishlist/toggle/{{ product.id }}/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const icon = document.getElementById('wishlist-icon');
+          if (data.in_wishlist) {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            icon.style.color = '#ef4444';
+            showNotification('Added to wishlist!', 'success');
+          } else {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            icon.style.color = '';
+            showNotification('Removed from wishlist', 'info');
+          }
+        } else {
+          showNotification(data.message, 'error');
+        }
+      })
+      .catch(error => showNotification('Error updating wishlist', 'error'));
+      {% else %}
+      showNotification('Please login to add items to wishlist', 'info');
+      {% endif %}
+    }
+
+    // Compare functionality
+    function compareProduct() {
+      {% if user.is_authenticated %}
+      fetch('/compare/toggle/{{ product.id }}/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showNotification(data.message, 'success');
+        } else {
+          showNotification(data.message, 'error');
+        }
+      })
+      .catch(error => showNotification('Error updating compare list', 'error'));
+      {% else %}
+      showNotification('Please login to compare products', 'info');
+      {% endif %}
+    }
+
+    // AJAX add to cart feedback
+    const addForm = document.getElementById('addToCartForm');
+    if (addForm) {
+      addForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const btn = this.querySelector('button[type="submit"]');
+        const original = btn.innerHTML; 
+        btn.disabled=true; 
+        btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Adding...';
+        
+        try{
+          const fd=new FormData(this);
+          const res=await fetch(this.action,{ 
+            method:'POST', 
+            body:fd, 
+            headers: { 
+              'X-CSRFToken': fd.get('csrfmiddlewaretoken') 
+            }
+          });
+          const data=await res.json();
+          if(data.success){ 
+            btn.innerHTML='<i class="fas fa-check mr-2"></i>Added to Cart';
+            setTimeout(()=>{ 
+              btn.innerHTML=original; 
+              btn.disabled=false; 
+            }, 1500);
+            showNotification('Product added to cart!', 'success');
+            
+            // Update stock display in real-time
+            const updatedStock = data.updated_stock;
+            const productId = '{{ product.id }}';
+            
+            // Update stock text value
+            const stockSpan = document.querySelector(`span[data-stock-id="${productId}"] .stock-value`);
+            if (stockSpan) {
+              stockSpan.textContent = updatedStock;
+            }
+            
+            // Update the stock status (icon + text color)
+            const statusWrap = document.querySelector(`[data-stock-status-id="${productId}"]`);
+            if (statusWrap) {
+              const icon = statusWrap.querySelector('i');
+              const textEl = statusWrap.querySelector(`[data-stock-id="${productId}"]`);
+              if (updatedStock <= 0) {
+                if (icon) {
+                  icon.classList.remove('fa-check-circle', 'text-green-500');
+                  icon.classList.add('fa-times-circle', 'text-red-500');
+                }
+                if (textEl) {
+                  textEl.classList.remove('text-green-600');
+                  textEl.classList.add('text-red-600');
+                  textEl.textContent = 'Out of stock';
+                }
+              } else {
+                if (icon) {
+                  icon.classList.remove('fa-times-circle', 'text-red-500');
+                  icon.classList.add('fa-check-circle', 'text-green-500');
+                }
+                if (textEl) {
+                  textEl.classList.remove('text-red-600');
+                  textEl.classList.add('text-green-600');
+                  const sv = textEl.querySelector('.stock-value');
+                  if (sv) sv.textContent = updatedStock;
+                  textEl.innerHTML = `<span class="stock-value">${updatedStock}</span> items in stock`;
+                }
+              }
+            }
+            
+            // Update quantity input max value
+            const qtyInput = document.querySelector(`input[data-product="${productId}"]`);
+            if (qtyInput) {
+              qtyInput.max = updatedStock;
+              qtyInput.dataset.maxStock = updatedStock;
+              if (updatedStock <= 0) {
+                qtyInput.value = 0;
+              } else {
+                const v = parseInt(qtyInput.value || '1');
+                if (v > updatedStock) qtyInput.value = updatedStock;
+                if (v < 1) qtyInput.value = 1;
+              }
+            }
+            
+            // Disable/enable buttons
+            const addBtn = document.querySelector(`button[data-add-cart-btn="${productId}"]`);
+            const buyBtn = document.querySelector(`button[data-buy-now-btn="${productId}"]`);
+            if (addBtn) {
+              addBtn.disabled = updatedStock <= 0;
+            }
+            if (buyBtn) {
+              buyBtn.disabled = updatedStock <= 0;
+            }
+
+            // Reset quantity selector after successful add
+            if (typeof sync === 'function') {
+              sync(updatedStock > 0 ? 1 : 0);
+            } else {
+              const qtyEl = document.getElementById('qty-input');
+              if (qtyEl) qtyEl.value = (updatedStock > 0 ? 1 : 0);
+              const addQtyHidden = document.querySelector('form#addToCartForm input[name="quantity"]');
+              if (addQtyHidden) addQtyHidden.value = (updatedStock > 0 ? 1 : 0);
+              const buyQtyHidden = document.querySelector('form#buyNowForm input[name="quantity"]');
+              if (buyQtyHidden) buyQtyHidden.value = (updatedStock > 0 ? 1 : 0);
+            }
+            
+          } else { 
+            btn.innerHTML='<i class=\"fas fa-times mr-2\"></i>Error';
+            setTimeout(()=>{ 
+              btn.innerHTML=original; 
+              btn.disabled=false; 
+            }, 1500);
+            showNotification('Error adding product to cart', 'error');
+          }
+        } catch(_) { 
+          btn.innerHTML='<i class="fas fa-times mr-2"></i>Error';
+          setTimeout(()=>{ 
+            btn.innerHTML=original; 
+            btn.disabled=false; 
+          }, 1500);
+          showNotification('Network error. Please try again.', 'error');
+        }
+      });
+    }
+
+    // Toast notification function
+    function showNotification(message, type = 'info') {
+      const container = document.getElementById('notification-container');
+      const notification = document.createElement('div');
+      
+      const bgColor = type === 'success' ? 'bg-green-500' : 
+                     type === 'error' ? 'bg-red-500' : 
+                     'bg-blue-500';
+      
+      const icon = type === 'success' ? 'fa-check-circle' : 
+                  type === 'error' ? 'fa-exclamation-circle' : 
+                  'fa-info-circle';
+      
+      notification.className = `${bgColor} text-white p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
+      notification.innerHTML = `
+        <div class="flex items-center">
+          <i class="fas ${icon} mr-3"></i>
+          <span>${message}</span>
+        </div>
+      `;
+      
+      container.appendChild(notification);
+      
+      // Animate in
+      setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+      }, 10);
+      
+      // Auto remove after 3 seconds
+      setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+          if (notification.parentElement) {
+            notification.remove();
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // CSRF token helper function
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    // NEW FEATURE: Product Alerts
+    function createAlert(alertType) {
+      {% if not user.is_authenticated %}
+        alert('Please login to set up alerts');
+        window.location.href = '{% url "login" %}';
+        return;
+      {% endif %}
+
+      fetch('/api/create-alert/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          product_id: {{ product.id }},
+          alert_type: alertType
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showNotification(data.message || 'Alert created! We\'ll notify you.', 'success');
+        } else {
+          showNotification(data.message || 'Failed to create alert', 'error');
+        }
+      })
+      .catch(error => {
+        showNotification('Network error. Please try again.', 'error');
+      });
+    }
+
+    function showTargetPriceModal() {
+      {% if not user.is_authenticated %}
+        alert('Please login to set up alerts');
+        window.location.href = '{% url "login" %}';
+        return;
+      {% endif %}
+
+      const currentPrice = {{ product.final_price }};
+      const price = prompt(`Enter your target price (Current: ₹${currentPrice}):`);
+      
+      if (price && !isNaN(price) && parseFloat(price) > 0) {
+        fetch('/api/create-alert/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify({
+            product_id: {{ product.id }},
+            alert_type: 'price_target',
+            target_price: parseFloat(price)
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showNotification(data.message || `Alert set! We'll notify you when price drops below ₹${price}`, 'success');
+          } else {
+            showNotification(data.message || 'Failed to create alert', 'error');
+          }
+        })
+        .catch(error => {
+          showNotification('Network error. Please try again.', 'error');
+        });
+      }
+    }
+  </script>
+
+  <!-- Smart Context-Aware Chat Widget -->
+  {% include 'smart_chat_widget.html' %}
+</body>
+</html>

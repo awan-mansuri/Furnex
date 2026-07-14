@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">My Room Designs</h1>
+        <p class="text-gray-600">View and manage your saved room designs</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Create New Design Card -->
+        <a href="{% url 'room_designer' %}" class="group">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full border-2 border-dashed border-gray-300 hover:border-blue-500 transition-all duration-300 flex flex-col items-center justify-center p-8 text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
+                    <i class="fas fa-plus text-blue-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Create New Design</h3>
+                <p class="text-gray-500">Start a new room design from scratch</p>
+            </div>
+        </a>
+
+        <!-- Saved Designs -->
+        {% for design in designs %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <div class="h-48 bg-gray-200 relative">
+                {% if design.room_image %}
+                    <img src="{{ design.room_image.url }}" alt="{{ design.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
+                        <i class="fas fa-image text-4xl text-gray-400"></i>
+                    </div>
+                {% endif %}
+                <div class="absolute top-2 right-2">
+                    <span class="bg-white/80 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        {{ design.get_room_type_display }}
+                    </span>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="font-semibold text-lg text-gray-800">{{ design.name }}</h3>
+                        <p class="text-sm text-gray-500">{{ design.products.count }} items • {{ design.room_width|floatformat:0 }}×{{ design.room_length|floatformat:0 }} ft</p>
+                    </div>
+                    <span class="text-xs text-gray-400">
+                        {{ design.updated_at|timesince }} ago
+                    </span>
+                </div>
+                <div class="mt-4 flex space-x-2">
+                    <a href="{% url 'room_designer' %}?load_design={{ design.id }}" 
+                       class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-3 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                    </a>
+                    <a href="#" 
+                       class="bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-3 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="md:col-span-2 lg:col-span-3 py-12 text-center">
+            <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-palette text-3xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-1">No designs yet</h3>
+            <p class="text-gray-500 mb-6">Get started by creating your first room design</p>
+            <a href="{% url 'room_designer' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="fas fa-plus mr-2"></i> Create Design
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

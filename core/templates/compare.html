@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Products - Furnex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B5D50',
+                        'primary-dark': '#2F4B41',
+                        'primary-light': '#DCE5E1',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3B5D4F 0%, #2F4B41 100%);
+        }
+        
+        .highlight-gradient {
+            background: linear-gradient(135deg, #3B5D4F, #2F4B41);
+        }
+        /* Theme overrides matching user_profile */
+        :root { --theme:#3B5D4F; --theme-dark:#2F4B41; --theme-light:#DCE5E1; }
+        .text-primary{color:var(--theme)!important}
+        .bg-primary{background-color:var(--theme)!important}
+        .bg-primary-light{background-color:var(--theme-light)!important}
+        .hover\:bg-primary-dark:hover{background-color:var(--theme-dark)!important}
+        .border-primary{border-color:var(--theme)!important}
+        /* Map green utilities used here to theme */
+        .text-green-500,.text-green-600{color:var(--theme)!important}
+        .bg-green-100,.bg-green-50{background-color:var(--theme-light)!important}
+        .bg-green-600,.bg-green-700{background-color:var(--theme)!important}
+        .hover\:bg-green-700:hover,.hover\:bg-green-600:hover{background-color:var(--theme-dark)!important}
+        .border-green-500{border-color:var(--theme)!important}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Start Header/Navigation -->
+    <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-primary">Furnex<span class="text-gray-600">.</span></span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Home</a>
+                    <a href="{% url 'shop' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Shop</a>
+                    <a href="{% url 'about' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">About us</a>
+                    <a href="{% url 'services' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Services</a>
+                    <a href="{% url 'blog' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Blog</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary transition-colors duration-200">Contact us</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- User menu would go here -->
+                    <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-primary-light transition-colors duration-200">
+                        <i class="fas fa-shopping-cart text-gray-600 hover:text-primary"></i>
+                    </a>
+                    <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Hero Section -->
+    <div class="gradient-bg text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center mb-2">
+                        <div class="p-2 bg-white/20 rounded-lg mr-3">
+                            <i class="fas fa-balance-scale text-xl"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold">Compare Products</h1>
+                    </div>
+                    <p class="text-primary-light text-lg">Side-by-side comparison of your favorite products ({{ compare_count }}/4)</p>
+                </div>
+                
+                <div class="flex items-center space-x-2 text-sm">
+                    <a href="{% url 'home' %}" class="text-primary-light hover:text-white transition-colors">Home</a>
+                    <i class="fas fa-chevron-right text-primary-light text-xs"></i>
+                    <span class="text-white font-medium">Compare</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        {% if products %}
+        <!-- Comparison Summary Card -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 mb-8 animate-fade-in">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Product Comparison</h2>
+                    <p class="text-gray-600">Compare features, prices, and ratings to make the best choice</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex flex-wrap gap-2">
+                    <button onclick="clearCompare()" class="flex items-center px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors duration-200">
+                        <i class="fas fa-trash mr-2"></i> Clear All
+                    </button>
+                    <button onclick="printComparison()" class="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        <i class="fas fa-print mr-2"></i> Print
+                    </button>
+                    <button onclick="exportComparison()" class="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        <i class="fas fa-download mr-2"></i> Export
+                    </button>
+                    <a href="{% url 'shop' %}" class="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i> Add More
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="w-64 p-6 text-left bg-gray-50">
+                                <div class="flex items-center">
+                                    <i class="fas fa-list mr-3 text-primary"></i>
+                                    <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Features</span>
+                                </div>
+                            </th>
+                            {% for product in products %}
+                            <th class="p-6 text-center min-w-64 relative {% if forloop.counter == best_value_index %}bg-primary-light/20 border-l-4 border-l-primary{% endif %}">
+                                <button class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200"
+                                        onclick="removeFromCompare({{ product.id }}, this)" 
+                                        title="Remove from compare">
+                                    <i class="fas fa-times text-sm"></i>
+                                </button>
+                                <div class="flex flex-col items-center">
+                                    {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                                         class="w-32 h-32 object-cover rounded-xl mb-4 border-2 border-gray-200 hover:border-primary transition-all duration-300">
+                                    {% else %}
+                                    <img src="{% static 'images/product-1.png' %}" alt="{{ product.name }}" 
+                                         class="w-32 h-32 object-cover rounded-xl mb-4 border-2 border-gray-200 hover:border-primary transition-all duration-300">
+                                    {% endif %}
+                                    <h3 class="font-semibold text-gray-800 mb-2">{{ product.name }}</h3>
+                                    <span class="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
+                                        {{ product.category.name }}
+                                    </span>
+                                    {% if forloop.counter == best_value_index %}
+                                    <div class="mt-2 px-2 py-1 bg-primary text-white text-xs font-medium rounded-full">
+                                        Best Value
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </th>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <th class="p-6 text-center min-w-64">
+                                <div class="flex flex-col items-center cursor-pointer" data-bs-toggle="modal" data-bs-target="#addProductModal" 
+                                     onclick="setEmptySlot({{ forloop.counter|add:compare_count }})">
+                                    <div class="w-32 h-32 flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary-light/10 transition-all duration-300 mb-4">
+                                        <i class="fas fa-plus text-2xl text-gray-400"></i>
+                                    </div>
+                                    <p class="font-medium text-gray-700">Add Product</p>
+                                    <p class="text-xs text-gray-500 mt-1">Click to compare</p>
+                                </div>
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Price Row -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
+                            <td class="p-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-tag mr-3 text-primary"></i>
+                                    <span class="font-medium text-gray-700">Price</span>
+                                </div>
+                            </td>
+                            {% for product in products %}
+                            <td class="p-6 text-center {% if forloop.counter == best_value_index %}bg-primary-light/10{% endif %}">
+                                <div class="flex flex-col items-center">
+                                    <span class="text-2xl font-bold text-primary">₹{{ product.final_price|floatformat:0 }}</span>
+                                    {% if product.discount_price %}
+                                    <span class="text-sm text-gray-500 line-through mt-1">₹{{ product.price|floatformat:0 }}</span>
+                                    <span class="mt-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                                        Save ₹{{ product.discount_price|floatformat:0 }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <td class="p-6 text-center text-gray-400">-</td>
+                            {% endfor %}
+                        </tr>
+                        
+                        <!-- Rating Row -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
+                            <td class="p-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-star mr-3 text-primary"></i>
+                                    <span class="font-medium text-gray-700">Rating</span>
+                                </div>
+                            </td>
+                            {% for product in products %}
+                            <td class="p-6 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="flex items-center mb-1">
+                                        <div class="flex text-amber-400 mr-2">
+                                            {% with product.average_rating|default:0 as rating %}
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= rating %}
+                                                <i class="fas fa-star"></i>
+                                                {% else %}
+                                                <i class="far fa-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% endwith %}
+                                        </div>
+                                        <span class="text-sm text-gray-600">({{ product.review_count|default:0 }})</span>
+                                    </div>
+                                </div>
+                            </td>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <td class="p-6 text-center text-gray-400">-</td>
+                            {% endfor %}
+                        </tr>
+                        
+                        <!-- Stock Status Row -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
+                            <td class="p-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-box mr-3 text-primary"></i>
+                                    <span class="font-medium text-gray-700">Stock Status</span>
+                                </div>
+                            </td>
+                            {% for product in products %}
+                            <td class="p-6 text-center">
+                                {% if product.stock > 0 %}
+                                <span class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                                    <i class="fas fa-check mr-1"></i> In Stock ({{ product.stock }})
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                                    <i class="fas fa-times mr-1"></i> Out of Stock
+                                </span>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <td class="p-6 text-center text-gray-400">-</td>
+                            {% endfor %}
+                        </tr>
+                        
+                        <!-- Warranty Row -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
+                            <td class="p-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-shield-alt mr-3 text-primary"></i>
+                                    <span class="font-medium text-gray-700">Warranty</span>
+                                </div>
+                            </td>
+                            {% for product in products %}
+                            <td class="p-6 text-center">
+                                <span class="text-gray-600">
+                                    {% if product.warranty %}
+                                        {{ product.warranty }}
+                                    {% else %}
+                                        Not specified
+                                    {% endif %}
+                                </span>
+                            </td>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <td class="p-6 text-center text-gray-400">-</td>
+                            {% endfor %}
+                        </tr>
+                        
+                        <!-- Description Row -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
+                            <td class="p-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-align-left mr-3 text-primary"></i>
+                                    <span class="font-medium text-gray-700">Description</span>
+                                </div>
+                            </td>
+                            {% for product in products %}
+                            <td class="p-6 text-center">
+                                <p class="text-gray-600 text-sm line-clamp-3">
+                                    {{ product.description|truncatewords:25 }}
+                                </p>
+                            </td>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <td class="p-6 text-center text-gray-400">-</td>
+                            {% endfor %}
+                        </tr>
+                        
+                        <!-- Dimensions Row -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
+                            <td class="p-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-ruler-combined mr-3 text-primary"></i>
+                                    <span class="font-medium text-gray-700">Dimensions</span>
+                                </div>
+                            </td>
+                            {% for product in products %}
+                            <td class="p-6 text-center">
+                                <span class="text-gray-600 text-sm">
+                                    {% if product.dimensions %}
+                                        {{ product.dimensions }}
+                                    {% else %}
+                                        Not specified
+                                    {% endif %}
+                                </span>
+                            </td>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <td class="p-6 text-center text-gray-400">-</td>
+                            {% endfor %}
+                        </tr>
+                        
+                        <!-- Material Row -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
+                            <td class="p-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-palette mr-3 text-primary"></i>
+                                    <span class="font-medium text-gray-700">Material</span>
+                                </div>
+                            </td>
+                            {% for product in products %}
+                            <td class="p-6 text-center">
+                                <span class="text-gray-600 text-sm">
+                                    {% if product.material %}
+                                        {{ product.material }}
+                                    {% else %}
+                                        Not specified
+                                    {% endif %}
+                                </span>
+                            </td>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <td class="p-6 text-center text-gray-400">-</td>
+                            {% endfor %}
+                        </tr>
+                        
+                        <!-- Actions Row -->
+                        <tr>
+                            <td class="p-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-cogs mr-3 text-primary"></i>
+                                    <span class="font-medium text-gray-700">Actions</span>
+                                </div>
+                            </td>
+                            {% for product in products %}
+                            <td class="p-6">
+                                <div class="flex flex-col space-y-2">
+                                    <a href="{% url 'product_detail' product.id %}" class="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200">
+                                        <i class="fas fa-eye mr-2"></i> View Details
+                                    </a>
+                                    {% if product.stock > 0 %}
+                                    <button onclick="addToCart({{ product.id }})" class="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">
+                                        <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                                    </button>
+                                    {% else %}
+                                    <button class="flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed" disabled>
+                                        <i class="fas fa-ban mr-2"></i> Out of Stock
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            {% endfor %}
+                            {% for i in empty_slots %}
+                            <td class="p-6 text-center text-gray-400">-</td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="bg-white rounded-2xl shadow-sm p-12 text-center animate-fade-in">
+            <div class="max-w-md mx-auto">
+                <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center rounded-full bg-primary-light text-primary">
+                    <i class="fas fa-balance-scale text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-3">No Products to Compare</h3>
+                <p class="text-gray-600 mb-8">Add products to your compare list to see side-by-side comparisons and make better decisions</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="{% url 'shop' %}" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center justify-center">
+                        <i class="fas fa-shopping-bag mr-2"></i> Start Shopping
+                    </a>
+                    <a href="{% url 'user_profile' %}" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center justify-center">
+                        <i class="fas fa-user mr-2"></i> Back to Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Add Product Modal -->
+    <div id="addProductModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95 opacity-0">
+            <div class="highlight-gradient text-white p-6">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-plus-circle text-xl mr-3"></i>
+                        <h2 class="text-xl font-semibold">Add Product to Compare</h2>
+                    </div>
+                    <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 max-h-[60vh] overflow-y-auto">
+                <p class="text-gray-600 mb-6">Select a product to add to the empty slot in your comparison:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="productSuggestions">
+                    <!-- Product suggestions will be loaded here -->
+                    <div class="col-span-2 flex justify-center py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 p-6 bg-gray-50 flex justify-end space-x-3">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                    Cancel
+                </button>
+                <button onclick="addSelectedProduct()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Add to Compare
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Footer Section -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600 text-sm">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-primary transition-colors text-sm">Terms & Conditions</a>
+                    <a href="#" class="text-gray-500 hover:text-primary transition-colors text-sm">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End Footer Section -->
+
+    <!-- Notification Toast -->
+    <div id="notification" class="fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 hidden">
+        <div class="flex items-center">
+            <i id="notification-icon" class="mr-3"></i>
+            <span id="notification-message"></span>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.animate-fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Initialize modal
+            const modal = document.getElementById('addProductModal');
+            if (modal) {
+                window.openModal = function() {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.querySelector('.transform').classList.remove('scale-95', 'opacity-0');
+                    }, 10);
+                    loadProductSuggestions();
+                };
+                
+                window.closeModal = function() {
+                    modal.querySelector('.transform').classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
+                };
+            }
+        });
+        
+        let selectedProductId = null;
+        let currentEmptySlot = null;
+        
+        function setEmptySlot(slotNumber) {
+            currentEmptySlot = slotNumber;
+            openModal();
+        }
+        
+        function loadProductSuggestions() {
+            $.get('/api/products/suggestions/')
+                .done(function(data) {
+                    const container = $('#productSuggestions');
+                    container.empty();
+                    
+                    if (data.products && data.products.length > 0) {
+                        data.products.forEach(product => {
+                            const productHtml = `
+                                <div class="border border-gray-200 rounded-xl p-4 hover:border-primary hover:shadow-md transition-all duration-300 cursor-pointer" onclick="selectProduct(${product.id}, this)">
+                                    <div class="flex items-center">
+                                        <div class="w-16 h-16 flex-shrink-0 mr-4">
+                                            <img src="${product.image || '{% static "images/product-1.png" %}'}" 
+                                                 alt="${product.name}" class="w-full h-full object-cover rounded-lg">
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-gray-800 mb-1">${product.name}</h4>
+                                            <p class="text-primary font-semibold mb-1">₹${product.final_price}</p>
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <div class="flex text-amber-400 mr-2">
+                                                    ${getStarRating(product.average_rating || 0)}
+                                                </div>
+                                                <span>${product.category}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            container.append(productHtml);
+                        });
+                    } else {
+                        container.html(`
+                            <div class="col-span-2 text-center py-8">
+                                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gray-100 text-gray-400">
+                                    <i class="fas fa-box-open text-xl"></i>
+                                </div>
+                                <p class="text-gray-600 mb-4">No products available to compare</p>
+                                <a href="{% url 'shop' %}" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">Browse Shop</a>
+                            </div>
+                        `);
+                    }
+                })
+                .fail(function() {
+                    $('#productSuggestions').html(`
+                        <div class="col-span-2 text-center py-8">
+                            <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-red-100 text-red-500">
+                                <i class="fas fa-exclamation-triangle text-xl"></i>
+                            </div>
+                            <p class="text-gray-600 mb-4">Error loading products</p>
+                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors" onclick="loadProductSuggestions()">Retry</button>
+                        </div>
+                    `);
+                });
+        }
+        
+        function selectProduct(productId, element) {
+            selectedProductId = productId;
+            $('.border-primary').removeClass('border-primary').addClass('border-gray-200');
+            $(element).removeClass('border-gray-200').addClass('border-primary bg-primary-light/10');
+        }
+        
+        function addSelectedProduct() {
+            if (!selectedProductId) {
+                showNotification('Please select a product first', 'warning');
+                return;
+            }
+            
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            });
+            
+            $.post(`/compare/toggle/${selectedProductId}/`)
+                .done(function(data) {
+                    if (data.success) {
+                        closeModal();
+                        location.reload();
+                    } else {
+                        showNotification('Error adding product to comparison', 'error');
+                    }
+                })
+                .fail(function() {
+                    showNotification('Network error. Please try again.', 'error');
+                });
+        }
+        
+        function getStarRating(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<i class="fas fa-star text-xs"></i>';
+                } else {
+                    stars += '<i class="far fa-star text-xs"></i>';
+                }
+            }
+            return stars;
+        }
+        
+        function removeFromCompare(productId, button) {
+            if (confirm('Remove this product from comparison?')) {
+                // Add loading state
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                button.disabled = true;
+                
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                });
+                
+                $.post(`/compare/toggle/${productId}/`)
+                    .done(function(data) {
+                        if (data.success) {
+                            location.reload();
+                        }
+                    })
+                    .fail(function() {
+                        // Restore button on error
+                        button.innerHTML = originalHTML;
+                        button.disabled = false;
+                        showNotification('Error removing product', 'error');
+                    });
+            }
+        }
+        
+        function clearCompare() {
+            if (confirm('Are you sure you want to clear your compare list?')) {
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                });
+                
+                $.post('/compare/clear/')
+                    .done(function(data) {
+                        if (data.success) {
+                            location.reload();
+                        }
+                    })
+                    .fail(function() {
+                        showNotification('Error clearing comparison', 'error');
+                    });
+            }
+        }
+        
+        function printComparison() {
+            window.print();
+        }
+        
+        function exportComparison() {
+            let csvContent = "Feature,";
+            
+            // Add product names as headers
+            {% for product in products %}
+            csvContent += `"{{ product.name }}",`;
+            {% endfor %}
+            csvContent += "\\n";
+            
+            // Add price data
+            csvContent += "Price,";
+            {% for product in products %}
+            csvContent += `"₹{{ product.final_price|floatformat:0 }}",`;
+            {% endfor %}
+            csvContent += "\\n";
+            
+            // Add rating data
+            csvContent += "Rating,";
+            {% for product in products %}
+            csvContent += `"{{ product.average_rating|default:0 }}/5",`;
+            {% endfor %}
+            csvContent += "\\n";
+            
+            // Add stock data
+            csvContent += "Stock Status,";
+            {% for product in products %}
+            csvContent += `"{% if product.stock > 0 %}In Stock{% else %}Out of Stock{% endif %}",`;
+            {% endfor %}
+            csvContent += "\\n";
+            
+            // Create and download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'product-comparison.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('Comparison exported successfully!', 'success');
+        }
+        
+        function addToCart(productId) {
+            const formData = new FormData();
+            formData.append('product_id', productId);
+            formData.append('quantity', 1);
+            formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+            
+            fetch('{% url "add_to_cart" %}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Product added to cart successfully!', 'success');
+                } else {
+                    showNotification('Error adding product to cart', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Network error. Please try again.', 'error');
+            });
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notification-icon');
+            const messageEl = document.getElementById('notification-message');
+            
+            // Set styles based on type
+            if (type === 'success') {
+                notification.className = notification.className.replace(/bg-\w+-\d+/, 'bg-green-500');
+                notification.className = notification.className.replace(/text-\w+-\d+/, 'text-white');
+                icon.className = 'fas fa-check-circle';
+            } else if (type === 'warning') {
+                notification.className = notification.className.replace(/bg-\w+-\d+/, 'bg-amber-500');
+                notification.className = notification.className.replace(/text-\w+-\d+/, 'text-white');
+                icon.className = 'fas fa-exclamation-triangle';
+            } else {
+                notification.className = notification.className.replace(/bg-\w+-\d+/, 'bg-red-500');
+                notification.className = notification.className.replace(/text-\w+-\d+/, 'text-white');
+                icon.className = 'fas fa-exclamation-circle';
+            }
+            
+            // Set message and show
+            messageEl.textContent = message;
+            notification.classList.remove('hidden', 'translate-x-full');
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 300);
+            }, 3000);
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

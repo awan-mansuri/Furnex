@@ -1,0 +1,20 @@
+/* Admin table spacing and readability */
+.change-list .results, .results table { font-size: 14px; }
+.results table { border-collapse: separate; border-spacing: 0; }
+.results table thead th { padding: 12px 14px !important; white-space: nowrap; }
+.results table tbody td { padding: 12px 14px !important; vertical-align: middle; }
+.results table tbody tr { height: 56px; }
+.results .paginator, .change-list .paginator { padding: 10px 14px; }
+.action-checkbox, .action-checkbox-column { width: 44px; }
+.field-id { width: 80px; }
+.column-__str__, .field-name { min-width: 200px; }
+
+/* Improve row hover and borders for dark theme */
+.results table tbody tr:hover { background-color: rgba(255,255,255,0.03); }
+.results table thead th { border-bottom: 1px solid rgba(255,255,255,0.08); }
+.results table tbody td { border-top: 1px solid rgba(255,255,255,0.06); }
+
+/* Filters and search spacing */
+.change-list .searchbar, .change-list .object-tools { margin-bottom: 12px; }
+.change-list .actions { padding: 10px 14px; }
+

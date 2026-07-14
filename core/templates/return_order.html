@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Order - Furnex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header/Navigation - match Wishlist page -->
+    <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-brand">Furnex<span class="text-gray-600">.</span></span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Home</a>
+                    <a href="{% url 'shop' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Shop</a>
+                    <a href="{% url 'about' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">About us</a>
+                    <a href="{% url 'services' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Services</a>
+                    <a href="{% url 'blog' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Blog</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Contact us</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-brand-light transition-colors duration-200">
+                        <i class="fas fa-shopping-cart text-gray-600 hover:text-brand"></i>
+                    </a>
+                    <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Hero Section -->
+    <div class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="flex justify-center mb-6">
+                    <div class="bg-white/20 p-4 rounded-2xl">
+                        <i class="fas fa-undo text-3xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Return Order</h1>
+                <p class="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
+                    Initiate a return request and we'll process it within 24 hours. Your satisfaction is our priority.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <div class="flex items-center bg-white/20 px-4 py-2 rounded-xl">
+                        <i class="fas fa-shield-alt mr-2"></i>
+                        <span>Secure & Easy Process</span>
+                    </div>
+                    <div class="flex items-center bg-white/20 px-4 py-2 rounded-xl">
+                        <i class="fas fa-clock mr-2"></i>
+                        <span>Quick Refund</span>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-2xl inline-flex items-center">
+                    <i class="fas fa-truck mr-3 text-2xl"></i>
+                    <div class="text-left">
+                        <div class="font-bold text-lg">Free Returns</div>
+                        <div class="text-green-100">We cover return shipping costs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <!-- Order Information Card (larger image-friendly container) -->
+                <div class="bg-white rounded-2xl shadow-sm p-8 mb-8 card-hover animate-fade-in-up">
+                    <div class="flex items-center mb-8">
+                        <div class="bg-green-100 p-3 rounded-xl mr-4">
+                            <i class="fas fa-shopping-bag text-green-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Order Information</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center p-6 bg-gray-50 rounded-xl border border-gray-100">
+                            <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-hashtag text-green-600"></i>
+                            </div>
+                            <p class="text-sm text-gray-500 uppercase tracking-wide mb-2">Order Number</p>
+                            <p class="text-xl font-bold text-gray-800">#{{ order.id }}</p>
+                        </div>
+                        
+                        <div class="text-center p-6 bg-gray-50 rounded-xl border border-gray-100">
+                            <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-calendar-alt text-green-600"></i>
+                            </div>
+                            <p class="text-sm text-gray-500 uppercase tracking-wide mb-2">Order Date</p>
+                            <p class="text-xl font-bold text-gray-800">{{ order.created_at|date:"F d, Y" }}</p>
+                        </div>
+                        
+                        <div class="text-center p-6 bg-gradient-to-r from-green-600 to-green-500 rounded-xl text-white">
+                            <div class="bg-white/20 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <p class="text-sm uppercase tracking-wide mb-2 opacity-90">Total Amount</p>
+                            <p class="text-xl font-bold">₹{{ order.total }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Return Process Steps -->
+                <div class="bg-white rounded-2xl shadow-sm p-8 mb-8 card-hover animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="flex items-center mb-8">
+                        <div class="bg-green-100 p-3 rounded-xl mr-4">
+                            <i class="fas fa-list-ol text-green-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Return Process</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center p-4">
+                            <div class="bg-green-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <span class="text-green-600 font-bold text-xl">1</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-800 mb-2">Submit Request</h3>
+                            <p class="text-sm text-gray-600">Fill out the return form with details</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="bg-green-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <span class="text-green-600 font-bold text-xl">2</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-800 mb-2">Get Approval</h3>
+                            <p class="text-sm text-gray-600">We'll review and approve within 24h</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="bg-green-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <span class="text-green-600 font-bold text-xl">3</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-800 mb-2">Receive Refund</h3>
+                            <p class="text-sm text-gray-600">Get your refund within 3-5 days</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Return Form -->
+                <div class="bg-white rounded-2xl shadow-sm p-8 card-hover animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="flex items-center mb-8">
+                        <div class="bg-green-100 p-3 rounded-xl mr-4">
+                            <i class="fas fa-edit text-green-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Return Request Form</h2>
+                    </div>
+
+                    <form method="POST" action="{% url 'submit_return' %}" class="space-y-8">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <div>
+                            <label class="block text-lg font-semibold text-gray-800 mb-4">Select items to return:</label>
+                            <div class="grid grid-cols-1 gap-4">
+                                {% for item in order.items.all %}
+                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-green-400 hover:bg-green-50 transition-all duration-200 cursor-pointer">
+                                    <input type="checkbox" class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 mt-1 return-item-checkbox" value="{{ item.id }}">
+                                    <div class="ml-4 flex items-center w-full">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                            {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
+                                            {% else %}
+                                            <div class="w-full h-full flex items-center justify-center text-gray-400"><i class="fas fa-image"></i></div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="ml-4 flex-1">
+                                            <div class="text-gray-800 font-medium">{{ item.product.name }}</div>
+                                            <div class="text-sm text-gray-500">Qty: {{ item.quantity }} • ₹{{ item.price }}</div>
+                                        </div>
+                                        <span class="text-sm text-gray-500 hidden md:inline">Select to return</span>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                            <p id="noItemsSelectedMsg" class="text-sm text-red-600 mt-2 hidden">Please select at least one item to return.</p>
+                        </div>
+                        <div>
+                            <label class="block text-lg font-semibold text-gray-800 mb-6">Please select a reason for return:</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex items-start p-4 border-2 border-gray-200 rounded-xl hover:border-green-400 hover:bg-green-50 transition-all duration-200 cursor-pointer">
+                                    <input type="radio" id="reason1" name="return_reason" value="damaged" class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 mt-1">
+                                    <label for="reason1" class="ml-3 block text-base text-gray-700 cursor-pointer">
+                                        <span class="font-medium">Product damaged or defective</span>
+                                        <p class="text-sm text-gray-500 mt-1">Item arrived broken or not working properly</p>
+                                    </label>
+                                </div>
+                                <div class="flex items-start p-4 border-2 border-gray-200 rounded-xl hover:border-green-400 hover:bg-green-50 transition-all duration-200 cursor-pointer">
+                                    <input type="radio" id="reason2" name="return_reason" value="wrong" class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 mt-1">
+                                    <label for="reason2" class="ml-3 block text-base text-gray-700 cursor-pointer">
+                                        <span class="font-medium">Wrong product received</span>
+                                        <p class="text-sm text-gray-500 mt-1">Received different item than ordered</p>
+                                    </label>
+                                </div>
+                                <div class="flex items-start p-4 border-2 border-gray-200 rounded-xl hover:border-green-400 hover:bg-green-50 transition-all duration-200 cursor-pointer">
+                                    <input type="radio" id="reason3" name="return_reason" value="description" class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 mt-1">
+                                    <label for="reason3" class="ml-3 block text-base text-gray-700 cursor-pointer">
+                                        <span class="font-medium">Product not as described</span>
+                                        <p class="text-sm text-gray-500 mt-1">Item doesn't match the description</p>
+                                    </label>
+                                </div>
+                                <div class="flex items-start p-4 border-2 border-gray-200 rounded-xl hover:border-green-400 hover:bg-green-50 transition-all duration-200 cursor-pointer">
+                                    <input type="radio" id="reason4" name="return_reason" value="changed" class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 mt-1">
+                                    <label for="reason4" class="ml-3 block text-base text-gray-700 cursor-pointer">
+                                        <span class="font-medium">Changed my mind</span>
+                                        <p class="text-sm text-gray-500 mt-1">No longer want the product</p>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="additional_details" class="block text-lg font-semibold text-gray-800 mb-4">
+                                Additional Details
+                            </label>
+                            <textarea id="additional_details" name="additional_details" rows="4" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200" placeholder="Please provide any additional details about your return..."></textarea>
+                        </div>
+
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-undo text-green-600 mr-2"></i>
+                                <h3 class="font-semibold text-gray-800">Items being returned</h3>
+                            </div>
+                            <div id="selectedItemsContainer" class="space-y-3 text-sm text-gray-700">
+                                <p class="text-gray-500" id="noSelectedItems">No items selected yet.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                            <a href="{% url 'user_profile' %}" class="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-300 rounded-xl text-base font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 sm:w-auto w-full">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Back to Profile
+                            </a>
+                            <button type="submit" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-xl text-base font-semibold text-white bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg sm:w-auto w-full">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Submit Return Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (match Wishlist) -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600 text-sm">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-brand transition-colors text-sm">Terms & Conditions</a>
+                    <a href="#" class="text-gray-500 hover:text-brand transition-colors text-sm">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add interactive functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add active state to radio buttons
+            const radioButtons = document.querySelectorAll('input[name="return_reason"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Remove active class from all
+                    document.querySelectorAll('.flex.items-start').forEach(div => {
+                        div.classList.remove('border-green-500', 'bg-green-50');
+                    });
+                    
+                    // Add active class to selected
+                    if (this.checked) {
+                        this.closest('.flex.items-start').classList.add('border-green-500', 'bg-green-50');
+                    }
+                });
+            });
+            
+            // Form submission
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const selectedReason = document.querySelector('input[name="return_reason"]:checked');
+                const selectedItemCheckboxes = Array.from(document.querySelectorAll('.return-item-checkbox:checked'));
+                const noItemsMsg = document.getElementById('noItemsSelectedMsg');
+                let valid = true;
+                if (!selectedReason) {
+                    alert('Please select a reason for return');
+                    valid = false;
+                }
+                if (selectedItemCheckboxes.length === 0) {
+                    if (noItemsMsg) noItemsMsg.classList.remove('hidden');
+                    valid = false;
+                } else {
+                    if (noItemsMsg) noItemsMsg.classList.add('hidden');
+                }
+                if (!valid) {
+                    e.preventDefault();
+                    return;
+                }
+                // Append selected item ids to form
+                selectedItemCheckboxes.forEach(cb => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'item_ids';
+                    input.value = cb.value;
+                    form.appendChild(input);
+                });
+            });
+
+            // Handle selection preview for items being returned
+            const checkboxes = document.querySelectorAll('.return-item-checkbox');
+            const selectedContainer = document.getElementById('selectedItemsContainer');
+            const noSelected = document.getElementById('noSelectedItems');
+            function refreshSelected() {
+                if (!selectedContainer) return;
+                // Clear current list
+                selectedContainer.querySelectorAll('[data-selected-item]').forEach(el => el.remove());
+                const selected = Array.from(checkboxes).filter(cb => cb.checked);
+                if (selected.length === 0) {
+                    if (noSelected) noSelected.classList.remove('hidden');
+                    return;
+                }
+                if (noSelected) noSelected.classList.add('hidden');
+                selected.forEach(cb => {
+                    const label = cb.closest('label');
+                    if (!label) return;
+                    const nameEl = label.querySelector('.text-gray-800.font-medium');
+                    const qtyEl = label.querySelector('.text-sm.text-gray-500');
+                    const imgEl = label.querySelector('img');
+                    const row = document.createElement('div');
+                    row.setAttribute('data-selected-item', '1');
+                    row.className = 'flex items-center';
+                    const thumb = document.createElement('div');
+                    thumb.className = 'w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0';
+                    if (imgEl && imgEl.src) {
+                        const img = document.createElement('img');
+                        img.src = imgEl.src;
+                        img.className = 'w-full h-full object-cover';
+                        thumb.appendChild(img);
+                    } else {
+                        const ph = document.createElement('div');
+                        ph.className = 'w-full h-full flex items-center justify-center text-gray-400';
+                        ph.innerHTML = '<i class="fas fa-image"></i>';
+                        thumb.appendChild(ph);
+                    }
+                    const meta = document.createElement('div');
+                    meta.className = 'ml-3';
+                    meta.innerHTML = `<div class="font-medium">${nameEl ? nameEl.textContent : 'Item'}</div><div class="text-xs text-gray-500">${qtyEl ? qtyEl.textContent : ''}</div>`;
+                    row.appendChild(thumb);
+                    row.appendChild(meta);
+                    selectedContainer.appendChild(row);
+                });
+            }
+            checkboxes.forEach(cb => cb.addEventListener('change', refreshSelected));
+            refreshSelected();
+        });
+    </script>
+</body>
+</html>

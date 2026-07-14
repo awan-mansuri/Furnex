@@ -1,0 +1,613 @@
+<!-- Floating Chat Widget - Include this in base template -->
+<style>
+    .chat-widget-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .chat-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3B5D50 0%, #2D4A3F 100%);
+        box-shadow: 0 4px 12px rgba(59, 93, 80, 0.4);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+    }
+    
+    .chat-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(59, 93, 80, 0.6);
+    }
+    
+    .chat-button i {
+        color: white;
+        font-size: 24px;
+    }
+    
+    .chat-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    
+    .chat-window {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 480px; /* was 380px */
+        max-width: calc(100vw - 40px);
+        height: 640px; /* was 550px */
+        max-height: calc(100vh - 120px);
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
+    }
+
+    /* Expanded mode for larger view on tap */
+    .chat-window.expanded {
+        width: min(900px, calc(100vw - 40px));
+        height: min(85vh, 820px);
+        right: 20px;
+        bottom: 90px;
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .chat-window.active {
+        display: flex;
+    }
+    
+    .chat-header {
+        background: linear-gradient(135deg, #3B5D50 0%, #2D4A3F 100%);
+        color: white;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .chat-header-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #3B5D50;
+    }
+    
+    .chat-status {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-title {
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    .chat-online {
+        font-size: 12px;
+        opacity: 0.9;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .online-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    .chat-close, .chat-expand {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 4px;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+    .chat-close:hover, .chat-expand:hover { opacity: 1; }
+    .chat-header-controls { display:flex; align-items:center; gap:8px; }
+    
+    .chat-close:hover {
+        opacity: 1;
+    }
+    
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: #f9fafb;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .chat-message {
+        display: flex;
+        gap: 8px;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .chat-message.user {
+        flex-direction: row-reverse;
+    }
+    
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 14px;
+    }
+    
+    .message-avatar.bot {
+        background: #3B5D50;
+        color: white;
+    }
+    
+    .message-avatar.user {
+        background: #e5e7eb;
+        color: #6b7280;
+    }
+    
+    .message-content {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    
+    .message-content.bot {
+        background: white;
+        color: #1f2937;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .message-content.user {
+        background: #3B5D50;
+        color: white;
+    }
+    
+    .message-time {
+        font-size: 11px;
+        opacity: 0.6;
+        margin-top: 4px;
+    }
+    
+    .quick-replies {
+        padding: 12px 20px;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+    }
+    
+    .quick-reply {
+        background: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 13px;
+        color: #4b5563;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+    
+    .quick-reply:hover {
+        background: #3B5D50;
+        color: white;
+        border-color: #3B5D50;
+    }
+    
+    .chat-input-container {
+        padding: 16px 20px;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        gap: 8px;
+    }
+    
+    .chat-input {
+        flex: 1;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        padding: 10px 16px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    
+    .chat-input:focus {
+        border-color: #3B5D50;
+    }
+    
+    .chat-send {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #3B5D50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    
+    .chat-send:hover {
+        background: #2D4A3F;
+        transform: scale(1.05);
+    }
+    
+    .chat-send:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .typing-indicator {
+        display: flex;
+        gap: 4px;
+        padding: 10px 14px;
+        background: white;
+        border-radius: 12px;
+        width: fit-content;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: #9ca3af;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-10px); }
+    }
+    
+    @media (max-width: 640px) {
+        .chat-window {
+            bottom: 80px;
+            right: 10px;
+            width: calc(100vw - 20px);
+            height: calc(100vh - 100px);
+        }
+    }
+</style>
+
+<div class="chat-widget-container">
+    <!-- Chat Button -->
+    <button class="chat-button" onclick="toggleChat()" id="chatButton">
+        <i class="fas fa-comments"></i>
+        <span class="chat-badge" id="chatBadge" style="display: none;">1</span>
+    </button>
+    
+    <!-- Chat Window -->
+    <div class="chat-window" id="chatWindow">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chat-status">
+                    <div class="chat-title">Furnex Support</div>
+                    <div class="chat-online">
+                        <span class="online-dot"></span>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header-controls">
+                <button class="chat-expand" onclick="toggleExpand()" title="Expand">
+                    <i class="fas fa-up-right-and-down-left-from-center"></i>
+                </button>
+                <button class="chat-close" onclick="toggleChat()" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">
+                <div class="message-avatar bot">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <div class="message-content bot">
+                        👋 Hi! I'm your Furnex AI assistant. How can I help you today?
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Replies -->
+        <div class="quick-replies">
+            <button class="quick-reply" onclick="sendQuickMessage('Product dimensions?')">📏 Dimensions</button>
+            <button class="quick-reply" onclick="sendQuickMessage('Delivery time?')">🚚 Delivery</button>
+            <button class="quick-reply" onclick="sendQuickMessage('Return policy?')">↩️ Returns</button>
+            <button class="quick-reply" onclick="sendQuickMessage('Payment options?')">💳 Payment</button>
+        </div>
+        
+        <!-- Input -->
+        <div class="chat-input-container">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="Type your message..."
+                onkeypress="if(event.key==='Enter') sendMessage()"
+            >
+            <button class="chat-send" onclick="sendMessage()" id="chatSend">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let chatOpen = false;
+let conversationId = null;
+
+function toggleChat() {
+    chatOpen = !chatOpen;
+    const wnd = document.getElementById('chatWindow');
+    const badge = document.getElementById('chatBadge');
+    
+    if (chatOpen) {
+        wnd.classList.add('active');
+        badge.style.display = 'none';
+        // Create conversation if user is logged in
+        {% if user.is_authenticated %}
+        if (!conversationId) {
+            createConversation();
+        }
+        {% endif %}
+    } else {
+        wnd.classList.remove('active');
+        wnd.classList.remove('expanded');
+    }
+}
+
+function toggleExpand() {
+    const wnd = document.getElementById('chatWindow');
+    if (!wnd.classList.contains('active')) {
+        // Opening also expands
+        toggleChat();
+    }
+    wnd.classList.toggle('expanded');
+}
+
+function createConversation() {
+    fetch('/api/create-conversation/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            conversationId = data.conversation_id;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addMessage(message, 'user');
+    input.value = '';
+    
+    // Show typing indicator
+    showTyping();
+    
+    // Get bot response
+    setTimeout(() => {
+        const botResponse = getBotResponse(message);
+        hideTyping();
+        addMessage(botResponse, 'bot');
+        
+        {% if user.is_authenticated %}
+        // Save to database
+        saveMessage(message, botResponse);
+        {% endif %}
+    }, 1000);
+}
+
+function sendQuickMessage(message) {
+    document.getElementById('chatInput').value = message;
+    sendMessage();
+}
+
+function addMessage(text, type) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${type}`;
+    
+    const avatar = type === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+    
+    messageDiv.innerHTML = `
+        <div class="message-avatar ${type}">
+            ${avatar}
+        </div>
+        <div>
+            <div class="message-content ${type}">
+                ${text}
+            </div>
+        </div>
+    `;
+    
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function showTyping() {
+    const messagesContainer = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'chat-message bot';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+        <div class="message-avatar bot">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function hideTyping() {
+    const typing = document.getElementById('typingIndicator');
+    if (typing) typing.remove();
+}
+
+function getBotResponse(message) {
+    const msg = message.toLowerCase();
+    
+    if (msg.includes('dimension') || msg.includes('size')) {
+        return "📏 You can find product dimensions on each product page. Look for the 'Product Dimensions' section with width, height, depth, and weight details!";
+    } else if (msg.includes('delivery') || msg.includes('shipping')) {
+        return "🚚 We offer free delivery on all orders! Standard delivery takes 5-7 business days. We'll send you tracking information once your order ships.";
+    } else if (msg.includes('return')) {
+        return "↩️ You can return delivered items within 10 days of delivery. Visit your orders page to initiate a return request. We'll process refunds within 5-7 business days.";
+    } else if (msg.includes('payment')) {
+        return "💳 We accept multiple payment methods: Bank Transfer, PayPal, Cash on Delivery, and Razorpay. All payments are secure and encrypted!";
+    } else if (msg.includes('hello') || msg.includes('hi')) {
+        return "👋 Hello! How can I help you today? I can answer questions about products, delivery, returns, and payments!";
+    } else if (msg.includes('thank')) {
+        return "😊 You're welcome! Is there anything else I can help you with?";
+    } else if (msg.includes('price') || msg.includes('cost')) {
+        return "💰 You can view prices for all products on our shop page. We also offer price drop alerts - just visit any product and click the notification bell!";
+    } else if (msg.includes('track') || msg.includes('order')) {
+        return "📦 You can track your order using the tracking ID sent to your email. Visit the 'Track Order' page or your profile to see the latest status!";
+    } else {
+        return "🤔 I'm here to help! You can ask me about product dimensions, delivery, returns, payments, or tracking orders. Or type 'help' to see what I can do!";
+    }
+}
+
+function saveMessage(userMessage, botMessage) {
+    if (!conversationId) return;
+    
+    fetch('/api/send-message/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            conversation_id: conversationId,
+            message: userMessage
+        })
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Show notification badge after a delay
+setTimeout(() => {
+    if (!chatOpen) {
+        const badge = document.getElementById('chatBadge');
+        badge.style.display = 'flex';
+    }
+}, 5000);
+</script>

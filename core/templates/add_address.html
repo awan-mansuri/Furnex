@@ -1,0 +1,572 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Address - Furnex</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <!-- Tailwind (scoped, no preflight) for modern form UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { corePlugins: { preflight: false }, theme: { extend: { colors: { brand: '#3B5D50', primary: '#3B5D50', 'primary-dark': '#2D4A3F', 'primary-light': '#DCE5E1' } } } };
+    </script>
+    
+    <style>
+        /* Ensure header links match profile (no underline) */
+        .sticky-nav a { text-decoration: none; }
+        .profile-hero {
+            background: linear-gradient(135deg, #3B5D50 0%, #2D4A3F 100%);
+            color: white;
+            padding: 40px 0 30px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(59, 93, 80, 0.12);
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(45, 74, 63, 0.18);
+        }
+        
+        .profile-card .card-header {
+            background: linear-gradient(45deg, #3B5D50, #2D4A3F);
+            color: white;
+            border: none;
+            padding: 20px 25px;
+            font-weight: 600;
+        }
+        
+        .form-control:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
+        
+        .form-select:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
+        
+        .form-check-input:checked {
+            background-color: #198754;
+            border-color: #198754;
+        }
+        
+        .form-check-input:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #198754, #146c43);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #146c43, #198754);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(25, 135, 84, 0.3);
+        }
+        
+        .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: #6c757d;
+            border-color: #6c757d;
+            transform: translateY(-2px);
+        }
+        
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+        }
+        
+        .breadcrumb-item.active {
+            color: #198754;
+            font-weight: 600;
+        }
+        
+        .custom-navbar {
+            background: linear-gradient(135deg, #198754 0%, #146c43 100%) !important;
+        }
+        
+        .custom-navbar-nav .nav-link {
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+        
+        .custom-navbar-nav .nav-link:hover {
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .address-type-option {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+        }
+        
+        .address-type-option:hover {
+            border-color: #198754;
+            background: #f8fff9;
+        }
+        
+        .address-type-option.selected {
+            border-color: #198754;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+        }
+        
+        .form-check-input {
+            margin-top: 0.3em;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Start Header/Navigation (Tailwind, same as profile) -->
+    <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2 no-underline">
+                    <span class="text-2xl font-bold text-primary">Furnex<span class="text-gray-600">.</span></span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="no-underline text-gray-700 hover:text-primary transition-colors duration-200">Home</a>
+                    <a href="{% url 'shop' %}" class="no-underline text-gray-700 hover:text-primary transition-colors duration-200">Shop</a>
+                    <a href="{% url 'about' %}" class="no-underline text-gray-700 hover:text-primary transition-colors duration-200">About us</a>
+                    <a href="{% url 'services' %}" class="no-underline text-gray-700 hover:text-primary transition-colors duration-200">Services</a>
+                    <a href="{% url 'blog' %}" class="no-underline text-gray-700 hover:text-primary transition-colors duration-200">Blog</a>
+                    <a href="{% url 'contact' %}" class="no-underline text-gray-700 hover:text-primary transition-colors duration-200">Contact us</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-primary-light transition-colors duration-200">
+                        <i class="fas fa-shopping-cart text-gray-600 hover:text-primary"></i>
+                    </a>
+                    <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Profile Hero Section -->
+    <div class="profile-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-2"><i class="fas fa-plus-circle me-2"></i>Add New Address</h1>
+                    <p class="lead mb-0">Add a new delivery or billing address to your account</p>
+                </div>
+                <div class="col-lg-4">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-lg-end mb-0">
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white-50">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'user_profile' %}" class="text-white-50">Profile</a></li>
+                            <li class="breadcrumb-item active text-white">Add Address</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h5 class="mb-1"><i class="fas fa-map-marker-alt me-2"></i>Add New Address</h5>
+                        <p class="text-white-50 mb-0 small">Fill in your address details for seamless deliveries</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="space-y-6">
+                            {% csrf_token %}
+                            <!-- Hidden fields populated on submit -->
+                            <input type="hidden" name="first_name" id="first_name_hidden">
+                            <input type="hidden" name="last_name" id="last_name_hidden">
+
+                            <!-- Address Type (kept for backend compatibility) -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold mb-3">Address Type</label>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="address-type-option" onclick="document.getElementById('type_billing').click()">
+                                            <div class="form-check mb-0 text-center">
+                                                <input class="form-check-input" type="radio" name="address_type" id="type_billing" value="billing" style="display: none;">
+                                                <i class="fas fa-credit-card fa-2x text-success mb-2"></i>
+                                                <label class="form-check-label d-block fw-semibold" for="type_billing">Billing Only</label>
+                                                <small class="text-muted">For invoice purposes</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="address-type-option" onclick="document.getElementById('type_shipping').click()">
+                                            <div class="form-check mb-0 text-center">
+                                                <input class="form-check-input" type="radio" name="address_type" id="type_shipping" value="shipping" style="display: none;">
+                                                <i class="fas fa-shipping-fast fa-2x text-success mb-2"></i>
+                                                <label class="form-check-label d-block fw-semibold" for="type_shipping">Shipping Only</label>
+                                                <small class="text-muted">For product delivery</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="address-type-option selected" onclick="document.getElementById('type_both').click()">
+                                            <div class="form-check mb-0 text-center">
+                                                <input class="form-check-input" type="radio" name="address_type" id="type_both" value="both" checked style="display: none;">
+                                                <i class="fas fa-home fa-2x text-success mb-2"></i>
+                                                <label class="form-check-label d-block fw-semibold" for="type_both">Both</label>
+                                                <small class="text-muted">For billing & shipping</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tailwind form fields -->
+                            <div class="grid grid-cols-1 gap-6">
+                                <!-- Full Name -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                    <input id="full_name" type="text" placeholder="Enter full name" required class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand transition" />
+                                </div>
+
+                                <!-- Country / State / City -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                                        <div class="relative">
+                                            <select id="country" name="country" required class="w-full appearance-none rounded-xl border border-gray-300 px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand transition">
+                                                <option value="">Select Country</option>
+                                                <option value="India" data-code="IN" data-dial="+91">India</option>
+                                                <option value="United States" data-code="US" data-dial="+1">United States</option>
+                                                <option value="United Kingdom" data-code="GB" data-dial="+44">United Kingdom</option>
+                                                <option value="Canada" data-code="CA" data-dial="+1">Canada</option>
+                                                <option value="Australia" data-code="AU" data-dial="+61">Australia</option>
+                                                <option value="Germany" data-code="DE" data-dial="+49">Germany</option>
+                                                <option value="France" data-code="FR" data-dial="+33">France</option>
+                                                <option value="Other" data-code="ZZ" data-dial="+">Other</option>
+                                            </select>
+                                            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-chevron-down"></i></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                                        <div class="relative">
+                                            <select id="state_select" name="state" required class="w-full appearance-none rounded-xl border border-gray-300 px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand transition"></select>
+                                            <span id="state_spinner" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-brand animate-spin"><i class="fas fa-circle-notch"></i></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                        <div class="relative">
+                                            <select id="city_select" name="city" required class="w-full appearance-none rounded-xl border border-gray-300 px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand transition"></select>
+                                            <span id="city_spinner" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-brand animate-spin"><i class="fas fa-circle-notch"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Address lines -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 1</label>
+                                    <input id="address" name="address" type="text" placeholder="House no., Street, Landmark" required class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand transition" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2 (optional)</label>
+                                    <input id="apartment" name="apartment" type="text" placeholder="Apartment, Suite, Floor (optional)" class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand transition" />
+                                </div>
+
+                                <!-- Postal + Phone -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+                                        <input id="postal_code" name="postal_code" type="text" placeholder="Enter postal code" required class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand transition" />
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                        <div class="flex rounded-xl overflow-hidden border border-gray-300 focus-within:ring-2 focus-within:ring-brand/40 focus-within:border-brand transition">
+                                            <span id="dial_prefix" class="min-w-[72px] bg-gray-50 px-3 py-3 text-gray-600 select-none flex items-center justify-center">+91</span>
+                                            <input id="phone_local" type="tel" placeholder="Enter phone number" class="flex-1 px-4 py-3 focus:outline-none" />
+                                            <input type="hidden" id="phone" name="phone" />
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Country code is locked and set from the selected country</p>
+                                    </div>
+                                </div>
+
+                                <!-- Default address -->
+                                <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-200">
+                                    <input id="is_default" name="is_default" type="checkbox" class="h-5 w-5 rounded border-gray-300 text-brand focus:ring-brand" />
+                                    <label for="is_default" class="text-sm text-gray-700">Set as default address</label>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="flex gap-3 pt-3 border-t border-gray-200">
+                                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-brand text-white px-5 py-3 hover:bg-emerald-700 transition">
+                                        <i class="fas fa-save"></i><span>Save Address</span>
+                                    </button>
+                                    <a href="{% url 'user_profile' %}" class="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-5 py-3 text-gray-700 hover:bg-gray-50 transition">
+                                        <i class="fas fa-times"></i><span>Cancel</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Help Section -->
+                <div class="profile-card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Address Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                    <div>
+                                        <h6 class="mb-1">Accurate Information</h6>
+                                        <p class="text-muted mb-0 small">Ensure all details match your official documents for smooth deliveries.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                    <div>
+                                        <h6 class="mb-1">Complete Address</h6>
+                                        <p class="text-muted mb-0 small">Include apartment numbers and landmarks for better delivery accuracy.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                    <div>
+                                        <h6 class="mb-1">Phone Number</h6>
+                                        <p class="text-muted mb-0 small">Adding a phone number helps couriers contact you if needed.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                    <div>
+                                        <h6 class="mb-1">Multiple Addresses</h6>
+                                        <p class="text-muted mb-0 small">You can add multiple addresses and choose during checkout.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Footer Section (Tailwind, same as profile) -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="container mx-auto py-12 px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl font-bold text-primary">Furnex<span class="text-gray-600">.</span></span>
+                    </div>
+                    <p class="text-gray-600 mb-6 max-w-md">Discover comfort, style, and craftsmanship. At Furnex, we design furniture that turns houses into homes.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-all duration-200"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-all duration-200"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-all duration-200"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-all duration-200"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Company</h3>
+                    <ul class="space-y-3">
+                        <li><a href="{% url 'about' %}" class="text-base text-gray-600 hover:text-primary transition-colors">About us</a></li>
+                        <li><a href="{% url 'services' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Services</a></li>
+                        <li><a href="{% url 'blog' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="{% url 'contact' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Contact us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Account</h3>
+                    <ul class="space-y-3">
+                        <li><a href="{% url 'cart' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Shopping Cart</a></li>
+                        <li><a href="{% url 'wishlist' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Wishlist</a></li>
+                        <li><a href="{% url 'compare' %}" class="text-base text-gray-600 hover:text-primary transition-colors">Compare</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-gray-200">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-base text-gray-500">Copyright &copy; <script>document.write(new Date().getFullYear());</script> Furnex. All Rights Reserved.</p>
+                    <div class="mt-4 md:mt-0 flex space-x-6">
+                        <a href="#" class="text-base text-gray-500 hover:text-primary transition-colors">Terms & Conditions</a>
+                        <a href="#" class="text-base text-gray-500 hover:text-primary transition-colors">Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End Footer Section -->
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    
+    <script>
+            // Address type selection styling
+            (async function() {
+                const addressTypeOptions = document.querySelectorAll('.address-type-option');
+                const addressTypeInputs = document.querySelectorAll('input[name="address_type"]');
+                addressTypeInputs.forEach(input => {
+                    input.addEventListener('change', function() {
+                        addressTypeOptions.forEach(option => option.classList.remove('selected'));
+                        if (this.checked) this.closest('.address-type-option').classList.add('selected');
+                    });
+                });
+                addressTypeInputs.forEach(input => { if (input.checked) input.closest('.address-type-option').classList.add('selected'); });
+
+                // ------------------------------
+                // Dynamic country/state/city data
+                // ------------------------------
+                const countryEl = document.getElementById('country');
+                const stateSelect = document.getElementById('state_select');
+                const citySelect = document.getElementById('city_select');
+                const stateSpinner = document.getElementById('state_spinner');
+                const citySpinner = document.getElementById('city_spinner');
+                const dialPrefix = document.getElementById('dial_prefix');
+                const phoneLocal = document.getElementById('phone_local');
+                const phoneHidden = document.getElementById('phone');
+                const fullName = document.getElementById('full_name');
+                const firstHidden = document.getElementById('first_name_hidden');
+                const lastHidden = document.getElementById('last_name_hidden');
+
+                // Minimal real datasets (extendable)
+                const countries = [
+                    { name: 'India', code: 'IN', dial: '+91' },
+                    { name: 'United States', code: 'US', dial: '+1' },
+                    { name: 'United Kingdom', code: 'GB', dial: '+44' },
+                    { name: 'Canada', code: 'CA', dial: '+1' },
+                    { name: 'Australia', code: 'AU', dial: '+61' },
+                    { name: 'Germany', code: 'DE', dial: '+49' },
+                    { name: 'France', code: 'FR', dial: '+33' },
+                    { name: 'Other', code: 'ZZ', dial: '+' },
+                ];
+                const statesByCountry = {
+                    IN: ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Delhi','Goa','Gujarat','Haryana','Himachal Pradesh','Jammu and Kashmir','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal'],
+                    US: ['California','New York','Texas','Florida','Illinois','Washington'],
+                    GB: ['England','Scotland','Wales','Northern Ireland'],
+                    CA: ['Ontario','Quebec','British Columbia','Alberta','Manitoba'],
+                    AU: ['New South Wales','Victoria','Queensland','Western Australia','South Australia'],
+                    DE: ['Bavaria','Berlin','Hesse','Hamburg','Saxony'],
+                    FR: ['Île-de-France','Provence-Alpes-Côte d’Azur','Auvergne-Rhône-Alpes','Occitanie']
+                };
+                const citiesIN = {
+                    Gujarat: ['Ahmedabad','Surat','Vadodara','Rajkot','Bhavnagar','Jamnagar','Junagadh','Gandhinagar','Kutch','Mehsana','Anand','Bharuch','Navsari','Valsad','Banaskantha','Sabarkantha','Panchmahal'],
+                    Maharashtra: ['Mumbai','Pune','Nagpur','Nashik','Thane','Aurangabad'],
+                    Karnataka: ['Bengaluru','Mysuru','Mangaluru','Hubballi'],
+                    'Tamil Nadu': ['Chennai','Coimbatore','Madurai','Salem'],
+                    Delhi: ['New Delhi','Central Delhi','South Delhi','North West Delhi']
+                };
+                const citiesFallback = ['City 1', 'City 2', 'City 3'];
+
+                // Populate countries (prefill common list and default to India)
+                countryEl.innerHTML = '<option value="">Select Country</option>' + countries.map(c=>`<option value="${c.name}" data-code="${c.code}" data-dial="${c.dial}">${c.name}</option>`).join('');
+                if (!countryEl.value) countryEl.value = 'India';
+
+                function setDialFromCountry(){
+                    const opt = countryEl.options[countryEl.selectedIndex];
+                    dialPrefix.textContent = (opt && opt.dataset.dial) || '+';
+                }
+
+                function withSpinner(el, show){ el.classList.toggle('hidden', !show); }
+
+                function populateStates(){
+                    const opt = countryEl.options[countryEl.selectedIndex];
+                    const ccode = opt ? opt.dataset.code : 'ZZ';
+                    const list = statesByCountry[ccode] || [];
+                    withSpinner(stateSpinner, true); stateSelect.disabled = true;
+                    setTimeout(()=>{
+                        stateSelect.innerHTML = '<option value="">Select State</option>' + list.map(s=>`<option value="${s}">${s}</option>`).join('');
+                        stateSelect.disabled = false; withSpinner(stateSpinner, false);
+                        populateCities();
+                    }, 200);
+                }
+                function populateCities(){
+                    const state = stateSelect.value;
+                    withSpinner(citySpinner, true); citySelect.disabled = true;
+                    setTimeout(()=>{
+                        let cities = [];
+                        if (countryEl.value === 'India') { cities = citiesIN[state] || []; }
+                        if (cities.length === 0) cities = citiesFallback; // fallback
+                        citySelect.innerHTML = '<option value="">Select City</option>' + cities.map(c=>`<option value="${c}">${c}</option>`).join('');
+                        citySelect.disabled = false; withSpinner(citySpinner, false);
+                    }, 200);
+                }
+
+                countryEl.addEventListener('change', ()=>{ setDialFromCountry(); populateStates(); });
+                stateSelect.addEventListener('change', populateCities);
+
+                // Phone and name handling before submit
+                const form = document.querySelector('form');
+                form.addEventListener('submit', ()=>{
+                    const parts = (fullName.value || '').trim().split(/\s+/);
+                    firstHidden.value = parts.shift() || '';
+                    lastHidden.value = parts.join(' ') || '';
+                    phoneHidden.value = `${dialPrefix.textContent} ${phoneLocal.value.trim()}`.trim();
+                });
+
+                // Init defaults
+                setDialFromCountry();
+                populateStates();
+                // Fallback in case options are not injected (safety on some browsers)
+                if (stateSelect.options.length <= 1) {
+                    const indiaStates = ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Delhi','Goa','Gujarat','Haryana','Himachal Pradesh','Jammu and Kashmir','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal'];
+                    stateSelect.innerHTML = '<option value="">Select State</option>' + indiaStates.map(s=>`<option value="${s}">${s}</option>`).join('');
+                }
+            })();
+    </script>
+</body>
+</html>

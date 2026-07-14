@@ -1,0 +1,919 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Furnex</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand': '#3B5D50',
+                        'brand-dark': '#2F4B41',
+                        'brand-light': '#DCE5E1',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root { --brand:#3B5D4F; --brand-dark:#2F4B41; }
+        .profile-hero {
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+            color: white;
+            padding: 40px 0 30px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(59,93,80,0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(59,93,80,0.2);
+        }
+        
+        .profile-card .card-header {
+            background: linear-gradient(45deg, var(--brand), var(--brand-dark));
+            color: white;
+            border: none;
+            padding: 20px 25px;
+            font-weight: 600;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--brand), var(--brand-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(59,93,80,0.3);
+        }
+        
+        .list-group-item {
+            border: none;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .list-group-item.active {
+            background: linear-gradient(45deg, var(--brand), var(--brand-dark));
+            border: none;
+            transform: translateX(5px);
+        }
+        
+        .list-group-item:not(.active):hover {
+            background: #e7edea;
+            transform: translateX(3px);
+            color: var(--brand);
+        }
+        
+        .form-control:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 0.2rem rgba(59,93,80,0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--brand), var(--brand-dark));
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--brand-dark), var(--brand));
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: #6c757d;
+            border-color: #6c757d;
+        }
+        
+        .btn-outline-warning {
+            border-color: #198754;
+            color: #198754;
+        }
+        
+        .btn-outline-warning:hover {
+            background: #198754;
+            color: white;
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #d1edff 0%, #e3f2fd 100%);
+            border: 1px solid #bee5eb;
+            border-left: 4px solid #198754;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+        }
+        
+        .breadcrumb-item.active {
+            color: #198754;
+            font-weight: 600;
+        }
+        
+        .custom-navbar {
+            background: #3b5d50 !important;
+        }
+        
+        .custom-navbar-nav .nav-link {
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+        
+        .custom-navbar-nav .nav-link:hover {
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+        
+        .text-success {
+            color: var(--brand) !important;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .form-label i {
+            color: var(--brand);
+        }
+        /* Theme overrides to align utilities with site theme */
+        .text-brand{color:var(--brand)!important}
+        .bg-brand{background-color:var(--brand)!important}
+        .bg-brand-light{background-color:#DCE5E1!important}
+        .hover\:bg-brand-dark:hover{background-color:var(--brand-dark)!important}
+        .border-brand{border-color:var(--brand)!important}
+        /* Map green utilities used in this file (gradients/buttons) to theme */
+        .from-green-600{--tw-gradient-from: var(--brand)!important}
+        .to-green-500{--tw-gradient-to: var(--brand-dark)!important}
+        .hover\:from-green-700:hover{--tw-gradient-from: var(--brand-dark)!important}
+        .hover\:to-green-600:hover{--tw-gradient-to: var(--brand)!important}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header (match Wishlist) -->
+    <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-brand">Furnex<span class="text-gray-600">.</span></span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Home</a>
+                    <a href="{% url 'shop' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Shop</a>
+                    <a href="{% url 'about' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">About us</a>
+                    <a href="{% url 'services' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Services</a>
+                    <a href="{% url 'blog' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Blog</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Contact us</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-brand-light transition-colors duration-200">
+                        <i class="fas fa-shopping-cart text-gray-600 hover:text-brand"></i>
+                    </a>
+                    <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Hero Section -->
+    <div class="profile-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-2"><i class="fas fa-user-edit me-2"></i>Edit Profile</h1>
+                    <p class="lead mb-0">Update your personal information and preferences</p>
+                </div>
+                <div class="col-lg-4">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-lg-end mb-0">
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white-50">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'user_profile' %}" class="text-white-50">Profile</a></li>
+                            <li class="breadcrumb-item active text-white">Edit Profile</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <!-- Profile Sidebar -->
+            <div class="col-lg-3">
+                <div class="profile-card">
+                    <div class="card-body text-center">
+                        <div class="position-relative d-inline-block">
+                            <div class="user-avatar overflow-hidden" style="width: 96px; height: 96px;">
+                                {% if profile and profile.avatar_url %}
+                                    <img id="editProfileAvatar" src="{{ profile.avatar_url }}" alt="avatar" class="w-100 h-100" style="object-fit: cover; border-radius: 50%;">
+                                {% else %}
+                                    <div class="d-flex align-items-center justify-content-center w-100 h-100" style="border-radius:50%;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <button id="openCameraBtn" type="button" class="btn btn-sm btn-light border position-absolute" style="right:-6px; bottom:-6px; border-radius: 20px;">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <button id="removeAvatarBtn" type="button" class="btn btn-outline-secondary btn-sm" {% if not profile or not profile.avatar_url %}disabled{% endif %}>
+                                <i class="fas fa-trash me-1"></i> Remove Photo
+                            </button>
+                        </div>
+                        <input id="avatarFileInput" type="file" accept="image/*" class="d-none">
+                        <h5 class="mb-1 mt-3">{{ user.get_full_name|default:user.username }}</h5>
+                        <p class="text-muted mb-2">{{ user.email }}</p>
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>Member since {{ user.date_joined|date:"M d, Y" }}
+                        </small>
+                    </div>
+                </div>
+                
+              
+            </div>
+
+            <!-- Edit Profile Form -->
+            <div class="col-lg-9">
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h5 class="mb-1"><i class="fas fa-user-edit me-2"></i>Edit Profile Information</h5>
+                        <p class="text-white-50 mb-0 small">Update your personal information below</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                <!-- Username -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="id_username" class="form-label">
+                                        <i class="fas fa-user me-1"></i>Username *
+                                    </label>
+                                    <input type="text" 
+                                           name="username" 
+                                           id="id_username" 
+                                           class="form-control form-control-lg" 
+                                           value="{{ form.username.value|default:user.username }}" 
+                                           required
+                                           placeholder="Enter your username">
+                                    {% if form.username.errors %}
+                                        <div class="text-danger small mt-2">
+                                            {% for error in form.username.errors %}
+                                                <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Email -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="id_email" class="form-label">
+                                        <i class="fas fa-envelope me-1"></i>Email Address *
+                                    </label>
+                                    <input type="email" 
+                                           name="email" 
+                                           id="id_email" 
+                                           class="form-control form-control-lg" 
+                                           value="{{ form.email.value|default:user.email }}" 
+                                           required
+                                           placeholder="Enter your email address">
+                                    {% if form.email.errors %}
+                                        <div class="text-danger small mt-2">
+                                            {% for error in form.email.errors %}
+                                                <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- First Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="id_first_name" class="form-label">
+                                        <i class="fas fa-user-tag me-1"></i>First Name *
+                                    </label>
+                                    <input type="text" 
+                                           name="first_name" 
+                                           id="id_first_name" 
+                                           class="form-control form-control-lg" 
+                                           value="{{ form.first_name.value|default:user.first_name }}" 
+                                           required
+                                           placeholder="Enter your first name">
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger small mt-2">
+                                            {% for error in form.first_name.errors %}
+                                                <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Last Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="id_last_name" class="form-label">
+                                        <i class="fas fa-user-tag me-1"></i>Last Name *
+                                    </label>
+                                    <input type="text" 
+                                           name="last_name" 
+                                           id="id_last_name" 
+                                           class="form-control form-control-lg" 
+                                           value="{{ form.last_name.value|default:user.last_name }}" 
+                                           required
+                                           placeholder="Enter your last name">
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger small mt-2">
+                                            {% for error in form.last_name.errors %}
+                                                <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Account Information -->
+                            <div class="alert alert-info mt-4">
+                                <div class="d-flex">
+                                    <i class="fas fa-info-circle fa-2x me-3 text-primary"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="alert-heading mb-2">Account Information</h6>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-2">
+                                                <small><strong><i class="fas fa-calendar me-1"></i>Member Since:</strong> {{ user.date_joined|date:"F d, Y" }}</small>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <small><strong><i class="fas fa-sign-in-alt me-1"></i>Last Login:</strong> 
+                                                    {% if user.last_login %}
+                                                        {{ user.last_login|date:"M d, Y g:i A" }}
+                                                    {% else %}
+                                                        Never
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Password Change Note -->
+                            <div class="alert alert-warning mt-3">
+                                <div class="d-flex">
+                                    <i class="fas fa-key fa-2x me-3 text-warning"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="alert-heading mb-2">Password Management</h6>
+                                        <p class="mb-3">To change your password, please use the password reset option.</p>
+                                        <a href="{% url 'password_reset' %}" class="btn btn-outline-warning btn-sm">
+                                            <i class="fas fa-key me-1"></i>Change Password
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-3 mt-4 pt-3 border-top">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save me-2"></i>Update Profile
+                                </button>
+                                <a href="{% url 'user_profile' %}" class="btn btn-outline-secondary px-4">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (match Wishlist) -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600 text-sm">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-brand transition-colors text-sm">Terms & Conditions</a>
+                    <a href="#" class="text-gray-500 hover:text-brand transition-colors text-sm">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Advanced Camera Modal -->
+    <div id="cameraModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden items-center justify-center" style="z-index: 9999;">
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 bg-black/30 backdrop-blur-sm">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-camera text-green-500"></i>
+                    Profile Photo Studio
+                </h3>
+                <button id="closeCameraBtn" class="text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Camera View -->
+            <div class="relative bg-black overflow-hidden" style="height: 400px;">
+                <!-- Video Stream -->
+                <video id="cameraVideo" autoplay playsinline class="w-full h-full object-cover" style="filter: var(--camera-filter, none);"></video>
+                
+                <!-- Canvas for capture -->
+                <canvas id="cameraCanvas" class="hidden"></canvas>
+                
+                <!-- Preview Image -->
+                <img id="cameraPreview" class="hidden w-full h-full object-cover" alt="preview" style="filter: var(--preview-filter, none);" />
+                
+                <!-- Camera Grid Overlay -->
+                <div id="cameraGrid" class="absolute inset-0 pointer-events-none hidden">
+                    <div class="w-full h-full grid grid-cols-3 grid-rows-3">
+                        <div class="border-r border-b border-white/20"></div>
+                        <div class="border-r border-b border-white/20"></div>
+                        <div class="border-b border-white/20"></div>
+                        <div class="border-r border-b border-white/20"></div>
+                        <div class="border-r border-b border-white/20"></div>
+                        <div class="border-b border-white/20"></div>
+                        <div class="border-r border-white/20"></div>
+                        <div class="border-r border-white/20"></div>
+                        <div></div>
+                    </div>
+                </div>
+                
+                <!-- Camera Controls Overlay -->
+                <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                    <!-- Flash/Grid Toggle -->
+                    <div class="flex gap-2">
+                        <button id="toggleGrid" class="bg-black/50 backdrop-blur-sm text-white p-3 rounded-full hover:bg-black/70 transition-all">
+                            <i class="fas fa-border-all text-sm"></i>
+                        </button>
+                        <button id="flipCamera" class="bg-black/50 backdrop-blur-sm text-white p-3 rounded-full hover:bg-black/70 transition-all">
+                            <i class="fas fa-sync-alt text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Center Guide Circle -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="w-48 h-48 rounded-full border-4 border-green-500/30"></div>
+                </div>
+            </div>
+
+            <!-- Filter Selection -->
+            <div id="filterSection" class="px-6 py-3 bg-black/30 backdrop-blur-sm overflow-x-auto hidden">
+                <div class="flex gap-3">
+                    <button class="filter-btn flex-shrink-0" data-filter="none">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center text-white text-xs font-bold">None</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="grayscale(100%)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-gray-300 to-gray-500 flex items-center justify-center text-white text-xs font-bold">B&W</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="sepia(100%)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-yellow-600 to-orange-700 flex items-center justify-center text-white text-xs font-bold">Sepia</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="brightness(1.2) contrast(1.1)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold">Vivid</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="hue-rotate(180deg)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">Cool</div>
+                    </button>
+                    <button class="filter-btn flex-shrink-0" data-filter="saturate(2)">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-pink-500 to-red-600 flex items-center justify-center text-white text-xs font-bold">Pop</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- File Upload Fallback -->
+            <div id="fileFallback" class="hidden px-6 py-4 bg-gray-800/50">
+                <label class="block text-sm text-gray-300 mb-2">📁 Choose a photo from device</label>
+                <input id="avatarFile" type="file" accept="image/*" capture="user" class="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700" />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 px-6 py-4 bg-black/30 backdrop-blur-sm">
+                <button id="captureBtn" class="flex-1 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold py-3 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                    <i class="fas fa-camera"></i>
+                    <span>Capture</span>
+                </button>
+                <button id="retakeBtn" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-xl transition-all hidden flex items-center justify-center gap-2">
+                    <i class="fas fa-redo"></i>
+                    <span>Retake</span>
+                </button>
+                <button id="savePhotoBtn" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-3 rounded-xl transition-all shadow-lg hover:shadow-xl hidden flex items-center justify-center gap-2">
+                    <i class="fas fa-check"></i>
+                    <span>Save</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    
+    <script>
+        // Add focus effects to form inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            const formInputs = document.querySelectorAll('.form-control');
+            
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.classList.remove('focused');
+                    }
+                });
+            });
+
+            // Remove avatar handler
+            const removeBtn = document.getElementById('removeAvatarBtn');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', async function(){
+                    if (!confirm('Remove your profile photo?')) return;
+                    try{
+                        const res = await fetch('{% url "remove_avatar" %}', {
+                            method: 'POST',
+                            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            const avatarImg = document.getElementById('editProfileAvatar');
+                            if (avatarImg) {
+                                avatarImg.src = '';
+                                avatarImg.parentElement.innerHTML = '<div class="d-flex align-items-center justify-content-center w-100 h-100" style="border-radius:50%;"><i class="fas fa-user"></i></div>';
+                            }
+                            removeBtn.disabled = true;
+                        } else {
+                            alert(data.message || 'Failed to remove photo');
+                        }
+                    }catch(e){
+                        alert('Failed to remove photo');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+        // Advanced Camera Studio for avatar capture
+        (function(){
+            const openBtn = document.getElementById('openCameraBtn');
+            const modal = document.getElementById('cameraModal');
+            const closeBtn = document.getElementById('closeCameraBtn');
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            const preview = document.getElementById('cameraPreview');
+            const captureBtn = document.getElementById('captureBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+            const saveBtn = document.getElementById('savePhotoBtn');
+            const fileFallback = document.getElementById('fileFallback');
+            const fileInput = document.getElementById('avatarFile');
+            const filterSection = document.getElementById('filterSection');
+            const gridOverlay = document.getElementById('cameraGrid');
+            const toggleGridBtn = document.getElementById('toggleGrid');
+            const flipCameraBtn = document.getElementById('flipCamera');
+            
+            let stream;
+            let selectedFile = null;
+            let currentFilter = 'none';
+            let facingMode = 'user';
+            
+            function showModal(){ modal.classList.remove('hidden'); modal.classList.add('flex'); }
+            function hideModal(){ modal.classList.add('hidden'); modal.classList.remove('flex'); }
+
+            async function startCamera(){
+                try {
+                    console.log('Starting camera...');
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: facingMode, width: 1280, height: 1280 }, 
+                        audio: false 
+                    });
+                    console.log('Camera stream obtained:', stream);
+                    
+                    video.srcObject = stream;
+                    
+                    // Wait for video metadata to load
+                    await new Promise((resolve, reject) => {
+                        video.onloadedmetadata = () => {
+                            console.log('Video metadata loaded');
+                            resolve();
+                        };
+                        video.onerror = (e) => {
+                            console.error('Video element error:', e);
+                            reject(e);
+                        };
+                        // Timeout after 5 seconds
+                        setTimeout(() => reject(new Error('Video load timeout')), 5000);
+                    });
+                    
+                    // Explicitly play the video
+                    try {
+                        await video.play();
+                        console.log('Video playing successfully');
+                    } catch(playError) {
+                        console.error('Video play error:', playError);
+                    }
+                    
+                    video.classList.remove('hidden');
+                    
+                    // Show filter section
+                    if(filterSection) {
+                        filterSection.classList.remove('hidden');
+                        console.log('Filter section shown');
+                    } else {
+                        console.error('Filter section element not found');
+                    }
+                } catch(e) {
+                    console.error('Camera error:', e);
+                    // Show fallback file picker
+                    if(fileFallback){ fileFallback.classList.remove('hidden'); }
+                    video.classList.add('hidden');
+                    captureBtn.classList.add('hidden');
+                    retakeBtn.classList.add('hidden');
+                    saveBtn.classList.add('hidden');
+                    // Keep filter section visible for file uploads
+                    if(filterSection) {
+                        filterSection.classList.remove('hidden');
+                        console.log('Filter section shown for file upload');
+                    }
+                }
+            }
+            
+            function stopCamera(){
+                if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
+                video.srcObject = null;
+            }
+
+            function dataURLToBlob(dataURL){
+                const arr = dataURL.split(','), mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length; const u8arr = new Uint8Array(n);
+                while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+                return new Blob([u8arr], {type:mime});
+            }
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            if(openBtn){
+                openBtn.addEventListener('click', async ()=>{
+                    console.log('Opening camera modal...');
+                    showModal();
+                    // Reset state
+                    video.classList.remove('hidden');
+                    preview.classList.add('hidden');
+                    retakeBtn.classList.add('hidden');
+                    saveBtn.classList.add('hidden');
+                    captureBtn.classList.remove('hidden');
+                    if(fileFallback){ fileFallback.classList.add('hidden'); }
+                    // Ensure filter section is visible
+                    if(filterSection){ 
+                        filterSection.classList.remove('hidden'); 
+                        console.log('Filter section element found and shown');
+                    } else {
+                        console.error('Filter section element not found!');
+                    }
+                    selectedFile = null;
+                    // Apply default filter
+                    currentFilter = 'none';
+                    video.style.setProperty('--camera-filter', 'none');
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('ring-2', 'ring-green-500'));
+                    await startCamera();
+                });
+            }
+            if(closeBtn){
+                closeBtn.addEventListener('click', ()=>{ stopCamera(); hideModal(); });
+            }
+            if(captureBtn){
+                captureBtn.addEventListener('click', ()=>{
+                    if(!stream) {
+                        console.error('No camera stream available');
+                        return;
+                    }
+                    const w = video.videoWidth || 512; const h = video.videoHeight || 512;
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Apply current filter to captured image
+                    if(currentFilter !== 'none') {
+                        ctx.filter = currentFilter;
+                    }
+                    ctx.drawImage(video, 0, 0, w, h);
+                    
+                    const dataURL = canvas.toDataURL('image/jpeg', 0.92);
+                    preview.src = dataURL;
+                    preview.style.setProperty('--preview-filter', currentFilter);
+                    preview.classList.remove('hidden');
+                    video.classList.add('hidden');
+                    captureBtn.classList.add('hidden');
+                    retakeBtn.classList.remove('hidden');
+                    saveBtn.classList.remove('hidden');
+                    // Pause camera preview
+                    stopCamera();
+                });
+            }
+            if(retakeBtn){
+                retakeBtn.addEventListener('click', async ()=>{
+                    preview.classList.add('hidden');
+                    video.classList.remove('hidden');
+                    saveBtn.classList.add('hidden');
+                    retakeBtn.classList.add('hidden');
+                    captureBtn.classList.remove('hidden');
+                    await startCamera();
+                });
+            }
+            if(saveBtn){
+                saveBtn.addEventListener('click', async ()=>{
+                    try{
+                        const fd = new FormData();
+                        if(selectedFile){
+                            fd.append('avatar', selectedFile, selectedFile.name || 'avatar.jpg');
+                        } else if(preview.src && preview.src.startsWith('data:')){
+                            const blob = dataURLToBlob(preview.src);
+                            fd.append('avatar', blob, 'avatar.jpg');
+                        } else {
+                            alert('No image selected');
+                            return;
+                        }
+                        const res = await fetch('{% url "upload_avatar" %}', {
+                            method: 'POST',
+                            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                            body: fd,
+                        });
+                        const data = await res.json();
+                        if(data.success){
+                            // Update avatar in edit profile
+                            let avatarImg = document.getElementById('editProfileAvatar');
+                            if(!avatarImg){
+                                avatarImg = document.createElement('img');
+                                avatarImg.id = 'editProfileAvatar';
+                                avatarImg.className = 'w-100 h-100';
+                                avatarImg.style.objectFit = 'cover';
+                                avatarImg.style.borderRadius = '50%';
+                                const container = document.querySelector('.user-avatar');
+                                if(container){
+                                    container.innerHTML = '';
+                                    container.appendChild(avatarImg);
+                                }
+                            }
+                            avatarImg.src = data.url + '?t=' + Date.now();
+                            
+                            // Enable remove button
+                            const removeBtn = document.getElementById('removeAvatarBtn');
+                            if(removeBtn) removeBtn.disabled = false;
+                            
+                            hideModal();
+                        } else {
+                            alert(data.message || 'Upload failed');
+                        }
+                    }catch(e){
+                        alert('Upload failed');
+                    }
+                });
+            }
+            // Fallback file input handler
+            if(fileInput){
+                fileInput.addEventListener('change', ()=>{
+                    const file = fileInput.files && fileInput.files[0];
+                    if(file){
+                        selectedFile = file;
+                        preview.src = URL.createObjectURL(file);
+                        preview.classList.remove('hidden');
+                        video.classList.add('hidden');
+                        saveBtn.classList.remove('hidden');
+                        captureBtn.classList.add('hidden');
+                        retakeBtn.classList.remove('hidden');
+                        // Show filter section for uploaded files
+                        if(filterSection) {
+                            filterSection.classList.remove('hidden');
+                            console.log('Filter section shown for uploaded file');
+                        }
+                    }
+                });
+            }
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentFilter = btn.dataset.filter;
+                    const filterValue = currentFilter === 'none' ? 'none' : currentFilter;
+                    video.style.setProperty('--camera-filter', filterValue);
+                    preview.style.setProperty('--preview-filter', filterValue);
+                    
+                    // Visual feedback
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('ring-2', 'ring-green-500'));
+                    btn.classList.add('ring-2', 'ring-green-500');
+                });
+            });
+            
+            // Grid toggle
+            if(toggleGridBtn && gridOverlay) {
+                toggleGridBtn.addEventListener('click', () => {
+                    gridOverlay.classList.toggle('hidden');
+                    toggleGridBtn.classList.toggle('bg-green-500');
+                    toggleGridBtn.classList.toggle('text-white');
+                });
+            }
+            
+            // Flip camera
+            if(flipCameraBtn) {
+                flipCameraBtn.addEventListener('click', async () => {
+                    facingMode = facingMode === 'user' ? 'environment' : 'user';
+                    stopCamera();
+                    await startCamera();
+                });
+            }
+            
+            // Close modal when clicking backdrop
+            if(modal){
+                modal.addEventListener('click', (e)=>{ if(e.target === modal){ stopCamera(); hideModal(); } });
+            }
+        })();
+    </script>
+</body>
+</html>

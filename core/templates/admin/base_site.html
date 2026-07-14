@@ -1,0 +1,582 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Furnex Admin{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  :root {
+    /* Professional admin color scheme */
+    --f-admin-bg: #f8fafc;
+    --f-panel: #ffffff;
+    --f-panel-hover: #f8fafc;
+    --f-border: #e2e8f0;
+    --f-border-light: #f1f5f9;
+    --f-text: #1e293b;
+    --f-text-light: #64748b;
+    --f-text-lighter: #94a3b8;
+    --f-accent: #3b5d50;
+    --f-accent-dark: #2d4a3f;
+    --f-accent-light: #4a7465;
+    --f-success: #10b981;
+    --f-warning: #f59e0b;
+    --f-danger: #ef4444;
+    --f-info: #3b82f6;
+    --f-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --f-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    
+    /* Sidebar colors - MATCHING YOUR FURNEX THEME */
+    --f-sidebar-bg: #1e293b;
+    --f-sidebar-text: #f1f5f9;
+    --f-sidebar-hover: #334155;
+    --f-sidebar-active: #3b5d50;
+    --f-sidebar-border: #374151;
+  }
+
+  /* Base styles */
+  body {
+    background: var(--f-admin-bg);
+    color: var(--f-text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.5;
+  }
+
+  /* ===== SIDEBAR STYLING - FIXED TO MATCH THEME ===== */
+  #content-related {
+    background: var(--f-sidebar-bg) !important;
+    border-left: 1px solid var(--f-sidebar-border) !important;
+  }
+
+  .module {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .module h2 {
+    background: var(--f-sidebar-bg) !important;
+    color: var(--f-sidebar-text) !important;
+    border-bottom: 1px solid var(--f-sidebar-border) !important;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 12px 16px;
+    margin: 0;
+  }
+
+  .module ul {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .module li {
+    list-style: none !important;
+    margin: 0 !important;
+    border-bottom: 1px solid var(--f-sidebar-border) !important;
+  }
+
+  .module li:last-child {
+    border-bottom: none !important;
+  }
+
+  .module a {
+    color: var(--f-sidebar-text) !important;
+    text-decoration: none !important;
+    padding: 12px 16px !important;
+    display: block !important;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+  }
+
+  .module a:hover {
+    background: var(--f-sidebar-hover) !important;
+    color: white !important;
+    border-left-color: var(--f-accent);
+  }
+
+  .module a:link, .module a:visited {
+    color: var(--f-sidebar-text) !important;
+  }
+
+  /* Main sidebar styling */
+  #nav-sidebar {
+    background: var(--f-sidebar-bg) !important;
+    border-right: 1px solid var(--f-sidebar-border) !important;
+  }
+
+  #nav-sidebar .module {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  #nav-sidebar .module h2 {
+    background: var(--f-sidebar-bg) !important;
+    color: var(--f-sidebar-text) !important;
+    border-bottom: 1px solid var(--f-sidebar-border) !important;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px 20px 12px 20px;
+    margin: 0;
+  }
+
+  #nav-sidebar .module caption {
+    background: var(--f-sidebar-bg) !important;
+    color: var(--f-sidebar-text) !important;
+    border-bottom: 1px solid var(--f-sidebar-border) !important;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px 20px 12px 20px;
+    margin: 0;
+  }
+
+  #nav-sidebar .current-app .section {
+    background: transparent !important;
+  }
+
+  #nav-sidebar .current-model {
+    background: var(--f-sidebar-active) !important;
+  }
+
+  #nav-sidebar a:link, #nav-sidebar a:visited {
+    color: var(--f-sidebar-text) !important;
+    text-decoration: none !important;
+    padding: 10px 20px 10px 24px !important;
+    display: block !important;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+  }
+
+  #nav-sidebar a:hover {
+    background: var(--f-sidebar-hover) !important;
+    color: white !important;
+    border-left-color: var(--f-accent);
+  }
+
+  #nav-sidebar .current-app a {
+    border-left-color: var(--f-accent);
+  }
+
+  /* Header simplification */
+  #header {
+    background: var(--f-panel);
+    border-bottom: 1px solid var(--f-border);
+    box-shadow: var(--f-shadow);
+    padding: 0 20px;
+    height: 60px;
+  }
+
+  #branding {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #branding img {
+    height: 28px;
+    width: 28px;
+  }
+
+  #site-name {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--f-text);
+  }
+
+  #user-tools {
+    font-weight: 500;
+    color: var(--f-text-light);
+  }
+
+  #user-tools a {
+    color: var(--f-accent) !important;
+    font-weight: 500;
+  }
+
+  #user-tools a:hover {
+    color: var(--f-accent-dark) !important;
+  }
+
+  /* Breadcrumbs cleanup */
+  .breadcrumbs {
+    background: transparent;
+    border: none;
+    padding: 16px 20px 0;
+    margin-bottom: 0;
+  }
+
+  .breadcrumbs a {
+    color: var(--f-accent);
+    font-weight: 500;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--f-accent-dark);
+  }
+
+  /* Main content area */
+  #content {
+    padding: 20px;
+    margin: 0;
+  }
+
+  #content-main {
+    width: 100%;
+  }
+
+  /* Dashboard modules */
+  .dashboard .module {
+    background: var(--f-panel);
+    border: 1px solid var(--f-border);
+    border-radius: 12px;
+    box-shadow: var(--f-shadow);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .dashboard .module:hover {
+    box-shadow: var(--f-shadow-lg);
+    transform: translateY(-1px);
+  }
+
+  .module h2, .module caption {
+    background: var(--f-panel);
+    color: var(--f-text);
+    font-weight: 600;
+    font-size: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--f-border-light);
+    margin: 0;
+  }
+
+  .module table {
+    width: 100%;
+    border: none;
+  }
+
+  .module th, .module td {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--f-border-light);
+    font-size: 14px;
+  }
+
+  .module th {
+    font-weight: 600;
+    color: var(--f-text);
+    background: transparent;
+  }
+
+  .module td {
+    color: var(--f-text-light);
+  }
+
+  .module tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Action buttons */
+  .object-tools {
+    margin: 0;
+    padding: 0;
+  }
+
+  .object-tools li {
+    display: inline-block;
+    margin-left: 8px;
+  }
+
+  .object-tools a {
+    background: var(--f-accent);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .object-tools a:hover {
+    background: var(--f-accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 93, 80, 0.2);
+  }
+
+  /* Forms and inputs */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="url"],
+  input[type="number"],
+  textarea,
+  select {
+    background: white;
+    border: 1px solid var(--f-border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--f-text);
+    transition: all 0.2s ease;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--f-accent);
+    box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.1);
+  }
+
+  /* Buttons */
+  input[type="submit"],
+  button,
+  .button,
+  .submit-row input {
+    background: var(--f-accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  input[type="submit"]:hover,
+  button:hover,
+  .button:hover,
+  .submit-row input:hover {
+    background: var(--f-accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 93, 80, 0.2);
+  }
+
+  .submit-row {
+    background: transparent;
+    border-top: 1px solid var(--f-border);
+    padding: 16px 0;
+    margin-top: 24px;
+  }
+
+  /* Tables in change lists */
+  .change-list .filtered .results,
+  .results {
+    background: var(--f-panel);
+    border: 1px solid var(--f-border);
+    border-radius: 12px;
+    box-shadow: var(--f-shadow);
+    overflow: hidden;
+  }
+
+  .change-list table {
+    border: none;
+  }
+
+  .change-list thead th {
+    background: var(--f-panel-hover);
+    border-bottom: 1px solid var(--f-border);
+    font-weight: 600;
+    color: var(--f-text);
+  }
+
+  .change-list tbody tr:hover {
+    background: var(--f-panel-hover);
+  }
+
+  /* Pagination */
+  .pagination {
+    background: transparent;
+    border: none;
+    padding: 20px 0;
+  }
+
+  .pagination a:link, .pagination a:visited {
+    background: white;
+    border: 1px solid var(--f-border);
+    color: var(--f-text-light);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 0 2px;
+    text-decoration: none;
+  }
+
+  .pagination a:hover {
+    background: var(--f-accent);
+    border-color: var(--f-accent);
+    color: white;
+  }
+
+  .pagination .this-page {
+    background: var(--f-accent);
+    border-color: var(--f-accent);
+    color: white;
+    font-weight: 500;
+  }
+
+  /* Messages */
+  ul.messagelist {
+    margin: 0 0 20px 0;
+    padding: 0;
+  }
+
+  ul.messagelist li {
+    background: var(--f-success);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    list-style: none;
+  }
+
+  ul.messagelist li.warning {
+    background: var(--f-warning);
+  }
+
+  ul.messagelist li.error {
+    background: var(--f-danger);
+  }
+
+  /* Filter sidebar */
+  #changelist-filter {
+    background: var(--f-panel);
+    border: 1px solid var(--f-border);
+    border-radius: 12px;
+    box-shadow: var(--f-shadow);
+    padding: 0;
+    margin-top: 0;
+  }
+
+  #changelist-filter h2 {
+    background: var(--f-panel-hover);
+    border-bottom: 1px solid var(--f-border);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 16px;
+    margin: 0;
+  }
+
+  #changelist-filter h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 16px 0 8px 0;
+    padding: 0 16px;
+  }
+
+  #changelist-filter ul {
+    padding: 0 16px 16px;
+    margin: 0;
+  }
+
+  #changelist-filter li {
+    list-style: none;
+    margin: 4px 0;
+  }
+
+  #changelist-filter li.selected {
+    border-left: 3px solid var(--f-accent);
+    padding-left: 13px;
+    margin-left: -16px;
+  }
+
+  #changelist-filter li.selected a {
+    color: var(--f-accent);
+    font-weight: 500;
+  }
+
+  #changelist-filter a {
+    color: var(--f-text-light);
+    text-decoration: none;
+    font-size: 13px;
+  }
+
+  #changelist-filter a:hover {
+    color: var(--f-accent);
+  }
+
+  /* Hide unnecessary elements */
+  #recent-actions-module,
+  .recent-actions {
+    display: none !important;
+  }
+
+  /* Responsive improvements */
+  @media (max-width: 768px) {
+    #header {
+      padding: 0 16px;
+    }
+    
+    #content {
+      padding: 16px;
+    }
+    
+    .dashboard .module {
+      margin-bottom: 16px;
+    }
+    
+    .module th, .module td {
+      padding: 10px 16px;
+    }
+  }
+
+  /* Custom dashboard stats */
+  .dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--f-panel);
+    border: 1px solid var(--f-border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--f-shadow);
+    transition: all 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--f-shadow-lg);
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--f-accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: var(--f-text-light);
+    font-weight: 500;
+  }
+
+  .stat-change {
+    font-size: 12px;
+    color: var(--f-success);
+    margin-top: 4px;
+  }
+
+  .stat-change.negative {
+    color: var(--f-danger);
+  }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div id="branding">
+  <img src="{% static 'images/furnex-f-logo.svg' %}" alt="Furnex" onerror="this.style.display='none'"/>
+  <h1 id="site-name">Furnex Admin</h1>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<!-- Optional: Add global navigation if needed -->
+{% endblock %}

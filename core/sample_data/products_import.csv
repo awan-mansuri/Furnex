@@ -1,0 +1,13 @@
+name,category,price,discount_price,stock,description,image
+"Modern 3-Seater Sofa","Sofas",24999,2000,10,"Comfortable modern sofa with plush cushions","products/sofa-modern-3s.jpg"
+"Compact 2-Seater Sofa","Sofas",17999,,8,"Space-saving 2-seater ideal for apartments","products/sofa-compact-2s.jpg"
+"Premium Dining Table (6-Seater)","Tables",15999,1000,5,"Solid wood dining table for family gatherings","products/dining-table-6.jpg"
+"Coffee Table with Storage","Tables",6999,500,15,"Minimal coffee table with concealed storage shelf","products/coffee-table-storage.jpg"
+"Ergonomic Office Chair","Office Chairs",8999,1000,20,"Adjustable lumbar support and breathable mesh back","products/office-chair-ergonomic.jpg"
+"Recliner Chair","Chairs",12999,1500,7,"Manual recliner with soft fabric upholstery","products/recliner-chair.jpg"
+"Queen Bed with Headboard","Beds",27999,2500,6,"Queen-size bed with cushioned headboard and storage","products/queen-bed-storage.jpg"
+"King Bed (Solid Wood)","Beds",34999,,4,"King-size solid wood bed frame with premium finish","products/king-bed-wood.jpg"
+"Sliding Door Wardrobe (3-Door)","Wardrobes",31999,2000,5,"Spacious wardrobe with smooth sliding mechanism","products/wardrobe-3door-sliding.jpg"
+"TV Unit (6ft)","TV Units",14999,1000,9,"TV entertainment unit with cable management","products/tv-unit-6ft.jpg"
+"Bookshelf (5-Tier)","Bookshelves",5999,,18,"Open 5-tier bookshelf for living room or study","products/bookshelf-5tier.jpg"
+"Decorative Floor Lamp","Decor",3999,400,12,"Warm ambient lighting with modern metal stand","products/floor-lamp-modern.jpg"

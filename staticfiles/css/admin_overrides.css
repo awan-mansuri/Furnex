@@ -1,0 +1,44 @@
+/* ======== FIX TEXT SELECTION & FOCUS ======== */
+
+/* Prevent text selection from turning invisible */
+*::selection {
+  background: #2b2b2b !important; /* dark gray selection */
+  color: #66b3ff !important; /* soft blue text */
+}
+
+/* Inputs, textareas, buttons */
+input, select, textarea, button {
+  color: #dce3ea !important; /* light gray text */
+  background-color: #2e2f33 !important; /* dark card-like bg */
+  border: 1px solid #444 !important;
+}
+
+/* Focus states */
+input:focus, select:focus, textarea:focus, button:focus, a:focus, a:active {
+  color: #ffffff !important;
+  background-color: #333 !important;
+  outline: 2px solid #66b3ff !important;
+}
+
+/* Page + content area */
+body, .content, .module, .change-list, .results, .module caption, td, th {
+  color: #dce3ea !important; /* soft white text */
+  background-color: #2b2b2b !important; /* main dark background */
+}
+
+/* Links */
+a, .breadcrumbs a {
+  color: #66b3ff !important; /* light blue like in image */
+  text-decoration: none;
+}
+a:hover, a:active, a:focus {
+  color: #66b3ff !important;
+  opacity: 0.9;
+  background-color: transparent !important;
+}
+
+/* Optional - make cards/boxes consistent */
+.module, .change-list {
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(102, 179, 255, 0.2);
+}

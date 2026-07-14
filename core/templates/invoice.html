@@ -1,0 +1,565 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Invoice #{{ order.order_number }} - Furnex</title>
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendor/fontawesome/css/all.min.css' %}" rel="stylesheet">
+  <link rel="shortcut icon" href="{% static 'images/furnex-f-logo.svg' %}">
+  <style>
+    @media print {
+      body { margin: 0; }
+      .no-print { display: none !important; }
+      .invoice-container { box-shadow: none; margin: 0; }
+    }
+    
+    body {
+      background: #f8fafc;
+      color: #1e293b;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .invoice-container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .invoice-header {
+      background: linear-gradient(135deg, #3b5d50 0%, #2f2f2f 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .company-logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    
+    .company-tagline {
+      opacity: 0.9;
+      font-size: 1.1rem;
+      color: #f9bf29;
+    }
+    
+    .invoice-details {
+      padding: 30px;
+    }
+    
+    .invoice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border-left: 4px solid #3b5d50;
+    }
+    
+    .invoice-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3b5d50;
+    }
+    
+    .invoice-date {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+    
+    .billing-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    .billing-info h4 {
+      color: #1e293b;
+      font-weight: 600;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .billing-details {
+      color: #64748b;
+      line-height: 1.8;
+    }
+    
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .items-table th {
+      background: #3b5d50;
+      color: white;
+      font-weight: 600;
+      padding: 15px;
+      text-align: left;
+      border-bottom: 2px solid #2f4c42;
+    }
+    
+    .items-table td {
+      padding: 15px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .items-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .items-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    
+    .items-table .text-right {
+      text-align: right;
+    }
+    
+    .items-table .text-center {
+      text-align: center;
+    }
+    
+    .total-section {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+    }
+    
+    .total-row.final {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e293b;
+      border-top: 2px solid #3b5d50;
+      margin-top: 15px;
+      padding-top: 20px;
+    }
+    
+    .payment-status {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-paid {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    
+    .status-pending {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+    
+    .status-failed {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 30px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #3b5d50 0%, #2f2f2f 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(59, 93, 80, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 93, 80, 0.4);
+      color: #fff;
+    }
+    
+    .btn-outline {
+      background: transparent;
+      color: #3b5d50;
+      border: 2px solid #3b5d50;
+    }
+    
+    .btn-outline:hover {
+      background: #3b5d50;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    
+    .company-info {
+      text-align: center;
+      margin-top: 20px;
+      color: #64748b;
+      font-size: 0.9rem;
+      padding: 20px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .discount-badge {
+      background: #f9bf29;
+      color: #2f2f2f;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    
+    .savings-text {
+      color: #22c55e;
+      font-weight: 600;
+    }
+    
+    .btn-copy {
+      background: transparent;
+      border: 1px solid #3b5d50;
+      color: #3b5d50;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-left: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-copy:hover {
+      background: #3b5d50;
+      color: white;
+    }
+    
+    .btn-copy.copied {
+      background: #22c55e;
+      border-color: #22c55e;
+      color: white;
+    }
+    
+    .btn-track {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+    
+    .btn-track:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      color: #fff;
+    }
+    
+    @media (max-width: 768px) {
+      .billing-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .invoice-meta {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .footer-actions {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .items-table {
+        font-size: 0.9rem;
+      }
+      
+      .items-table th,
+      .items-table td {
+        padding: 10px 8px;
+      }
+    }
+  </style>
+  <meta name="robots" content="noindex">
+</head>
+<body>
+  <div class="invoice-container">
+    <!-- Header -->
+    <div class="invoice-header">
+      <div class="company-logo">
+        <i class="fas fa-couch me-2"></i>Furnex<span style="color: #f9bf29;">.</span>
+      </div>
+      <div class="company-tagline">Premium Furniture & Home Decor</div>
+    </div>
+    
+    <!-- Invoice Details -->
+    <div class="invoice-details">
+      <!-- Invoice Meta -->
+      <div class="invoice-meta">
+        <div>
+          <div class="invoice-number">
+            <i class="fas fa-receipt me-2"></i>Invoice #{{ order.order_number }}
+          </div>
+          {% if order.tracking_id %}
+          <div style="margin-top:8px; color:#64748b;">
+            <i class="fas fa-barcode me-1"></i>
+            Tracking ID: <strong style="color:#1e293b;" id="trackingIdText">{{ order.tracking_id }}</strong>
+            <button onclick="copyTrackingId()" class="btn-copy" title="Copy Tracking ID">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          {% endif %}
+          <div class="invoice-date">
+            <i class="fas fa-calendar me-1"></i>
+            {{ order.created_at|date:'F d, Y' }}
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="payment-status status-{{ order.payment_status|default:'pending' }}">
+            <i class="fas fa-{% if order.payment_status == 'paid' %}check-circle{% elif order.payment_status == 'pending' %}clock{% else %}times-circle{% endif %} me-1"></i>
+            {{ order.payment_status|default:"pending"|title }}
+          </div>
+          <div style="margin-top: 8px; color: #64748b;">
+            <i class="fas fa-credit-card me-1"></i>
+            {{ order.payment_method|default:"cash_on_delivery"|title }}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Billing Information -->
+      <div class="billing-section">
+        <div class="billing-info">
+          <h4><i class="fas fa-user me-2"></i>Bill To</h4>
+          <div class="billing-details">
+            <div><strong>{{ order.first_name }} {{ order.last_name }}</strong></div>
+            {% if order.company_name %}<div>{{ order.company_name }}</div>{% endif %}
+            <div>{{ order.address }}</div>
+            {% if order.apartment %}<div>{{ order.apartment }}</div>{% endif %}
+            <div>{{ order.state_country }}, {{ order.postal_zip }}</div>
+            <div>{{ order.country }}</div>
+            <div style="margin-top: 10px;">
+              <i class="fas fa-envelope me-1"></i>{{ order.email }}
+            </div>
+            <div>
+              <i class="fas fa-phone me-1"></i>{{ order.phone }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="billing-info">
+          <h4><i class="fas fa-building me-2"></i>From</h4>
+          <div class="billing-details">
+            <div><strong>Furnex Furniture Store</strong></div>
+            <div>123 Furniture Street</div>
+            <div>Design District, Mumbai 400001</div>
+            <div>Maharashtra, India</div>
+            <div style="margin-top: 10px;">
+              <i class="fas fa-envelope me-1"></i>info@furnex.com
+            </div>
+            <div>
+              <i class="fas fa-phone me-1"></i>+91 98765 43210
+            </div>
+            <div>
+              <i class="fas fa-globe me-1"></i>www.furnex.com
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Items Table -->
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th style="width: 45%;">Item Description</th>
+            <th class="text-right" style="width: 20%;">Unit Price</th>
+            <th class="text-center" style="width: 15%;">Qty</th>
+            <th class="text-right" style="width: 20%;">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in order.items.all %}
+          <tr>
+            <td>
+              <div style="font-weight: 600; color: #3b5d50;">{{ item.product.name }}</div>
+              <div style="color: #64748b; font-size: 0.9rem;">{{ item.product.category.name }}</div>
+              {% if item.product.discount_price %}
+                <div style="margin-top: 4px;">
+                  <span class="discount-badge">
+                    <i class="fas fa-tag me-1"></i>
+                    Save ₹{{ item.product.discount_price|floatformat:0 }}
+                  </span>
+                </div>
+              {% endif %}
+            </td>
+            <td class="text-right">
+              <div style="font-weight: 600;">₹{{ item.price|floatformat:0 }}</div>
+              {% if item.product.discount_price %}
+                <div style="color: #64748b; text-decoration: line-through; font-size: 0.85rem;">
+                  ₹{{ item.product.price|floatformat:0 }}
+                </div>
+              {% endif %}
+            </td>
+            <td class="text-center" style="font-weight: 600;">{{ item.quantity }}</td>
+            <td class="text-right" style="font-weight: 600; color: #3b5d50;">
+              ₹{{ item.total_price|floatformat:0 }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      <!-- Totals -->
+      <div class="total-section">
+        <div class="total-row">
+          <span>Subtotal:</span>
+          <span style="font-weight: 600;">₹{{ order.subtotal|floatformat:0 }}</span>
+        </div>
+        
+        {% if order.coupon_code and order.coupon_discount > 0 %}
+        <div class="total-row">
+          <span class="savings-text">
+            <i class="fas fa-tag me-2"></i>Coupon Discount ({{ order.coupon_code }}):
+          </span>
+          <span class="savings-text" style="font-weight: 600;">-₹{{ order.coupon_discount|floatformat:0 }}</span>
+        </div>
+        {% endif %}
+        
+        {% if order.payment_method == 'cash_on_delivery' and COD_FEE %}
+        <div class="total-row">
+          <span>Cash on Delivery Fee:</span>
+          <span>₹{{ COD_FEE }}</span>
+        </div>
+        {% endif %}
+        
+        <div class="total-row final">
+          <span>Total Amount:</span>
+          <span style="color: #3b5d50;">₹{{ order.total|floatformat:0 }}</span>
+        </div>
+        
+        {% if order.coupon_discount > 0 %}
+        <div style="text-align: center; margin-top: 15px; padding: 10px; background: #dcfce7; border-radius: 8px;">
+          <i class="fas fa-gift me-2" style="color: #166534;"></i>
+          <strong class="savings-text">You saved ₹{{ order.coupon_discount|floatformat:0 }} with your coupon!</strong>
+        </div>
+        {% endif %}
+      </div>
+      
+      <!-- Order Notes -->
+      {% if order.order_notes %}
+      <div class="billing-info">
+        <h4><i class="fas fa-sticky-note me-2"></i>Order Notes</h4>
+        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; color: #64748b; border-left: 4px solid #f9bf29;">
+          <i class="fas fa-quote-left me-2" style="color: #f9bf29;"></i>
+          {{ order.order_notes }}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    
+    <!-- Footer Actions -->
+    <div class="footer-actions no-print">
+      <a href="{% url 'home' %}" class="btn btn-outline">
+        <i class="fas fa-home me-1"></i>Back to Home
+      </a>
+      <button onclick="window.print()" class="btn btn-primary">
+        <i class="fas fa-print me-1"></i>Print Invoice
+      </button>
+    </div>
+    
+    <!-- Company Footer -->
+    <div class="company-info">
+      <p style="margin-bottom: 10px;">
+        <i class="fas fa-heart" style="color: #ef4444;"></i>
+        Thank you for choosing Furnex! We appreciate your business.
+      </p>
+      <p style="margin-bottom: 0;">
+        For any queries, contact us at <strong>info@furnex.com</strong> or call <strong>+91 98765 43210</strong>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Copy Tracking ID functionality
+    function copyTrackingId() {
+      const trackingId = document.getElementById('trackingIdText').textContent;
+      const button = event.target.closest('.btn-copy');
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(trackingId).then(function() {
+        // Visual feedback
+        const originalIcon = button.innerHTML;
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        
+        // Reset after 2 seconds
+        setTimeout(function() {
+          button.classList.remove('copied');
+          button.innerHTML = originalIcon;
+        }, 2000);
+      }).catch(function(err) {
+        console.error('Failed to copy:', err);
+        alert('Copied: ' + trackingId);
+      });
+    }
+    
+    // Add print functionality enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+      const printBtn = document.querySelector('.btn-primary');
+      
+      if (printBtn) {
+        printBtn.addEventListener('click', function() {
+          // Add a small delay to ensure the print dialog appears after any animations
+          setTimeout(() => {
+            window.print();
+          }, 100);
+        });
+      }
+      
+      // Add confirmation for successful print
+      window.addEventListener('afterprint', function() {
+        console.log('Invoice printed successfully');
+      });
+    });
+  </script>
+</body>
+</html>

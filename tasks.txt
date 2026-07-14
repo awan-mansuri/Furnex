@@ -1,0 +1,27 @@
+1) When I login as a user , it shows message of Welcome back in admin panel , it should not show that 
+
+2) When I click on buy now without login in its throw error page , it should redirect to login page 
+
+3) When I turn off my net the payment page doesn't work as good so fix that
+
+4) In admin panel when i click on invoice , it should show invoices of each customer 
+
+5) In admin panel , make dropdown , for eg - order in which all the order related admin activity are stored 
+
+6) In profile , the Css is different from the main index page , match the color 
+
+
+7) In index , put the profile button same size as cart figure and put it left side of the cart button
+
+8) In Thank you page , the order summarys Css is different from the theme fix that
+
+9) In profile/edit the Css is different from the theme fix that 
+
+10)In compare page the Css is diff from the theme fox that
+
+11)In wishlist page the Css is diff from the theme fix that
+
+12)Remove my cart from profile 
+
+
+

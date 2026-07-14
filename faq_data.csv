@@ -1,0 +1,81 @@
+question,answer,tags,is_active
+What are your delivery timelines?,Standard delivery takes 5–7 business days. You’ll receive updates and a tracking ID once your order ships.,"shipping,delivery,time,eta,track",1
+Do you charge for delivery?,Delivery is free on all orders. No extra shipping charges at checkout.,"shipping,delivery,charges,fee",1
+How do I track my order?,Go to My Profile → My Orders → View Details for tracking and status updates.,"track,order status,tracking,shipment",1
+How long do refunds take?,"After approval, refunds are processed within 5–7 business days to the original payment method.","refund,timeline,return",1
+Can I cancel my order?,"You can cancel before dispatch from My Orders. If shipped, refuse delivery or start a return after delivery.","cancel,cancellation,order",1
+Can I change my delivery address after placing an order?,"If your order hasn’t shipped, contact support via order details to update the address.","address,change,shipping address",1
+Do you offer assembly services?,Yes. Many items include self-assembly guides; professional assembly may be available—ask support.,"assembly,installation,service",1
+Is there a warranty on products?,Most products include a standard manufacturer warranty (varies by product). See product page.,"warranty,guarantee,support",1
+Are product dimensions accurate?,Yes. Dimensions are listed on each product page under “Product Dimensions.”,"size,dimensions,measurement,spec",1
+Do you offer customization?,Some products support customization (fabric/finish/size). Check the product page or contact support.,"custom,customization,made to order",1
+I received a damaged or wrong item. What should I do?,Report via My Orders → Contact Support with photos within 48 hours; we’ll arrange replacement/refund.,"damaged,wrong,defective,replace",1
+How do coupons work?,Enter your coupon at checkout. Some coupons require a minimum order value or have usage limits.,"coupon,discount,promo,code",1
+Why was my coupon rejected?,"It may be expired, account-restricted, or below minimum order value. Check coupon terms.","coupon,invalid,error,terms",1
+An item is out of stock—can I get notified?,Yes. Click “Notify me when back in stock” on the product page to receive an alert.,"stock,restock,alert,notify",1
+How do I download my invoice?,Go to My Orders → View Details → Download Invoice to get a printable invoice.,"invoice,bill,receipt,download",1
+What are your support hours?,"Support is available 9:00 AM–6:00 PM (IST), Mon–Sat. You can also message via chat anytime.","support,hours,contact",1
+Is my data secure?,We use industry-standard security for payments and data protection. See our Privacy Policy.,"privacy,security,data",1
+Hello,"👋 Hello! Welcome to Furnex. I'm here to help you find the perfect furniture. You can ask me about products, delivery, returns, payments, and more!","hello, hi, hey, greeting, welcome",1
+Hi,"👋 Hi there! How can I assist you today? I can help with product information, orders, delivery, and any questions you have!","hello, hi, hey, greeting",1
+Do you ship to my location?,"🚚 Yes! We offer FREE delivery across all locations. Standard delivery takes 5-7 business days. We'll send you tracking information once your order ships. You can track your order anytime from ""My Orders"" page.","shipping, delivery, location, ship, deliver, free delivery, tracking",1
+Check delivery options,"🚚 Delivery Options:
+
+• FREE standard delivery (5-7 business days)
+• Track your order online
+• Scheduled delivery slots available
+• Doorstep delivery with care
+
+You'll receive SMS and email updates at every step!","delivery, shipping, options, delivery time, how long",1
+Browse Sofas,"🛋️ Our Sofa Collection:
+
+• Modern sectionals
+• Classic 3-seaters
+• Luxury recliners
+• Corner sofas
+• Sofa sets
+
+Visit our Shop page to browse all sofas with filters for size, color, and price. Need help choosing? Tell me your room size and style preference!","sofa, sofas, couch, seating, living room, browse sofas",1
+Bedroom Furniture,"🛏️ Bedroom Collection:
+
+• King & Queen beds
+• Wardrobes & closets
+• Dressers & nightstands
+• Complete bedroom sets
+• Mattresses
+
+All pieces available in Modern, Classic, and Minimalist styles. Visit our Shop page to explore!","bedroom, bed, furniture, wardrobe, dresser, nightstand, bedroom furniture",1
+Get Recommendations,"🎨 I'd love to help you find the perfect furniture! Tell me:
+
+1. Which room are you furnishing? (Living room, bedroom, dining, etc.)
+2. What's your style preference? (Modern, Classic, Minimalist)
+3. What's your budget range?
+4. Any specific size requirements?
+
+Or use our Room Designer tool to visualize your space!","recommendations, suggest, help choose, what should i buy, advice",1
+Current Offers,"🔥 Exciting Offers Right Now:
+
+• Up to 30% OFF on select sofas
+• FREE delivery on all orders
+• Assembly service discounts
+• Special combo deals
+
+Check our Shop page for products with the ""SALE"" tag. Offers are updated regularly!","offers, deals, discount, sale, promo, current offers, special offers",1
+What is your return policy?,"↩️ Easy Returns Policy:
+
+• 10-day return window from delivery
+• Free return pickup
+• Full refund in 5-7 business days
+• No questions asked
+
+To return: Go to My Orders → Select order → Click ""Return Product"". We want you to be 100% happy!","return, returns, refund, return policy, money back",1
+What payment methods do you accept?,"💳 Payment Options:
+
+• Credit/Debit Cards (Visa, Mastercard, Amex)
+• UPI (Google Pay, PhonePe, Paytm)
+• Net Banking
+• Cash on Delivery
+• Razorpay
+• EMI options available
+
+All payments are 100% secure and encrypted!","payment, pay, payment methods, payment options, cod, cash on delivery",1

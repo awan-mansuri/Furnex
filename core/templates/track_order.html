@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Track Your Order - Furnex</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#3B5D50',
+            'brand-dark': '#2D4A3F',
+            'brand-light': '#DCE5E1',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
+<style>
+/* ================= Modern Tracking Page CSS ================= */
+.tracking-container { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 60px 0; min-height: 80vh; }
+.tracking-card { background: white; border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.08); margin-bottom: 30px; overflow: hidden; border: 1px solid #e9ecef; }
+.tracking-header { background: linear-gradient(135deg, #3B5D50 0%, #2D4A3F 100%); color: white; padding: 40px; text-align: center; position: relative; overflow: hidden; }
+.tracking-header::before { content: ''; position: absolute; top: -50%; right: -5%; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+.tracking-header h2 { margin: 0; font-size: 2.5rem; font-weight: 700; position: relative; z-index: 1; }
+.tracking-header p { margin: 10px 0 0 0; opacity: 0.95; font-size: 1.1rem; position: relative; z-index: 1; }
+.tracking-form { padding: 40px; }
+.form-group { margin-bottom: 25px; }
+.form-label { font-weight: 600; color: #333; margin-bottom: 10px; display: block; font-size: 1.05rem; }
+.form-control { border: 2px solid #e1e5e9; border-radius: 12px; padding: 16px 20px; font-size: 1.1rem; transition: all 0.3s ease; width: 100%; }
+.form-control:focus { border-color: #3B5D50; box-shadow: 0 0 0 4px rgba(59, 93, 80, 0.12); outline: none; }
+.btn-track { background: linear-gradient(135deg, #3B5D50 0%, #2D4A3F 100%); border: none; color: white; padding: 16px 40px; border-radius: 12px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s ease; width: 100%; box-shadow: 0 4px 15px rgba(59, 93, 80, 0.25); }
+.btn-track:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(45, 74, 63, 0.35); color: white; }
+
+/* Estimated Delivery Banner */
+.delivery-banner { background: linear-gradient(135deg, #3B5D50 0%, #2D4A3F 100%); color: white; padding: 25px 30px; border-radius: 15px; margin-bottom: 30px; text-align: center; box-shadow: 0 10px 30px rgba(59, 93, 80, 0.2); }
+.delivery-banner h3 { margin: 0 0 8px 0; font-size: 1.3rem; font-weight: 700; }
+.delivery-banner .delivery-date { font-size: 2rem; font-weight: 800; margin: 10px 0; }
+.delivery-banner p { margin: 0; opacity: 0.95; font-size: 1rem; }
+
+/* Copy Tracking ID */
+.tracking-id-box { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; border: 2px solid #e9ecef; }
+.tracking-id-box .id-label { font-weight: 600; color: #64748b; font-size: 0.95rem; }
+.tracking-id-box .id-value { font-size: 1.4rem; font-weight: 700; color: #1e293b; font-family: 'Courier New', monospace; }
+.btn-copy-track { background: #3B5D50; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+.btn-copy-track:hover { background: #2D4A3F; transform: scale(1.05); }
+.btn-copy-track.copied { background: #2D4A3F; }
+
+/* Order Details */
+.order-details { background: white; border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.08); margin-top: 30px; overflow: hidden; border: 1px solid #e9ecef; }
+.order-header { background: linear-gradient(135deg, #3B5D50 0%, #2D4A3F 100%); color: white; padding: 30px; }
+.order-content { padding: 35px; }
+
+/* Modern Timeline */
+.status-timeline { position: relative; padding: 30px 0; }
+.timeline-line { position: absolute; left: 30px; top: 60px; bottom: 60px; width: 4px; background: linear-gradient(to bottom, #3B5D50 0%, #e9ecef 100%); border-radius: 2px; }
+.status-step { display: flex; align-items: flex-start; margin-bottom: 40px; position: relative; }
+.status-step:last-child { margin-bottom: 0; }
+.status-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 25px; z-index: 2; position: relative; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s ease; }
+.status-step.completed .status-icon { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; animation: pulse 2s infinite; }
+.status-step.current .status-icon { background: linear-gradient(135deg, #3B5D50 0%, #2D4A3F 100%); color: white; animation: pulse 2s infinite; border: 4px solid #b9c9c3; }
+.status-step.pending .status-icon { background: #f1f5f9; color: #94a3b8; border: 3px solid #e2e8f0; }
+.status-content { flex: 1; padding-top: 8px; }
+.status-title { font-weight: 700; font-size: 1.2rem; color: #1e293b; margin-bottom: 8px; }
+.status-step.completed .status-title { color: #16a34a; }
+.status-step.current .status-title { color: #3B5D50; }
+.status-step.pending .status-title { color: #94a3b8; }
+.status-description { color: #64748b; font-size: 0.95rem; margin-bottom: 6px; line-height: 1.5; }
+.status-time { color: #94a3b8; font-size: 0.9rem; font-weight: 500; }
+.status-step.completed .status-time { color: #16a34a; }
+.status-step.current .status-time { color: #2563eb; font-weight: 600; }
+.current-badge { display: inline-block; background: #3B5D50; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-left: 10px; animation: pulse 2s infinite; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+/* Order Items */
+.order-items { margin-top: 35px; }
+.section-title { font-size: 1.4rem; font-weight: 700; color: #1e293b; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 3px solid #e9ecef; }
+.order-item { border: 2px solid #e9ecef; border-radius: 12px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; transition: all 0.3s ease; }
+.order-item:hover { border-color: #3B5D50; box-shadow: 0 4px 15px rgba(59, 93, 80, 0.12); }
+.item-image { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; margin-right: 20px; border: 2px solid #e9ecef; }
+.item-details { flex: 1; }
+.item-name { font-weight: 700; color: #1e293b; margin-bottom: 6px; font-size: 1.1rem; }
+.item-qty { color: #64748b; font-size: 0.95rem; }
+.item-price { color: #3B5D50; font-weight: 700; font-size: 1.2rem; }
+
+/* Info Section */
+.info-section { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 30px; margin-top: 30px; border: 1px solid #e9ecef; }
+.info-row { display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; }
+.info-row:not(:last-child) { border-bottom: 1px solid #dee2e6; }
+.info-row:last-child { margin-top: 15px; padding-top: 15px; border-top: 3px solid #3b5d50; font-weight: 700; font-size: 1.2rem; color: #3b5d50; }
+.info-label { color: #64748b; font-weight: 500; }
+.info-value { color: #1e293b; font-weight: 600; }
+.status-refunded { background: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 8px; font-weight: 700; border: 2px solid #fbbf24; }
+.status-paid { color: #16a34a; font-weight: 700; }
+.status-pending-payment { color: #f59e0b; font-weight: 700; }
+
+.error-message { background: #fee2e2; border: 2px solid #fecaca; color: #991b1b; border-radius: 12px; padding: 20px; margin-bottom: 25px; font-weight: 500; }
+
+@media (max-width: 768px) {
+    .tracking-form { padding: 30px 20px; }
+    .order-content { padding: 25px 20px; }
+    .status-step { margin-bottom: 30px; }
+    .status-icon { width: 50px; height: 50px; font-size: 1.2rem; }
+    .delivery-banner .delivery-date { font-size: 1.6rem; }
+    .tracking-id-box { flex-direction: column; gap: 15px; text-align: center; }
+    .order-item { flex-direction: column; text-align: center; }
+    .item-image { margin: 0 auto 15px auto; }
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <nav class="sticky-nav bg-white shadow-sm border-b border-gray-100">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2">
+          <span class="text-2xl font-bold text-brand">Furnex<span class="text-gray-600">.</span></span>
+        </a>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="{% url 'home' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Home</a>
+          <a href="{% url 'shop' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Shop</a>
+          <a href="{% url 'about' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">About us</a>
+          <a href="{% url 'services' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Services</a>
+          <a href="{% url 'blog' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Blog</a>
+          <a href="{% url 'contact' %}" class="text-gray-700 hover:text-brand transition-colors duration-200">Contact us</a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'cart' %}" class="p-2 rounded-full bg-gray-100 hover:bg-brand-light transition-colors duration-200">
+            <i class="fas fa-shopping-cart text-gray-600 hover:text-brand"></i>
+          </a>
+          <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mx-auto px-4 py-8">
+<div class="tracking-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <!-- Tracking Form -->
+                <div class="tracking-card">
+                    <div class="tracking-header">
+                        <h2><i class="fas fa-search"></i> Track Your Order</h2>
+                        <p>Enter your tracking ID to see your order status and details</p>
+                    </div>
+                    <div class="tracking-form">
+                        {% if error_message %}
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i> {{ error_message }}
+                        </div>
+                        {% endif %}
+                        <form method="post" id="trackingForm">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="form-label" for="tracking_id">
+                                    <i class="fas fa-barcode"></i> Tracking ID
+                                </label>
+                                <input type="text" class="form-control" id="tracking_id" name="tracking_id" placeholder="Enter your tracking ID (e.g., FN12345678)" required>
+                                <small class="text-muted">You can find your tracking ID in your order confirmation email</small>
+                            </div>
+                            <button type="submit" class="btn btn-track">
+                                <i class="fas fa-search"></i> Track Order
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Order Details -->
+                {% if order %}
+                <div class="order-details">
+                    <div class="order-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h3 style="margin-bottom: 10px;"><i class="fas fa-box-open"></i> Order #{{ order.order_number }}</h3>
+                                <p class="mb-0" style="opacity: 0.9;">Placed on {{ order.created_at|date:"F d, Y" }} at {{ order.created_at|date:"g:i A" }}</p>
+                                <input type="hidden" id="current_tracking_id" value="{{ order.tracking_id }}">
+                            </div>
+                            <div class="col-md-4 text-md-right">
+                                <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px; display: inline-block;">
+                                    <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 3px;">Order Status</div>
+                                    <div style="font-size: 1.3rem; font-weight: 700;" id="statusDisplay">{{ order.get_status_display }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-content">
+                        <!-- Estimated Delivery Banner -->
+                        {% if estimated_delivery_date and order.status != 'delivered' and order.status != 'returned' and order.status != 'cancelled' %}
+                        <div class="delivery-banner">
+                            <h3><i class="fas fa-truck"></i> Estimated Delivery</h3>
+                            <div class="delivery-date">{{ estimated_delivery_date|date:"F d, Y" }}</div>
+                            <p>Your order will arrive by this date</p>
+                        </div>
+                        {% elif order.status == 'delivered' and order.delivered_at %}
+                        <div class="delivery-banner" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
+                            <h3><i class="fas fa-check-circle"></i> Order Delivered</h3>
+                            <div class="delivery-date">{{ order.delivered_at|date:"F d, Y" }}</div>
+                            <p>Delivered on {{ order.delivered_at|date:"F d, Y \a\t g:i A" }}</p>
+                        </div>
+                        {% elif order.status == 'returned' %}
+                        <div class="delivery-banner" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                            <h3><i class="fas fa-undo-alt"></i> Order Returned</h3>
+                            <p>This order has been returned. Refund is being processed.</p>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Copy Tracking ID -->
+                        <div class="tracking-id-box">
+                            <div>
+                                <div class="id-label"><i class="fas fa-barcode"></i> TRACKING ID</div>
+                                <div class="id-value" id="trackingIdValue">{{ order.tracking_id }}</div>
+                            </div>
+                            <button onclick="copyTrackingId()" class="btn-copy-track" id="copyBtn">
+                                <i class="fas fa-copy"></i> Copy ID
+                            </button>
+                        </div>
+                        <!-- Status Timeline -->
+                        <h3 class="section-title"><i class="fas fa-route"></i> Order Progress Timeline</h3>
+                        <div class="status-timeline">
+                            <div class="timeline-line"></div>
+                            
+                            <div id="step-placed" class="status-step {% if order.status == 'placed' %}current{% elif steps.placed %}completed{% else %}pending{% endif %}">
+                                <div class="status-icon"><i class="fas fa-shopping-cart"></i></div>
+                                <div class="status-content">
+                                    <div class="status-title">
+                                        Order Placed
+                                        {% if order.status == 'placed' %}<span class="current-badge">Current</span>{% endif %}
+                                    </div>
+                                    <div class="status-description">Your order has been successfully placed and confirmed</div>
+                                    <div class="status-time">{{ steps_time.placed }}</div>
+                                </div>
+                            </div>
+                            
+                            <div id="step-processing" class="status-step {% if order.status == 'processing' %}current{% elif steps.processing %}completed{% else %}pending{% endif %}">
+                                <div class="status-icon"><i class="fas fa-cogs"></i></div>
+                                <div class="status-content">
+                                    <div class="status-title">
+                                        Processing
+                                        {% if order.status == 'processing' %}<span class="current-badge">Current</span>{% endif %}
+                                    </div>
+                                    <div class="status-description">We're preparing your order for shipment</div>
+                                    <div class="status-time">{{ steps_time.processing }}</div>
+                                </div>
+                            </div>
+                            
+                            <div id="step-dispatched" class="status-step {% if order.status == 'dispatched' %}current{% elif steps.dispatched %}completed{% else %}pending{% endif %}">
+                                <div class="status-icon"><i class="fas fa-shipping-fast"></i></div>
+                                <div class="status-content">
+                                    <div class="status-title">
+                                        Dispatched
+                                        {% if order.status == 'dispatched' %}<span class="current-badge">Current</span>{% endif %}
+                                    </div>
+                                    <div class="status-description">Your order has been picked up by our delivery partner</div>
+                                    <div class="status-time">{{ steps_time.dispatched }}</div>
+                                </div>
+                            </div>
+                            
+                            <div id="step-out_for_delivery" class="status-step {% if order.status == 'out_for_delivery' %}current{% elif steps.out_for_delivery %}completed{% else %}pending{% endif %}">
+                                <div class="status-icon"><i class="fas fa-truck"></i></div>
+                                <div class="status-content">
+                                    <div class="status-title">
+                                        Out for Delivery
+                                        {% if order.status == 'out_for_delivery' %}<span class="current-badge">Current</span>{% endif %}
+                                    </div>
+                                    <div class="status-description">Your order is on the way to your delivery address</div>
+                                    <div class="status-time">{{ steps_time.out_for_delivery }}</div>
+                                </div>
+                            </div>
+                            
+                            <div id="step-delivered" class="status-step {% if order.status == 'delivered' %}current completed{% elif steps.delivered %}completed{% else %}pending{% endif %}">
+                                <div class="status-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="status-content">
+                                    <div class="status-title">
+                                        Delivered
+                                        {% if order.status == 'delivered' %}<span class="current-badge" style="background: #22c55e;">Completed</span>{% endif %}
+                                    </div>
+                                    <div class="status-description">Your order has been successfully delivered</div>
+                                    <div class="status-time">{{ steps_time.delivered }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Items -->
+                        <div class="order-items">
+                            <h3 class="section-title"><i class="fas fa-box-open"></i> Order Items</h3>
+                            {% for item in order.items.all %}
+                            <div class="order-item">
+                                {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="item-image">
+                                {% else %}
+                                <div class="item-image bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-image" style="font-size: 2rem; color: #cbd5e1;"></i>
+                                </div>
+                                {% endif %}
+                                <div class="item-details">
+                                    <div class="item-name">{{ item.product.name }}</div>
+                                    <div class="item-qty">Quantity: {{ item.quantity }}</div>
+                                </div>
+                                <div class="item-price">₹{{ item.total_price|floatformat:0 }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="info-section">
+                            <h3 class="section-title"><i class="fas fa-info-circle"></i> Order Summary</h3>
+                            <div class="info-row">
+                                <span class="info-label">Subtotal:</span>
+                                <span class="info-value">₹{{ order.subtotal|floatformat:0 }}</span>
+                            </div>
+                            {% if order.coupon_discount > 0 %}
+                            <div class="info-row">
+                                <span class="info-label"><i class="fas fa-tag"></i> Coupon Discount:</span>
+                                <span class="info-value" style="color: #22c55e;">-₹{{ order.coupon_discount|floatformat:0 }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="info-row">
+                                <span class="info-label">Payment Method:</span>
+                                <span class="info-value">{{ order.get_payment_method_display }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Payment Status:</span>
+                                <span class="info-value">
+                                    {% if order.status == 'returned' and order.payment_status == 'refunded' %}
+                                        <span class="status-refunded"><i class="fas fa-undo-alt"></i> REFUNDED</span>
+                                    {% elif order.payment_status == 'paid' %}
+                                        <span class="status-paid"><i class="fas fa-check-circle"></i> PAID</span>
+                                    {% elif order.payment_status == 'pending' %}
+                                        <span class="status-pending-payment"><i class="fas fa-clock"></i> PENDING</span>
+                                    {% else %}
+                                        {{ order.get_payment_status_display }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label"><strong>Total Amount:</strong></span>
+                                <span class="info-value"><strong>₹{{ order.total|floatformat:0 }}</strong></span>
+                            </div>
+                            {% if order.ship_to_different %}
+                            <div style="margin-top: 25px; padding: 20px; background: white; border-radius: 10px; border: 1px solid #e9ecef;">
+                                <div style="font-weight: 700; color: #1e293b; margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
+                                <div style="color: #64748b; line-height: 1.8;">
+                                    {{ order.ship_first_name }} {{ order.ship_last_name }}<br>
+                                    {{ order.ship_address }}<br>
+                                    {% if order.ship_apartment %}{{ order.ship_apartment }}<br>{% endif %}
+                                    {{ order.ship_state_country }}, {{ order.ship_postal_zip }}<br>
+                                    {{ order.ship_country }}
+                                </div>
+                            </div>
+                            {% else %}
+                            <div style="margin-top: 25px; padding: 20px; background: white; border-radius: 10px; border: 1px solid #e9ecef;">
+                                <div style="font-weight: 700; color: #1e293b; margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
+                                <div style="color: #64748b; line-height: 1.8;">
+                                    {{ order.first_name }} {{ order.last_name }}<br>
+                                    {{ order.address }}<br>
+                                    {% if order.apartment %}{{ order.apartment }}<br>{% endif %}
+                                    {{ order.state_country }}, {{ order.postal_zip }}<br>
+                                    {{ order.country }}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+                    <p class="text-muted">Need help? <a href="{% url 'contact' %}" class="text-decoration-none">Contact our support team</a></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+  </main>
+
+  <footer class="bg-white border-t border-gray-200 mt-12">
+    <div class="container mx-auto py-12 px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="col-span-1 md:col-span-2">
+          <div class="flex items-center mb-4">
+            <span class="text-2xl font-bold text-brand">Furnex<span class="text-gray-600">.</span></span>
+          </div>
+          <p class="text-gray-600 mb-6 max-w-md">Discover comfort, style, and craftsmanship. At Furnex, we design furniture that turns houses into homes.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-brand hover:text-white transition-all duration-200"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-brand hover:text-white transition-all duration-200"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-brand hover:text-white transition-all duration-200"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-brand hover:text-white transition-all duration-200"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Company</h3>
+          <ul class="space-y-3">
+            <li><a href="{% url 'about' %}" class="text-base text-gray-600 hover:text-brand transition-colors">About us</a></li>
+            <li><a href="{% url 'services' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Services</a></li>
+            <li><a href="{% url 'blog' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Blog</a></li>
+            <li><a href="{% url 'contact' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Contact us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Account</h3>
+          <ul class="space-y-3">
+            <li><a href="{% url 'cart' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Shopping Cart</a></li>
+            <li><a href="{% url 'wishlist' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Wishlist</a></li>
+            <li><a href="{% url 'compare' %}" class="text-base text-gray-600 hover:text-brand transition-colors">Compare</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-12 pt-8 border-t border-gray-200">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-base text-gray-500">Copyright &copy; <script>document.write(new Date().getFullYear());</script> Furnex. All Rights Reserved.</p>
+          <div class="mt-4 md:mt-0 flex space-x-6">
+            <a href="#" class="text-base text-gray-500 hover:text-brand transition-colors">Terms & Conditions</a>
+            <a href="#" class="text-base text-gray-500 hover:text-brand transition-colors">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+<script>
+// Copy Tracking ID Function
+function copyTrackingId() {
+    const trackingId = document.getElementById('trackingIdValue').textContent;
+    const button = document.getElementById('copyBtn');
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(trackingId).then(function() {
+        // Visual feedback
+        const originalHTML = button.innerHTML;
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        
+        // Reset after 2 seconds
+        setTimeout(function() {
+            button.classList.remove('copied');
+            button.innerHTML = originalHTML;
+        }, 2000);
+    }).catch(function(err) {
+        // Fallback for older browsers
+        console.error('Failed to copy:', err);
+        alert('Tracking ID copied: ' + trackingId);
+    });
+}
+
+// Form validation and input formatting
+const trackingInput = document.getElementById('tracking_id');
+if (trackingInput) {
+    trackingInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    });
+}
+
+const trackingForm = document.getElementById('trackingForm');
+if (trackingForm) {
+    trackingForm.addEventListener('submit', function(e) {
+        const id = document.getElementById('tracking_id').value.trim();
+        if (!id) {
+            e.preventDefault();
+            alert('Please enter a tracking ID');
+            return;
+        }
+        if (id.length < 6) {
+            e.preventDefault();
+            alert('Please enter a valid tracking ID (minimum 6 characters)');
+            return;
+        }
+    });
+}
+
+// Live AJAX tracking refresh (updates every 15 seconds)
+(function() {
+    const tidInput = document.getElementById('current_tracking_id');
+    if (!tidInput) return;
+    
+    const trackingId = tidInput.value;
+    const statusEl = document.getElementById('statusDisplay');
+    const steps = ['placed', 'processing', 'dispatched', 'out_for_delivery', 'delivered'];
+    
+    function updateStepClasses(currentStatus) {
+        const currentIndex = steps.indexOf(currentStatus);
+        
+        steps.forEach((step, index) => {
+            const stepEl = document.getElementById('step-' + step);
+            if (!stepEl) return;
+            
+            // Remove all state classes
+            stepEl.classList.remove('completed', 'current', 'pending');
+            
+            // Add appropriate class
+            if (index < currentIndex) {
+                stepEl.classList.add('completed');
+            } else if (index === currentIndex) {
+                stepEl.classList.add('current');
+            } else {
+                stepEl.classList.add('pending');
+            }
+        });
+    }
+    
+    async function pollOrderStatus() {
+        try {
+            const response = await fetch('{% url "track_order_ajax" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || ''
+                },
+                body: new URLSearchParams({ tracking_id: trackingId })
+            });
+            
+            const data = await response.json();
+            
+            if (data && data.success) {
+                const order = data.order;
+                
+                // Update status display
+                if (statusEl) {
+                    statusEl.textContent = order.status_display;
+                }
+                
+                // Update timeline steps
+                updateStepClasses(order.status);
+                
+                console.log('Order status updated:', order.status);
+            }
+        } catch (error) {
+            console.error('Error polling order status:', error);
+        }
+    }
+    
+    // Poll after 3 seconds initially, then every 15 seconds
+    setTimeout(pollOrderStatus, 3000);
+    setInterval(pollOrderStatus, 15000);
+})();
+</script>
